@@ -12,7 +12,7 @@ var penampung_json_3;
 var penampung_json_4;
 var penampung_data_waktu;
 const randomFraction = Math.random();
-const randomValue = Math.floor(randomFraction * (5000 - 2000 + 1)) + 2000;
+const randomValue = 5000;//Math.floor(randomFraction * (5000 - 2000 + 1)) + 2000;
 
 function data_thingspeak(){
     const url = 'https://api.thingspeak.com/channels/2172969/feeds.json?results=2';
@@ -78,7 +78,6 @@ function eksekutor(){
     animasi_tombol();
     analisa_realtime();
     kalkulator();
-    //animasi_chart_heat();
     animasi_chart();
 }
 
@@ -150,11 +149,13 @@ function animasi_kipas(){
     if(array_kipas_pusat[10]==1){
         if(mode_kandang==1){
             tmkps = tmkps + ', Hidup ' + array_kipas_pusat[11] + ' detik ,Mati ' + array_kipas_pusat[12] + ' menit';
-        }else if(mode_kandang==2){
-            tmkps ='Hidup ' + array_kipas_pusat[11] + ' detik Mati ' + array_kipas_pusat[12] + ' menit';
         }
     }else{
-        tmkps = 'Mati';
+        if(mode_kandang==1){
+            tmkps = 'Mati';
+        }else if(mode_kandang==2){
+            tmkps = 'Mati, [' + array_kipas_pusat[11] + '-' + array_kipas_pusat[12] + ']';
+        }
     }
     document.getElementById("mode_kipas").innerHTML = mdkps;
     document.getElementById("timer_kipas").innerHTML = tmkps;
@@ -178,51 +179,6 @@ function animasi_bar(){
 
 function animasi_tombol(){
 
-}
-
-function animasi_chart_heat(){
-    var bar_1 = document.getElementById("crt_heat_1");
-    var bar_2 = document.getElementById("crt_heat_2");
-    var bar_3 = document.getElementById("crt_heat_3");
-    var bar_4 = document.getElementById("crt_heat_4");
-    var bar_5 = document.getElementById("crt_heat_5");
-    var bar_6 = document.getElementById("crt_heat_6");
-    var bar_7 = document.getElementById("crt_heat_7");
-    var bar_8 = document.getElementById("crt_heat_8");
-    var bar_9 = document.getElementById("crt_heat_9");
-    var bar_10 = document.getElementById("crt_heat_10");
-    var bar_11 = document.getElementById("crt_heat_11");
-    var bar_12 = document.getElementById("crt_heat_12");
-    var bar_13 = document.getElementById("crt_heat_13");
-    var bar_14 = document.getElementById("crt_heat_14");
-    var bar_15 = document.getElementById("crt_heat_15");
-    var bar_16 = document.getElementById("crt_heat_16");
-    var bar_17 = document.getElementById("crt_heat_17");
-    var bar_18 = document.getElementById("crt_heat_18");
-    var bar_19 = document.getElementById("crt_heat_19");
-    var bar_20 = document.getElementById("crt_heat_20");
-    var bar_21 = document.getElementById("crt_heat_21");
-    bar_1.style.backgroundColor = nilaiKeWarnaPelangi(200);
-    bar_2.style.backgroundColor = nilaiKeWarnaPelangi(210);
-    bar_3.style.backgroundColor = nilaiKeWarnaPelangi(220);
-    bar_4.style.backgroundColor = nilaiKeWarnaPelangi(230);
-    bar_5.style.backgroundColor = nilaiKeWarnaPelangi(240);
-    bar_6.style.backgroundColor = nilaiKeWarnaPelangi(250);
-    bar_7.style.backgroundColor = nilaiKeWarnaPelangi(260);
-    bar_8.style.backgroundColor = nilaiKeWarnaPelangi(270);
-    bar_9.style.backgroundColor = nilaiKeWarnaPelangi(280);
-    bar_10.style.backgroundColor = nilaiKeWarnaPelangi(290);
-    bar_11.style.backgroundColor = nilaiKeWarnaPelangi(300);
-    bar_12.style.backgroundColor = nilaiKeWarnaPelangi(310);
-    bar_13.style.backgroundColor = nilaiKeWarnaPelangi(320);
-    bar_14.style.backgroundColor = nilaiKeWarnaPelangi(330);
-    bar_15.style.backgroundColor = nilaiKeWarnaPelangi(340);
-    bar_16.style.backgroundColor = nilaiKeWarnaPelangi(350);
-    bar_17.style.backgroundColor = nilaiKeWarnaPelangi(360);
-    bar_18.style.backgroundColor = nilaiKeWarnaPelangi(370);
-    bar_19.style.backgroundColor = nilaiKeWarnaPelangi(380);
-    bar_20.style.backgroundColor = nilaiKeWarnaPelangi(390);
-    bar_21.style.backgroundColor = nilaiKeWarnaPelangi(400);
 }
 
 const toggleButton = document.getElementById("toggleButton");
@@ -470,93 +426,14 @@ function updateTime() {
 }
 
 function analisa_realtime(){
-    if(usia_ayam == 1){
-        hasil_analisa(330,300,350,155);
-    }else if(usia_ayam == 2){
-        hasil_analisa(330,300,350,155);
-    }else if(usia_ayam == 3){
-        hasil_analisa(328,300,350,155);
-    }else if(usia_ayam == 4){
-        hasil_analisa(325,300,345,155);
-    }else if(usia_ayam == 5){
-        hasil_analisa(320,300,340,155);
-    }else if(usia_ayam == 6){
-        hasil_analisa(315,295,340,155);
-    }else if(usia_ayam == 7){
-        hasil_analisa(310,290,335,155);
-    }else if(usia_ayam == 8){
-        hasil_analisa(304,285,330,156);
-    }else if(usia_ayam == 9){
-        hasil_analisa(297,277,325,157);
-    }else if(usia_ayam == 10){
-        hasil_analisa(294,275,320,158);
-    }else if(usia_ayam == 11){
-        hasil_analisa(290,270,315,159);
-    }else if(usia_ayam == 12){
-        hasil_analisa(289,270,312,160);
-    }else if(usia_ayam == 13){
-        hasil_analisa(287,270,310,160);
-    }else if(usia_ayam == 14){
-        hasil_analisa(286,267,310,160);
-    }else if(usia_ayam == 15){
-        hasil_analisa(284,264,310,160);
-    }else if(usia_ayam == 16){
-        hasil_analisa(283,262,310,160);
-    }else if(usia_ayam == 17){
-        hasil_analisa(282,260,310,160);
-    }else if(usia_ayam == 18){
-        hasil_analisa(278,258,310,161);
-    }else if(usia_ayam == 19){
-        hasil_analisa(278,257,310,161);
-    }else if(usia_ayam == 20){
-        hasil_analisa(276,256,310,161);
-    }else if(usia_ayam == 21){
-        hasil_analisa(275,255,310,161);
-    }else if(usia_ayam == 22){
-        hasil_analisa(274,254,310,162);
-    }else if(usia_ayam == 23){
-        hasil_analisa(273,253,310,162);
-    }else if(usia_ayam == 24){
-        hasil_analisa(272,252,310,162);
-    }else if(usia_ayam == 25){
-        hasil_analisa(271,251,310,163);
-    }else if(usia_ayam == 26){
-        hasil_analisa(270,250,310,163);
-    }else if(usia_ayam == 27){
-        hasil_analisa(269,249,309,164);
-    }else if(usia_ayam == 28){
-        hasil_analisa(268,248,308,164);
-    }else if(usia_ayam == 29){
-        hasil_analisa(267,247,307,165);
-    }else if(usia_ayam == 30){
-        hasil_analisa(266,246,306,165);
-    }else if(usia_ayam == 31){
-        hasil_analisa(265,245,305,165);
-    }else if(usia_ayam == 32){
-        hasil_analisa(264,244,304,165);
-    }else if(usia_ayam == 33){
-        hasil_analisa(263,243,303,165);
-    }else if(usia_ayam == 34){
-        hasil_analisa(262,242,302,165);
-    }else if(usia_ayam == 35){
-        hasil_analisa(261,241,301,165);
-    }else if(usia_ayam == 36){
-        hasil_analisa(260,240,300,165);
-    }else if(usia_ayam == 37){
-        hasil_analisa(260,240,300,165);
-    }else if(usia_ayam == 38){
-        hasil_analisa(260,240,300,165);
-    }else if(usia_ayam == 39){
-        hasil_analisa(260,240,300,165);
-    }else if(usia_ayam == 40){
-        hasil_analisa(260,240,300,165);
-    }else{
-        hasil_analisa(260,240,300,165);
-    }
+    var array_kipas_pusat = penampung_json_4.kpa;
+    var trgtsh = array_kipas_pusat[2];
+    var shmin = array_kipas_pusat[3];
+    var shmax = array_kipas_pusat[4];
+    hasil_analisa(trgtsh,shmin,shmax,160);
 }
 
 var ket;
-    
 function hasil_analisa(target_suhu,suhu_minimal,suhu_maksimal,target_heat_index){
     var array_suhu = penampung_json_1.shu;
     var array_kelembapan = penampung_json_1.klb;
@@ -656,8 +533,6 @@ function kalkulator(){
     var calc_harga_obat_dll = document.getElementById('input_kalkulator_8').value;
     var calc_harga_pakan_per_kilo = document.getElementById('input_kalkulator_9').value;
 
-   
-    
     var ayam_tersisa = calc_ayam_awal - calc_ayam_mati;
     var persen_ayam_hidup = (ayam_tersisa/calc_ayam_awal)*100;
     var jumlah_pakan = calc_jumlah_pakan * 50;
@@ -706,32 +581,4 @@ function wkt_on(){
     }else{
         onl.style.backgroundColor = "red";
     }
-}
-
-// Fungsi untuk mengubah nilai menjadi warna pelangi
-function nilaiKeWarnaPelangi(nilai) {
-    nilai = 600 - nilai;
-    // Hitung nilai RGB berdasarkan posisi nilai dalam rentang
-    let merah, hijau, biru;
-    if (nilai >= 200 && nilai < 270) {
-        merah = 255;
-        hijau = Math.round((nilai - 200) * (255 / 60));
-        biru = 0;
-    } else if (nilai >= 270 && nilai < 310) {
-        merah = Math.round(255 - ((nilai - 250) * (255 / 50)));
-        hijau = 255;
-        biru = 0;
-    } else if (nilai >= 310 && nilai < 360) {
-        merah = 0;
-        hijau = 255;
-        biru = Math.round((nilai - 300) * (255 / 50));
-    } else if (nilai >= 360 && nilai <= 400) {
-        merah = 0;
-        hijau = Math.round(255 - ((nilai - 350) * (255 / 50)));
-        biru = 255;
-    }
-
-
-    // Format nilai RGB ke dalam format CSS
-    return `rgb(${merah}, ${hijau}, ${biru})`;
 }
