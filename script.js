@@ -1,18 +1,26 @@
-let myTab;
+function openOrFocusTab(url) {
+    // Cek di localStorage apakah URL sudah dibuka
+    const tabIsOpen = localStorage.getItem(url);
 
-function openInSameTab() {
-    const url = "https://kandangayamrakha.netlify.app/"; // URL tujuan
-    // Jika tab sudah ada dan belum ditutup, gunakan kembali tab tersebut
-    if (myTab && !myTab.closed) {
-        myTab.location.href = url; // Ganti URL tab yang sudah ada
-        myTab.focus(); // Bawa tab ke depan
+    if (!tabIsOpen) {
+        // Jika belum ada, simpan URL di localStorage
+        localStorage.setItem(url, "open");
+
+        // Buka tab baru dan simpan referensinya
+        const newTab = window.open(url, "_blank");
+
+        // Ketika tab baru ditutup, hapus URL dari localStorage
+        newTab.addEventListener("beforeunload", () => {
+            localStorage.removeItem(url);
+        });
     } else {
-        // Jika belum ada, buka tab baru dengan nama khusus                myTab = window.open(url, "myUniqueTab");
+        alert("Tab tersebut sudah terbuka. Silakan cek browser Anda.");
     }
 }
 
-        // Panggil fungsi saat halaman selesai dimuat
-window.onload = openInSameTab;
+// Contoh penggunaan
+openOrFocusTab("https://kandangayamrakha.netlify.app/");
+
 
 function hpsnull(hps_null){
     if (hps_null !== null) {
