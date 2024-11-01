@@ -1,3 +1,19 @@
+function openOrFocusTab(url) {
+    const existingTab = window.open(url, "_blank");
+
+    // Cek apakah tab sudah ada atau belum
+    if (existingTab) {
+        // Jika tab sudah ada, fokus ke tab tersebut
+        existingTab.focus();
+    } else {
+        // Jika tidak bisa fokus, buka tab baru
+        window.open(url, "_blank");
+    }
+}
+
+// Contoh penggunaan
+openOrFocusTab("https://kandangayamrakha.netlify.app/");
+
 function hpsnull(hps_null){
     if (hps_null !== null) {
         return hps_null;
