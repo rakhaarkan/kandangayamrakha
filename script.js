@@ -1,18 +1,18 @@
-function openOrFocusTab(url) {
-    const existingTab = window.open(url, "_blank");
+let myTab;
 
-    // Cek apakah tab sudah ada atau belum
-    if (existingTab) {
-        // Jika tab sudah ada, fokus ke tab tersebut
-        existingTab.focus();
+function openInSameTab() {
+    const url = "https://kandangayamrakha.netlify.app/"; // URL tujuan
+    // Jika tab sudah ada dan belum ditutup, gunakan kembali tab tersebut
+    if (myTab && !myTab.closed) {
+        myTab.location.href = url; // Ganti URL tab yang sudah ada
+        myTab.focus(); // Bawa tab ke depan
     } else {
-        // Jika tidak bisa fokus, buka tab baru
-        window.open(url, "_blank");
+        // Jika belum ada, buka tab baru dengan nama khusus                myTab = window.open(url, "myUniqueTab");
     }
 }
 
-// Contoh penggunaan
-openOrFocusTab("https://kandangayamrakha.netlify.app/");
+        // Panggil fungsi saat halaman selesai dimuat
+window.onload = openInSameTab;
 
 function hpsnull(hps_null){
     if (hps_null !== null) {
