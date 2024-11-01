@@ -1,25 +1,33 @@
-function openOrFocusTab(url) {
-    // Nama unik untuk tab
-    const tabName = "unique_tab_" + url;
-    
-    // Cari tab dengan nama ini (jika ada)
-    let existingTab = window.open('', tabName);
-
-    if (existingTab && !existingTab.closed) {
-        // Jika tab sudah ada, fokus ke tab tersebut
-        existingTab.focus();
-    } else {
-        // Jika belum ada, buka tab baru dengan URL dan nama
-        existingTab = window.open(url, tabName);
-
-        // Tambahkan event listener untuk menghapus referensi saat ditutup
-        existingTab.addEventListener("beforeunload", () => {
-            existingTab = null;
-        });
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
     }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
 }
-openOrFocusTab("https://kandangayamrakha.netlify.app/");
 
+// Fungsi untuk mendapatkan variabel dari cookie
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        let c = cookies[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+// Fungsi untuk menghapus cookie
+function deleteCookie(name) {
+    document.cookie = name + "=; Max-Age=-99999999;";
+}
+
+// Contoh penggunaan
+//const retrievedVar = getCookie("owner"); // Mengambil nilai dari cookie
+//console.log(retrievedVar); // Output: "Hello, World!"
 
 function hpsnull(hps_null){
     if (hps_null !== null) {
@@ -205,12 +213,13 @@ function animasi_tombol(){
 }
 
 const toggleButton = document.getElementById("toggleButton");
+const toggleButton2 = document.getElementById("toggleButton2");
 const hiddenText = document.getElementById("hiddenText");
 const button_bar1 = document.getElementById("button_bar1");
 const hidden_chart1 = document.getElementById("hidden_chart1");
 const hidden_chart2 = document.getElementById("hidden_chart2");
-const button_caclulator = document.getElementById("button_caclulator");
-const hidden_caclulator = document.getElementById("hidden_caclulator");
+const button_calculator = document.getElementById("button_calculator");
+const hidden_calculator = document.getElementById("hidden_calculator");
 
 toggleButton.addEventListener('click', function() {
     if (hiddenText.style.display == "none") {
@@ -222,18 +231,33 @@ toggleButton.addEventListener('click', function() {
     }
 });
 
-//button_caclulator.addEventListener('click', function() {
-    // Periksa apakah teks sedang ditampilkan atau tidak
-    //if (hidden_caclulator.style.display == "none") {
-        // Jika teks disembunyikan, tampilkan teks dan ubah teks tombol
-        //hidden_caclulator.style.display = "block";
-        //button_caclulator.textContent = "Sembunyikan Teks";
-    //} else {
-        // Jika teks ditampilkan, sembunyikan teks dan ubah teks tombol
-        //hidden_caclulator.style.display = "none";
-        //button_caclulator.textContent = "Lihat Teks Data";
-    //}
-//});
+toggleButton2.addEventListener('click', function() {
+    var myVar;
+    var input_cookie = document.getElementById("input_test_kosong").value;
+    if (input_cookie == "rakha25") {
+        alert("Perangkat anda telah di atur menjadi mode pemilik kandang");
+        myVar = "1";
+        setCookie("owner", myVar, 9999); 
+        setDefaultValue();
+    } else if (input_cookie == '') {
+        //alert("kosong");
+    } else {
+        myVar = "0";
+        setCookie("owner", myVar, 9999); 
+        setDefaultValue();
+        //alert("oke");
+    }
+});
+
+button_calculator.addEventListener('click', function() {
+    if (hidden_calculator.style.display == "none") {
+        hidden_calculator.style.display = "block";
+        //hidden_calculator.textContent = "Sembunyikan Teks";
+    } else {
+        hidden_calculator.style.display = "none";
+        //hidden_calculator.textContent = "Lihat Teks Data";
+    }
+});
 
 button_bar1.addEventListener('click', function() {
     if (hidden_chart1.style.display == "none") {
@@ -574,13 +598,18 @@ function kalkulator(){
 
 function setDefaultValue() {
     // Mengatur nilai default menggunakan JavaScript
-    document.getElementById('input_kalkulator_1').value = usia_ayam;
-    document.getElementById('input_kalkulator_2').value = 5000;
-    document.getElementById('input_kalkulator_6').value = 19900;
-    document.getElementById('input_kalkulator_7').value = 7700;
-    document.getElementById('input_kalkulator_8').value = 2500000;
-    document.getElementById('input_kalkulator_9').value = 9100;
-    
+    const retrievedVar = getCookie("owner")
+    if(retrievedVar == 1){
+        hidden_calculator.style.display = "block";
+        document.getElementById('input_kalkulator_1').value = usia_ayam;
+        document.getElementById('input_kalkulator_2').value = 5000;
+        document.getElementById('input_kalkulator_6').value = 19900;
+        document.getElementById('input_kalkulator_7').value = 7700;
+        document.getElementById('input_kalkulator_8').value = 2500000;
+        document.getElementById('input_kalkulator_9').value = 9100;    
+    }else{
+
+    }
 }
 
 function formatRupiah(angka) {
