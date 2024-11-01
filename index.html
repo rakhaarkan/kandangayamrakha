@@ -154,38 +154,6 @@
             Data 24 jam terakhir
             <canvas id="grafik" style="height: 75vw;width: 100vw;"></canvas>
         </div>
-        <!-- <div id="hidden_chart2" style="display: none;">
-            Coming Soon
-            
-        </div>
-        <div>
-            <div class="crt_panas_wrap">
-                <div class="crt_panas_blok" id="crt_heat_1"></div>
-                <div class="crt_panas_blok" id="crt_heat_2"></div>
-                <div class="crt_panas_blok" id="crt_heat_3"></div>
-                <div class="crt_panas_blok" id="crt_heat_4"></div>
-                <div class="crt_panas_blok" id="crt_heat_5"></div>
-                <div class="crt_panas_blok" id="crt_heat_6"></div>
-                <div class="crt_panas_blok" id="crt_heat_7"></div>
-                <div class="crt_panas_blok" id="crt_heat_8"></div>
-                <div class="crt_panas_blok" id="crt_heat_9"></div>
-                <div class="crt_panas_blok" id="crt_heat_10"></div>
-                <div class="crt_panas_blok" id="crt_heat_11"></div>
-                <div class="crt_panas_blok" id="crt_heat_12"></div>
-                <div class="crt_panas_blok" id="crt_heat_13"></div>
-                <div class="crt_panas_blok" id="crt_heat_14"></div>
-                <div class="crt_panas_blok" id="crt_heat_15"></div>
-                <div class="crt_panas_blok" id="crt_heat_16"></div>
-                <div class="crt_panas_blok" id="crt_heat_17"></div>
-                <div class="crt_panas_blok" id="crt_heat_18"></div>
-                <div class="crt_panas_blok" id="crt_heat_19"></div>
-                <div class="crt_panas_blok" id="crt_heat_20"></div>
-                <div class="crt_panas_blok" id="crt_heat_21"></div>
-            </div>
-            <div id="kotak"></div>
-
-            </div>
-        </div>-->
         <br>
         <div class="wrapper">
         <h3>Analisis Cepat</h3>
@@ -220,23 +188,6 @@
         
     </div>
 </div> 
-    <!--<div class="container txt2">
-        <h3>Data Luar Kandang</h3>
-        <div class="card2">
-            <p>
-                <span class="keterangan widget1">Suhu Luar : </span>
-                <span id="suhu_luar" style="background-color: ;">0</span>
-                <span class="keterangan widget1">°</span>
-            </p>
-        </div>
-        <div class="card2">
-            <p>
-                <span class="keterangan widget1">Kelembapan Luar : </span>
-                <span id="kelembapan_luar">0</span>
-                <span class="keterangan widget1">%</span>
-            </p>
-        </div>
-    </div> -->
     <div class="container txt2">
         <h3>Data Luar Kandang</h3>
         <div class="wrapper">
@@ -351,7 +302,6 @@
                     </div>    
                 </div>     
                 <div class="container_group_widget txt1" style="width: 40vw;">
-                    <!--<h4 class="txt1">Listrik</h4>-->
                     <div class="wrapper_group_widget" style="flex-wrap: wrap;width:50vw; justify-content: left;">
                         <div class="card_group_widget ">
                             <div class="wrapper_group_widget" style="flex-wrap: nowrap;justify-content: left;">
@@ -389,38 +339,6 @@
                 </div>               
             </div>
         </div>
-        <!--<div class="wrapper">
-            <div class="card2">
-                <div class="container_group_widget">
-                    <h4>Power Factor</h4>
-                    <div class="wrapper_group_widget" style="flex-wrap: nowrap;">
-                        <div class="keterangan_bar_pf">0</div>
-                        <div class="card_group_widget">
-                            <div class="progres_bar">
-                                <div class="progres_bar progres_bar_listrik" id="bar_efisiensi"></div>
-                            </div>
-                        </div>
-                        <div class="keterangan_bar_pf">1</div>
-                    </div>
-                    <div class="wrapper_group_widget" style="flex-wrap: nowrap;">
-                        <div class="card_group_widget" style="background-color: white;"></div>
-                        <div class="card_group_widget" >
-                            <span>Daya Aktif :</span>
-                            <span id="daya_aktif">10</span>
-                            <span>KWh</span>
-                        </div>
-                    </div>
-                    <div class="wrapper_group_widget">
-                        <div class="card_group_widget" style="background-color: white;"></div>
-                        <div class="card_group_widget" >
-                            <span>Daya Reaktif :</span>
-                            <span id="daya_reaktif">10</span>
-                            <span>KVA</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>-->
     </div>   
     <div class="judul_container_kipas txt1">
         <h3>Kipas</h3>
@@ -497,14 +415,14 @@
                     <label for="input_kalkulator_9">Harga Pakan/kg</label>
                     <input type="number" min="0" max="100000" id="input_kalkulator_9" placeholder="">
                 </div>
-
-                <!-- Output area -->
                 <div class="output-group">
                     <div><span>FCR :</span> <span id="output_kalkulator_fcr"></span></div>
                     <div><span>IP :</span> <span id="output_kalkulator_ip"></span></div>
                     <div><span>Deplesi :</span> <span id="output_kalkulator_deplesi"></span></div>
                     <div><span>Perkiraan Hasil :</span> <span id="output_kalkulator_perkiraan_pendapatan"></span></div>
                     <div><span>Kerugian per Ekor mati :</span> <span id="output_kalkulator_kerugian_per_ekor"></span></div>
+                    <br>
+                    <div style="color: red;"><span id="output_kalkulator_keterangan"></span></div>
                 </div>
             </div>
         </div>
