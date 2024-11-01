@@ -603,7 +603,7 @@ function setDefaultValue() {
         hidden_calculator.style.display = "block";
         document.getElementById('input_kalkulator_1').value = usia_ayam;
         document.getElementById('input_kalkulator_2').value = 5000;
-        document.getElementById('input_kalkulator_6').value = 19900;
+        document.getElementById('input_kalkulator_6').value = 20200;
         document.getElementById('input_kalkulator_7').value = 7700;
         document.getElementById('input_kalkulator_8').value = 2500000;
         document.getElementById('input_kalkulator_9').value = 9100;    
