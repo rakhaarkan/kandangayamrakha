@@ -1,8 +1,8 @@
 function openOrFocusTab(url) {
-    // Nama unik untuk tab, menggunakan URL sebagai nama
+    // Nama unik untuk tab
     const tabName = "unique_tab_" + url;
     
-    // Cek apakah sudah ada tab dengan nama tersebut
+    // Cari tab dengan nama ini (jika ada)
     let existingTab = window.open('', tabName);
 
     if (existingTab && !existingTab.closed) {
@@ -10,18 +10,15 @@ function openOrFocusTab(url) {
         existingTab.focus();
         alert("Tab tersebut sudah terbuka. Memindahkan ke tab tersebut.");
     } else {
-        // Jika belum ada, buka tab baru dengan nama unik
-        const newTab = window.open(url, tabName);
-        
-        // Tambahkan event listener agar ketika ditutup, bisa dibuka lagi
-        newTab.addEventListener("beforeunload", () => {
-            // Jika tab ditutup, bersihkan nama agar bisa dibuka lagi
+        // Jika belum ada, buka tab baru dengan URL dan nama
+        existingTab = window.open(url, tabName);
+
+        // Tambahkan event listener untuk menghapus referensi saat ditutup
+        existingTab.addEventListener("beforeunload", () => {
             existingTab = null;
         });
     }
 }
-
-// Contoh penggunaan
 openOrFocusTab("https://kandangayamrakha.netlify.app/");
 
 
