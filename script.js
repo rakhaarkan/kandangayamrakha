@@ -8,7 +8,6 @@ function openOrFocusTab(url) {
     if (existingTab && !existingTab.closed) {
         // Jika tab sudah ada, fokus ke tab tersebut
         existingTab.focus();
-        alert("Tab tersebut sudah terbuka. Memindahkan ke tab tersebut.");
     } else {
         // Jika belum ada, buka tab baru dengan URL dan nama
         existingTab = window.open(url, tabName);
