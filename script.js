@@ -1,20 +1,23 @@
 function openOrFocusTab(url) {
-    // Cek di localStorage apakah URL sudah dibuka
-    const tabIsOpen = localStorage.getItem(url);
+    // Nama unik untuk tab, menggunakan URL sebagai nama
+    const tabName = "unique_tab_" + url;
+    
+    // Cek apakah sudah ada tab dengan nama tersebut
+    let existingTab = window.open('', tabName);
 
-    if (!tabIsOpen) {
-        // Jika belum ada, simpan URL di localStorage
-        localStorage.setItem(url, "open");
-
-        // Buka tab baru dan simpan referensinya
-        const newTab = window.open(url, "_blank");
-
-        // Ketika tab baru ditutup, hapus URL dari localStorage
-        newTab.addEventListener("beforeunload", () => {
-            localStorage.removeItem(url);
-        });
+    if (existingTab && !existingTab.closed) {
+        // Jika tab sudah ada, fokus ke tab tersebut
+        existingTab.focus();
+        alert("Tab tersebut sudah terbuka. Memindahkan ke tab tersebut.");
     } else {
-        alert("Tab tersebut sudah terbuka. Silakan cek browser Anda.");
+        // Jika belum ada, buka tab baru dengan nama unik
+        const newTab = window.open(url, tabName);
+        
+        // Tambahkan event listener agar ketika ditutup, bisa dibuka lagi
+        newTab.addEventListener("beforeunload", () => {
+            // Jika tab ditutup, bersihkan nama agar bisa dibuka lagi
+            existingTab = null;
+        });
     }
 }
 
