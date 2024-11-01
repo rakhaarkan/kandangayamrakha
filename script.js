@@ -188,15 +188,12 @@ const hidden_chart1 = document.getElementById("hidden_chart1");
 const hidden_chart2 = document.getElementById("hidden_chart2");
 const button_caclulator = document.getElementById("button_caclulator");
 const hidden_caclulator = document.getElementById("hidden_caclulator");
-// Tambahkan event listener untuk menangani klik tombol
+
 toggleButton.addEventListener('click', function() {
-    // Periksa apakah teks sedang ditampilkan atau tidak
     if (hiddenText.style.display == "none") {
-        // Jika teks disembunyikan, tampilkan teks dan ubah teks tombol
         hiddenText.style.display = "block";
         toggleButton.textContent = "Sembunyikan Teks";
     } else {
-        // Jika teks ditampilkan, sembunyikan teks dan ubah teks tombol
         hiddenText.style.display = "none";
         toggleButton.textContent = "Lihat Teks Data";
     }
@@ -216,7 +213,6 @@ toggleButton.addEventListener('click', function() {
 //});
 
 button_bar1.addEventListener('click', function() {
-    // Periksa apakah teks sedang ditampilkan atau tidak
     if (hidden_chart1.style.display == "none") {
         hidden_chart1.style.display = "block";
         button_bar1.textContent = "Sembunyikan Grafik";
@@ -225,7 +221,6 @@ button_bar1.addEventListener('click', function() {
         button_bar1.textContent = "Lihat Grafik";
     }
 });
-// Fungsi untuk mendapatkan format waktu yang tepat
 function formatTime(time) {
     return (time < 10 ? '0' : '') + time;
 }
@@ -233,7 +228,6 @@ function formatTime(time) {
 const x1 = 0;
 function animasi_chart(){
     const canvas1 = document.getElementById('grafik');
-        // Inisialisasi grafik
         const grafik = new Chart(canvas1, {
             type: 'line',
             data: {
@@ -542,11 +536,16 @@ function kalkulator(){
     var deplesi = (100 - persen_ayam_hidup).toFixed(1);
     var perkiraan_pendapatan = (calc_bobot_rata * ayam_tersisa * calc_harga_kontrak_ayam)-(calc_harga_bibit * calc_ayam_awal) - (calc_harga_obat_dll) - (calc_harga_pakan_per_kilo * jumlah_pakan);
     var perkiraan_kerugian_per_ekor = ((calc_bobot_rata * (ayam_tersisa + 1) * calc_harga_kontrak_ayam)-(calc_harga_bibit * calc_ayam_awal) - (calc_harga_obat_dll) - (calc_harga_pakan_per_kilo * jumlah_pakan))-perkiraan_pendapatan;
+    var keterangan = '';
+    if((fcr < 1)||(ip > 550)||(perkiraan_pendapatan > calc_ayam_awal*8000)||(deplesi > 100)||(perkiraan_kerugian_per_ekor < 0)){
+        keterangan = 'Hasil perhitungan tidak realistis karena anda memasukkan input nilai yang asal.';
+    }
     document.getElementById('output_kalkulator_fcr').innerHTML = fcr;
     document.getElementById('output_kalkulator_ip').innerHTML = ip;
     document.getElementById('output_kalkulator_deplesi').innerHTML = deplesi +'%';
     document.getElementById('output_kalkulator_perkiraan_pendapatan').innerHTML = formatRupiah(perkiraan_pendapatan);
     document.getElementById('output_kalkulator_kerugian_per_ekor').innerHTML = formatRupiah(perkiraan_kerugian_per_ekor);
+    document.getElementById('output_kalkulator_keterangan').innerHTML = keterangan;
     
 }
 
