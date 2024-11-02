@@ -442,7 +442,7 @@ function updateTime() {
     const currentDate = `${dayOfWeek}, ${dayOfMonth} ${month} ${year}`;
     const currentTime = `${hours}:${minutes}:${seconds}`;
     const startDate = new Date(array_data[0]);
-    startDate.setHours(startDate.getHours() - 7);
+    startDate.setHours(startDate.getHours());
     const differenceInMilliseconds = now - startDate;
     var mode_usia_ayam =  array_data[1];
     const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
@@ -582,16 +582,16 @@ function kalkulator(){
     var ip = ((persen_ayam_hidup*calc_bobot_rata)/(fcr*calc_usia_ayam)*100).toFixed(0);
     var deplesi = (100 - persen_ayam_hidup).toFixed(1);
     var perkiraan_pendapatan = (calc_bobot_rata * ayam_tersisa * calc_harga_kontrak_ayam)-(calc_harga_bibit * calc_ayam_awal) - (calc_harga_obat_dll) - (calc_harga_pakan_per_kilo * jumlah_pakan);
-    var perkiraan_kerugian_per_ekor = ((calc_bobot_rata * (ayam_tersisa + 1) * calc_harga_kontrak_ayam)-(calc_harga_bibit * calc_ayam_awal) - (calc_harga_obat_dll) - (calc_harga_pakan_per_kilo * jumlah_pakan))-perkiraan_pendapatan;
+    var perkiraan_keuntungan_per_ekor = perkiraan_pendapatan/ayam_tersisa;
     var keterangan = '';
-    if((fcr < 1)||(ip > 550)||(perkiraan_pendapatan > calc_ayam_awal*8000)||(deplesi > 100)||(perkiraan_kerugian_per_ekor < 0)){
+    if((fcr < 1)||(ip > 550)||(perkiraan_pendapatan > calc_ayam_awal*8000)||(deplesi > 100)){
         keterangan = 'Hasil perhitungan tidak realistis karena anda memasukkan input nilai yang asal.';
     }
     document.getElementById('output_kalkulator_fcr').innerHTML = fcr;
     document.getElementById('output_kalkulator_ip').innerHTML = ip;
     document.getElementById('output_kalkulator_deplesi').innerHTML = deplesi +'%';
     document.getElementById('output_kalkulator_perkiraan_pendapatan').innerHTML = formatRupiah(perkiraan_pendapatan);
-    document.getElementById('output_kalkulator_kerugian_per_ekor').innerHTML = formatRupiah(perkiraan_kerugian_per_ekor);
+    document.getElementById('perkiraan_keuntungan_per_ekor').innerHTML = formatRupiah(perkiraan_keuntungan_per_ekor);
     document.getElementById('output_kalkulator_keterangan').innerHTML = keterangan;
     
 }
