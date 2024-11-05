@@ -471,3 +471,79 @@ svg{
     /*font-weight: bold;*/
 }
 
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  .modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+  }
+  
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  #resultContainer {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+  }
+
+  /* Gaya untuk tombol edit */
+.edit-button {
+    background-color: #40E0D0; /* Warna biru tosca */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 5px 0;
+    border-radius: 5px;
+    width: 100%;
+}
+
+/* Gaya untuk tombol hapus */
+.delete-button {
+    background-color: #FF6347; /* Warna merah tomat */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+/* Style for result items container */
+.result-item {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    position: relative;
+    max-width: 400px;
+}
+
+/* Style untuk menambahkan jarak antara tombol edit dan hapus */
+.result-item button {
+    display: block;
+    margin-top: 5px;
+}
