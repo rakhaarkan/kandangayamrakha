@@ -237,14 +237,16 @@ toggleButton2.addEventListener('click', function() {
     if (input_cookie == "rakha25") {
         alert("Perangkat anda telah di atur menjadi mode pemilik kandang");
         myVar = "1";
-        setCookie("owner", myVar, 9999); 
+        setCookie("owner", myVar, 7); 
         setDefaultValue();
+        addButton.style.display = "block";
     } else if (input_cookie == '') {
         //alert("kosong");
     } else {
         myVar = "0";
-        setCookie("owner", myVar, 9999); 
+        setCookie("owner", myVar, 7); 
         setDefaultValue();
+        addButton.style.display = "none";
         //alert("oke");
     }
 });
@@ -312,6 +314,17 @@ function animasi_chart(){
                     tension: 0.4,
                     pointStyle: false,
                     yAxisID: 'y1'
+                },{
+                    label: 'target Suhu',
+                    data: [gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts(),gts()],
+                    backgroundColor: 'rgba(255,0,0,0.2)', // Warna area di bawah garis
+                    borderColor: 'rgba(255,0,0,1)', // Warna garis
+                    borderWidth: 1 ,// Lebar garis
+                    fill: false,
+                    cubicInterpolationMode: 'monotone',
+                    tension: 0.4,
+                    pointStyle: false,
+                    yAxisID: 'y2'
                 }]
             },
             options: {
@@ -416,6 +429,12 @@ function gwk(x) {
     }else{
         return hasil_gwk + ':00';
     }
+}
+
+function gts(){
+    var array_kipas_pusat = penampung_json_4.kpa;
+    var trgtsh = array_kipas_pusat[2]/10;
+    return trgtsh;
 }
 
 
@@ -582,9 +601,9 @@ function kalkulator(){
     var ip = ((persen_ayam_hidup*calc_bobot_rata)/(fcr*calc_usia_ayam)*100).toFixed(0);
     var deplesi = (100 - persen_ayam_hidup).toFixed(1);
     var perkiraan_pendapatan = (calc_bobot_rata * ayam_tersisa * calc_harga_kontrak_ayam)-(calc_harga_bibit * calc_ayam_awal) - (calc_harga_obat_dll) - (calc_harga_pakan_per_kilo * jumlah_pakan);
-    var perkiraan_keuntungan_per_ekor = perkiraan_pendapatan/ayam_tersisa;
+    var perkiraan_keuntungan_per_ekor = perkiraan_pendapatan/calc_usia_ayam;
     var keterangan = '';
-    if((fcr < 1)||(ip > 550)||(perkiraan_pendapatan > calc_ayam_awal*8000)||(deplesi > 100)){
+    if(((calc_usia_ayam<7)&&(fcr < 1))||(ip > 550)||(perkiraan_pendapatan > calc_ayam_awal*8000)||(deplesi > 100)){
         keterangan = 'Hasil perhitungan tidak realistis karena anda memasukkan input nilai yang asal.';
     }
     document.getElementById('output_kalkulator_fcr').innerHTML = fcr;
@@ -633,3 +652,127 @@ function wkt_on(){
         onl.style.backgroundColor = "red";
     }
 }
+
+// Referensi ke elemen modal dan tombol
+const modal = document.getElementById("modal");
+const addButton = document.getElementById("addButton");
+const closeButton = document.querySelector(".close");
+const submitButton = document.getElementById("submitButton");
+
+// Fungsi untuk membuka modal
+if(getCookie("owner") == 1){
+    addButton.style.display = "block";
+    addButton.onclick = function() {
+    modal.style.display = "block";
+    }
+}else{
+    addButton.style.display = "none";
+}
+
+
+// Fungsi untuk menutup modal saat tombol "X" ditekan
+closeButton.onclick = function() {
+    modal.style.display = "none";
+}
+
+// Fungsi untuk menutup modal saat klik di luar area modal
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+// Fungsi untuk mengumpulkan dan menyimpan data
+submitButton.onclick = function() {
+    const namaBakul = document.getElementById("namaBakul").value;
+    const platNomor = document.getElementById("platNomor").value;
+    const tanggal = document.getElementById("tanggal").value;
+    const jumlahEkor = document.getElementById("jumlahEkor").value;
+    const totalKg = document.getElementById("totalKg").value;
+
+    // Simpan data ke dalam variabel atau array di JavaScript
+    const dataBakul = {
+        namaBakul,
+        platNomor,
+        tanggal,
+        jumlahEkor: parseInt(jumlahEkor),
+        totalKg: parseFloat(totalKg)
+    };
+
+    //alert("Data tersimpan:", dataBakul); // Anda bisa mengganti ini dengan fungsi lain sesuai kebutuhan
+    const resultItem = document.createElement("div");
+    resultItem.classList.add("result-item");
+    resultItem.innerHTML = `
+        <strong>Nama Bakul:</strong> ${dataBakul.namaBakul}<br>
+        <strong>Plat Nomor:</strong> ${dataBakul.platNomor}<br>
+        <strong>Tanggal:</strong> ${dataBakul.tanggal}<br>
+        <strong>Jumlah Ekor Ambil:</strong> ${dataBakul.jumlahEkor}<br>
+        <strong>Total KG:</strong> ${dataBakul.totalKg.toFixed(1)}
+    `;
+
+    // Tombol Edit untuk mengedit resultItem
+    const editButton = document.createElement("button");
+    editButton.classList.add("edit-button");
+    editButton.textContent = "Edit";
+    resultItem.appendChild(editButton);
+
+    // Tombol Hapus untuk menghapus resultItem
+    const deleteButton = document.createElement("button");
+    deleteButton.classList.add("delete-button");
+    deleteButton.textContent = "Hapus";
+    resultItem.appendChild(deleteButton);
+
+    // Event listener untuk tombol Edit
+    editButton.onclick = function() {
+        document.getElementById("namaBakul").value = dataBakul.namaBakul;
+        document.getElementById("platNomor").value = dataBakul.platNomor;
+        document.getElementById("tanggal").value = dataBakul.tanggal;
+        document.getElementById("jumlahEkor").value = dataBakul.jumlahEkor;
+        document.getElementById("totalKg").value = dataBakul.totalKg;
+        modal.style.display = "block";
+        
+        // Setelah edit selesai, perbarui data saat disubmit ulang
+        submitButton.onclick = function() {
+            dataBakul.namaBakul = document.getElementById("namaBakul").value;
+            dataBakul.platNomor = document.getElementById("platNomor").value;
+            dataBakul.tanggal = document.getElementById("tanggal").value;
+            dataBakul.jumlahEkor = parseInt(document.getElementById("jumlahEkor").value);
+            dataBakul.totalKg = parseFloat(document.getElementById("totalKg").value);
+
+            resultItem.innerHTML = `
+                <strong>Nama Bakul:</strong> ${dataBakul.namaBakul}<br>
+                <strong>Plat Nomor:</strong> ${dataBakul.platNomor}<br>
+                <strong>Tanggal:</strong> ${dataBakul.tanggal}<br>
+                <strong>Jumlah Ekor Ambil:</strong> ${dataBakul.jumlahEkor}<br>
+                <strong>Total KG:</strong> ${dataBakul.totalKg.toFixed(1)}
+            `;
+            resultItem.appendChild(editButton);
+            resultItem.appendChild(deleteButton);
+            modal.style.display = "none";
+        }
+    };
+
+    // Event listener untuk tombol Hapus
+    deleteButton.onclick = function() {
+        const confirmDelete = confirm("Apakah Anda yakin ingin menghapusnya?");
+        if (confirmDelete) {
+            resultContainer.removeChild(resultItem);
+            alert("Data berhasil dihapus");
+        }
+    };
+
+    // Tambahkan resultItem ke resultContainer
+    resultContainer.appendChild(resultItem);
+
+
+    // Tutup modal setelah submit
+    modal.style.display = "none";
+
+    // Reset input
+    document.getElementById("namaBakul").value = '';
+    document.getElementById("platNomor").value = '';
+    document.getElementById("tanggal").value = '';
+    document.getElementById("jumlahEkor").value = '';
+    document.getElementById("totalKg").value = '';
+}
+
