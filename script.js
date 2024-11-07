@@ -188,9 +188,95 @@ function animasi_kipas(){
             tmkps = 'Mati, [' + array_kipas_pusat[11] + '-' + array_kipas_pusat[12] + ']';
         }
     }
+    var input = array_kipas_pusat[13];
+    parseAndDisplay(input);
+
     document.getElementById("mode_kipas").innerHTML = mdkps;
     document.getElementById("timer_kipas").innerHTML = tmkps;
+    //document.getElementById("detail_kipas").innerHTML = parsedData;
 }
+
+var suhu_rendah = 33.0;    
+function parseAndDisplay(input) {
+    var array_kipas_pusat = penampung_json_4.kpa;
+    var trgtsh = array_kipas_pusat[2]/10;
+    var shmin = array_kipas_pusat[3]/10;
+    var shmax = array_kipas_pusat[4]/10;
+    var sb_min = (trgtsh + shmin)/2;
+    var sb_max = (trgtsh + shmax)/2;
+    var array_kipas_pusat = penampung_json_4.kpa;
+    mode_kandang = array_kipas_pusat[0];
+    
+    const detailKipas = document.getElementById("detail_kipas");
+    detailKipas.innerHTML = ''; // Kosongkan elemen sebelum memuat data baru
+    if(mode_kandang == 1) {
+        var div = document.createElement("div");
+        div.innerHTML = "Pengaturan automatis kipas hari ini :";
+        detailKipas.appendChild(div);
+        const parts = input.split('|');
+
+        parts.forEach(part => {
+            const [mode, values] = part.split(':');
+            const valueArray = values.split(',');
+
+            let outputText = '';
+
+            switch (parseInt(mode, 10)) {
+                case 1:
+                    outputText = `Suhu > ${shmin}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                    cekrdh(suhu_rendah,shmin);
+                    break;
+                
+                case 2:
+                    outputText = `Suhu > ${sb_min}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                    cekrdh(suhu_rendah,sb_min);
+                    break;
+                
+                case 3:
+                    outputText = `Suhu > ${trgtsh}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                    cekrdh(suhu_rendah,trgtsh);
+                    break;
+                
+                case 4:
+                    outputText = `Suhu > ${sb_max}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                    cekrdh(suhu_rendah,sb_max);
+                    break;
+        
+                case 5:                    
+                    outputText = `Suhu > ${shmax}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                    cekrdh(suhu_rendah,shmax);
+                    break;
+            
+                case 6:                    
+                    outputText = `Suhu < ${suhu_rendah}° = mode intermitten. kipas ${valueArray.join(', ')}`;
+                    break;
+                
+                case 0:
+                    outputText = `Suhu < ${suhu_rendah}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                    break;
+
+                default:
+                    outputText = `Mode ${mode} tidak dikenal`;
+            }
+
+            const div = document.createElement("div");
+            div.innerHTML = outputText;
+            detailKipas.appendChild(div);
+        });
+    }else if(mode_kandang == 2) {
+        var div = document.createElement("div");
+        div.innerHTML = "Kipas mode manual dengan smartphone";
+        detailKipas.appendChild(div);
+    }
+    
+}
+
+function cekrdh(val,shs){
+    if(shs < suhu_rendah){
+        suhu_rendah = shs;
+    }
+}
+
 function putaran_kipas(kipas,rpm){
     if(kipas >= 2.0){
         rpm.style.animationPlayState = 'paused';
@@ -220,6 +306,8 @@ const hidden_chart1 = document.getElementById("hidden_chart1");
 const hidden_chart2 = document.getElementById("hidden_chart2");
 const button_calculator = document.getElementById("button_calculator");
 const hidden_calculator = document.getElementById("hidden_calculator");
+const button_detail_kipas = document.getElementById("button_detail_kipas");
+const hidden_detail_kipas = document.getElementById("hidden_detail_kipas");
 
 toggleButton.addEventListener('click', function() {
     if (hiddenText.style.display == "none") {
@@ -268,6 +356,16 @@ button_bar1.addEventListener('click', function() {
     } else {
         hidden_chart1.style.display = "none";
         button_bar1.textContent = "Lihat Grafik";
+    }
+});
+
+button_detail_kipas.addEventListener('click', function() {
+    if (hidden_detail_kipas.style.display == "none") {
+        hidden_detail_kipas.style.display = "block";
+        button_detail_kipas.textContent = "Sembunyikan Detail";
+    } else {
+        hidden_detail_kipas.style.display = "none";
+        button_detail_kipas.textContent = "Lihat Detail Kipas";
     }
 });
 function formatTime(time) {
