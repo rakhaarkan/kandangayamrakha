@@ -78,7 +78,7 @@ function data_thingspeak(){
 }
 
 setInterval(data_thingspeak,randomValue)
-
+var dataabc = "rkh";
 function eksekutor(){
     var array_suhu = penampung_json_1.shu;
     var array_kelembapan = penampung_json_1.klb;
@@ -104,6 +104,7 @@ function eksekutor(){
     loading_1.style.display = "none";
     updateTime();
     fetchData();
+    document.getElementById("dataabc").innerHTML = dataabc;
     animasi_gauge();
     animasi_kipas();
     animasi_bar();
@@ -116,10 +117,9 @@ function eksekutor(){
 async function fetchData() {
   try {
     const response = await fetch('/.netlify/functions/fetchData');
-    const data = await response.json();
-    console.log(data); // Data dari database
+    dataabc = await response.json();
   } catch (error) {
-    console.error('Error fetching data:', error);
+    dataabc = "Error fetching data";
   }
 }
 
