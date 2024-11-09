@@ -1,1 +1,549 @@
-gi
+*,html,body{
+    margin: 0px;
+    padding: 0px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.txt1{
+    font-size: 4.2vw;
+}
+
+.txt2{
+    font-size: 3.5vw;
+}
+
+.txt3{
+    font-size: 2.8vw;
+}
+
+.txt4{
+    font-size: 2.1vw;
+}
+
+.txt5{
+    font-size: 1.4vw;
+}
+
+.txt6{
+    font-size: 0.7vw;
+}
+
+:root{
+    --bg-primary:white;
+    --bg-secondary:#222;
+    --txt-putih:white;
+    --page-width: 500px;
+    --rasio-gauge: 1.1;
+}
+.loading_1{    
+    position: fixed;
+    z-index: 9999;
+    top: 50%;
+    left: 50%;
+    width: 30vw;
+    height: 30vw;
+    background-image: url(https://www.svgrepo.com/show/126808/propeller.svg);
+    background-size: cover;
+    transform: translate(-50%, -50%);
+    animation: rotateSquare 1s linear infinite;
+    display: block;
+
+}
+
+.header_container{
+    width: 100%;
+    height: auto;
+    padding: 1%;
+    background-color: white;
+    color: white;
+    margin: 0% 0% 2% 0%;
+    box-shadow: 0vw 0vw 5vw 0vw rgba(0, 0, 0, 0.3); 
+}
+
+.header_wrapper{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: left;
+    width: auto;
+    height: auto;
+
+}
+
+.header_card{
+    display: flex;
+    flex-wrap: wrap;
+    width: auto;
+    height: auto;
+    color: black;
+    padding-left: 3vw;   
+    margin: 0vw; 
+}
+
+.indikator_online{
+    position: absolute;
+    top: 2.5vw;
+    left: 94vw;
+    width: 5vw;
+    height: 5vw;
+    background-color: rgb(59, 225, 89);    
+    border: black solid 0vw;
+    border-radius: 10%;
+    display: flex;
+    justify-content: center;
+}
+
+.container{
+    width: auto;
+    height: auto;
+    padding: 1% 3% 1% 2%;
+    background-color: none;
+    color: black;
+    margin: 4%;
+    box-shadow: 2.5vw 2.5vw 5vw rgba(0, 0, 0, 0.1);
+    border-radius: 3vw; 
+    
+}
+
+.wrapper{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    width: auto;
+    height: auto;
+    
+}
+
+.card{
+    width: auto;
+    height: auto;
+    color: black;
+    padding: 1%;   
+    margin: 1% 1% 1% 1%; 
+}
+
+.card2{
+    display: flex;
+    flex-wrap: nowrap;
+    width: auto;
+    height: auto;
+    color: black;
+    padding: 1%;   
+    margin: 1px; 
+}
+
+.card_widget{
+    width: 30vw;
+    height: auto;
+    color: black;
+    padding: 1%;   
+    margin: 1px; 
+}
+
+.judul_widget{
+    font-size: calc(1.8vw*var(--rasio-gauge));
+    
+}
+
+.card_gauge{
+    width: auto;
+    height: calc(25vw*var(--rasio-gauge)) ;
+    color: black;
+    padding: 1%;   
+    margin: 1% 1% 1% 1%; 
+}
+
+.skill{
+    width: calc(20vw*var(--rasio-gauge));
+    height: calc(20vw*var(--rasio-gauge));
+    /*border: 1px solid black;
+    /*background: cornflowerblue;*/
+    margin: calc(1vw*var(--rasio-gauge)) calc(0vw*var(--rasio-gauge)) calc(10vw*var(--rasio-gauge)) calc(2vw*var(--rasio-gauge));
+    position: relative;
+    transform: rotate(135deg);
+}
+
+.outer{
+    height: calc(20vw*var(--rasio-gauge));
+    width: calc(20vw*var(--rasio-gauge));
+    border-radius: 50%;
+    padding: calc(1vw*var(--rasio-gauge));
+}
+
+.inner{
+    height: calc(20vw*var(--rasio-gauge));
+    width: calc(20vw*var(--rasio-gauge));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#number{
+    font-weight: 600;
+    font-size: calc(3.5vw*var(--rasio-gauge));
+    color: #555;
+    transform: rotate(-135deg);
+}
+
+circle{
+    fill: none;
+    stroke: rgb(220, 220, 220);
+    stroke-width: calc(1.7vw*var(--rasio-gauge));
+    stroke-dasharray: calc(39vw*var(--rasio-gauge));
+    stroke-dashoffset: calc(39vw*var(--rasio-gauge));
+}
+
+svg{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.ket_gauge_kiri{
+    top: 36%;
+    left: 97%;
+    margin: 20;
+    padding: 10;
+    position: absolute;
+    transform: rotate(225deg);
+    font-size: calc(2vw*var(--rasio-gauge));
+    
+}
+
+.ket_gauge_kanan{
+    top: 3%;
+    left: 62%;
+    margin: 20;
+    padding: 10;
+    position: absolute;
+    transform: rotate(225deg);
+    font-size: calc(2vw*var(--rasio-gauge));
+    
+}
+
+@keyframes anim{
+    100%{
+        stroke-dashoffset: 0;
+    }
+}
+
+.container_group_widget{
+    width: 100%;
+    height: auto;
+    padding: 1%;
+    background-color: none;
+    color: black;
+    margin: 1%;
+    box-shadow: 2.5vw 2.5vw 5vw rgba(0, 0, 0, 0.1);
+    border-radius: 3vw; 
+    font-size: 1rem;
+    
+}
+
+.wrapper_group_widget{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
+    height: auto;
+
+}
+
+.card_group_widget{
+    color: black;
+    padding: 1%;   
+    margin: 1% 1% 1% 1%; 
+    font-size: 1rem;
+    border-radius: 10px;
+}
+
+
+
+
+.gambar_widget{
+    width: 100px;
+    height: 100px;
+    background-image: url();
+    background-size: cover;
+    position: absolute;
+    background-size: cover;
+}
+
+.logo_ayam{
+    width: 15vw;
+    height:15vw;
+}
+
+.logo_listrik{
+    width: 12vw;
+    height: 16vw;
+}
+
+.logo_analisa{
+    width: 20vw;
+    height: 20vw;
+}
+
+
+.progres_bar{
+    width: 30vw;
+    height: 2vw;
+    background-color: red;
+    border-radius: 1vw;
+}
+
+.progres_bar_listrik{
+    background-color: lightseagreen;    
+}
+
+.keterangan_bar_pf{
+    margin-top: 5vw;
+    font-size: 2.5vw;
+    margin: 0.2vw;
+}
+
+.putar{
+    transform: translate(-50%, -50%);
+    animation: rotateSquare 3s linear infinite; /* Animasi rotasi */
+}
+
+.kipas0 {
+    width: 6vw;
+    height: 6vw;
+    top: 27%;
+    left: 13%;
+    position: relative;
+    background-image: url(https://www.svgrepo.com/show/126808/propeller.svg);
+    background-size: cover;
+    transform: translate(-50%, -50%);
+    animation: rotateSquare 3s linear infinite; /* Animasi rotasi */
+}
+
+.kipas {
+    width: 12vw;
+    height: 12vw;
+    top: 50%;
+    position: absolute;
+    background-image: url(https://www.svgrepo.com/show/126808/propeller.svg);
+    background-size: cover;
+    transform: translate(-50%, -50%);
+    animation: rotateSquare 1s linear infinite; /* Animasi rotasi */
+}
+
+.kipas_1 {
+    left: 13%;
+}
+
+.kipas_2 {  
+    left: 33%;
+}
+
+.kipas_3 {  
+    left: 50%;
+}
+
+.kipas_4 {  
+    left: 67%;
+}
+
+.kipas_5 {  
+    left: 87%;
+}
+
+.judul_container_kipas{
+    width: auto;
+    height: auto;
+    background-color: none;
+    color: black;
+    margin: 5% 0% 0% 5%;
+}
+
+.container_kipas {
+    width: 90%;
+    height: 20vw;
+    position: relative;
+    padding: 1px;
+    border: 1vw solid black;
+    margin: 1% 5% 0% 5%;
+}
+.container_keterangan_kipas{
+    top: 10%;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto;
+    position: relative;
+    padding-left: 6.5%;
+    width: 85vw;
+    margin: 0% 5% 5% 5%;
+}
+
+.card_keterangan_kipas{
+    width: 10vw;
+    text-align: center;
+}
+
+@keyframes rotateSquare {
+    from {
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@media only screen and (max-width : 500px){
+    
+}
+
+.crt_panas_wrap{
+    display: flex;
+    flex-wrap: nowrap;
+    border: 0vw solid rgb(0, 0, 0);
+    width: 100%;
+    height: 20vw;
+}
+
+.crt_panas_blok{
+    border: 0vw solid black;
+    width: 5%;
+    height: 20vw;
+    
+}
+
+.tengah{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.keterangan_huruf{
+    font-size: 3vw;
+    margin: 1vw;
+    padding: 0.1vw;
+}
+
+.mrg3{
+    margin: 3vw;
+}
+
+#kotak {
+    width: 200px;
+    height: 200px;
+    
+}
+
+.container_input {
+    max-width: 85vw;
+    margin: auto;
+    padding: 5vw;
+    border: 1px solid #ddd;
+    border-radius: 1vw;
+    background-color: #f9f9f9;
+}
+
+/* Layout flex untuk label dan input */
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1vw;
+}
+
+.input-group label {
+    flex: 1;
+    min-width: 47vw;
+    /*font-weight: bold;*/
+}
+
+.input-group input {
+    flex: 2;
+    padding: 2vw;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Output area */
+.output-group {
+    margin-top: 7vw;
+}
+
+.output-group span {
+    /*font-weight: bold;*/
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  .modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+  }
+  
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  #resultContainer {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+  }
+
+  /* Gaya untuk tombol edit */
+.edit-button {
+    background-color: #40E0D0; /* Warna biru tosca */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 5px 0;
+    border-radius: 5px;
+    width: 100%;
+}
+
+/* Gaya untuk tombol hapus */
+.delete-button {
+    background-color: #FF6347; /* Warna merah tomat */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+/* Style for result items container */
+.result-item {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    position: relative;
+    max-width: 400px;
+}
+
+/* Style untuk menambahkan jarak antara tombol edit dan hapus */
+.result-item button {
+    display: block;
+    margin-top: 5px;
+}
