@@ -469,6 +469,7 @@ svg{
 
 .output-group span {
     /*font-weight: bold;*/
+    margin-top: 0vw;
 }
 
 /* Modal styles */
