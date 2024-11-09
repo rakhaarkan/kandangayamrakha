@@ -103,6 +103,7 @@ function eksekutor(){
     var loading_1 = document.getElementById("loading_1");
     loading_1.style.display = "none";
     updateTime();
+    fetchData();
     animasi_gauge();
     animasi_kipas();
     animasi_bar();
@@ -111,6 +112,18 @@ function eksekutor(){
     kalkulator();
     animasi_chart();
 }
+
+async function fetchData() {
+  try {
+    const response = await fetch('/.netlify/functions/fetchData');
+    const data = await response.json();
+    console.log(data); // Data dari database
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
+
+
 
 function mapNilai(nilai, dariMin, dariMax, keMin, keMax) {
     // Mencocokkan nilai dari satu rentang ke rentang lain
