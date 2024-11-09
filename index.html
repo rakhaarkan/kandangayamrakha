@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Kandang</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header_container">
+        <div class="header_wrapper">
+            <div class="header_card txt1" style="width:40vw;">
+                <h1>Kandang</h1>
+                <h1>Ayam</h1>
+                <div class="kipas0"></div>
+            </div>
+            <div class="header_card txt1" style="width:20vw;"></div>
+            <div class="header_card txt3" style="margin-top: 5vw;justify-content: left;">
+                <div class=""></div>
+                <h5>terakhir diperbarui:</h5>
+                <p><span class="txt2" id="current-date"></span></p>
+                <p><span class="txt2" id="current-time"></span></p>
+            </div>
+            <div class="header_card txt1" style="width:5vw;">
+                <div class="indikator_online" id="ind_online">
+                    <div id="data-container" class="txt2" style="margin-top: 0.3vw;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container txt2">
+        <h3>Kandang Ayam Atas</h3>
+        <div class="wrapper">
+            <div class="card_gauge">
+                <div class="judul_widget">Suhu Atas</div>
+                <div class="skill">
+                    <div class="outer">
+                        <div class="inner">
+                            <div id="number">
+                                <span class="keterangan widget1" id="suhu_atas"></span><span>°</span>
+                            </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="38vw" height="38vw">
+                            <defs>
+                            <linearGradient id="GradientColor">
+                                <stop offset="0%" stop-color="#e91e63" />
+                                <stop offset="100%" stop-color="#673ab7" />
+                            </linearGradient>
+                            </defs>
+                            <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke-dashoffset: -2vw;"/>
+                            <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke:red;" id="crc_sha"/>  
+                        </svg>
+                        <div class="ket_gauge_kiri">20</div>
+                        <div class="ket_gauge_kanan">40</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card_gauge">
+                <div class="judul_widget">Kelembapan Atas</div>
+                <div class="skill">
+                    <div class="outer">
+                        <div class="inner">
+                            <div id="number">
+                                <span class="keterangan widget1" id="kelembapan_atas"></span><span>%</span>
+                            </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="38vw" height="38vw">
+                            <defs>
+                            <linearGradient id="GradientColor">
+                                <stop offset="0%" stop-color="#e91e63" />
+                                <stop offset="100%" stop-color="#673ab7" />
+                            </linearGradient>
+                            </defs>
+                            <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke-dashoffset: -2vw;"/>
+                            <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke: rgb(0, 218, 251);" id="crc_kla"/>  
+                        </svg>
+                        <div class="ket_gauge_kiri">0</div>
+                        <div class="ket_gauge_kanan">100</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card_gauge">
+                <div class="judul_widget">Heat Index Atas</div>
+                <div class="skill">
+                    <div class="outer">
+                        <div class="inner">
+                            <div id="number">
+                                <span class="keterangan widget1" id="heat_index_atas"></span><span></span>
+                            </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="38vw" height="38vw">
+                            <defs>
+                            <linearGradient id="GradientColor">
+                                <stop offset="0%" stop-color="#e91e63" />
+                                <stop offset="100%" stop-color="#673ab7" />
+                            </linearGradient>
+                            </defs>
+                            <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke-dashoffset: -2vw;"/>
+                            <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke:url(#GradientColor);" id="crc_hia"/>  
+                        </svg>
+                        <div class="ket_gauge_kiri">100</div>
+                        <div class="ket_gauge_kanan">200</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="display:flex;">
+        <div class="card_widget">
+            <div class="container_group_widget">
+                <div class="wrapper_group_widget txt1" style="display: grid;width: 30vw;">
+                <div class="txt1 tengah">Usia Ayam</div>
+                    <div class="card_group_widget tengah">
+                        <div class="card_group_widget logo_ayam ">
+                            <div class="gambar_widget" style="width: 10vw; height: 10vw;">
+                                <img class="logo_ayam" src="https://www.svgrepo.com/show/396002/chicken.svg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card_group_widget tengah txt1" style="width: auto;justify-content: center;">
+                            <span class="txt1" id="usia_ayam" style="">--</span>
+                    </div>
+                    <div class="card_group_widget">
+                        <div class=""></div>
+                    </div>
+                </div>    
+            </div>                  
+        </div>
+        <div class="card_widget">
+            <div class="container_group_widget" style="width: 50vw;height: 31vw;box-shadow: none;">
+                <div class="txt2" style="margin: 5vw;"></div> 
+                <div class="">
+                    <div class="txt1 keterangan_huruf" style="margin: 0vw 0vw 3vw 3vw;">
+                        <span class="">Kecepatan Angin :</span>
+                        <span id="kecepatan_angin_atas">0</span>
+                        <span>m/s</span>
+                    </div>
+                    <div class="txt1 keterangan_huruf" style="margin: 3vw 0vw 3vw 3vw;">
+                        <span class="" style="margin-right: 0vw;">Sisa Air</span>
+                        <span>:</span>
+                        <span id="liter_air_atas"></span>
+                        <span class="keterangan widget1">liter,</span>
+                        <span id="persen_air_atas"></span>
+                        <span class="keterangan widget1">%</span>
+                    </div>
+                </div>  
+            </div>                  
+        </div>
+    </div>
+        <button class="txt3" id="button_bar1" style="margin-left: 3vw;border: 0.1vw solid rgb(255, 255, 255);padding: 1vw;background-color: rgb(248, 248, 248);width: 85vw;">Lihat Grafik</button>
+        <div id="hidden_chart1" style="display: none;">
+            Data 24 jam terakhir
+            <canvas id="grafik" style="height: 75vw;width: 100vw;"></canvas>
+        </div>
+        <br>
+        <div class="wrapper">
+        <h3>Analisis Cepat</h3>
+            <div class="card2">
+                <div class="container_group_widget txt1" style="width: 85vw;box-shadow: none; border-radius: 0vw;">                
+                    <div class="wrapper_group_widget" style="flex-wrap: nowrap;width:80vw; justify-content: left;">
+                        <div class="card_group_widget ">
+                            <div class="card_group_widget logo_analisa" style="margin-top: 20%;">
+                                <div class="gambar_widget" style="width: 20vw; height: 20vw;">
+                                    <img id="gambar_analisa" class="logo_analisa" src="" alt="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="txt1 ">
+                                <span id="judul_analisa">-</span>
+                            </div>
+                            <div class="txt1 keterangan_huruf" style="width: 60vw;">
+                                <span id="isi_analisa">-</span>
+                            </div>
+                            <div class="txt1 keterangan_huruf">
+                                <span id="dsp">-</span>
+                            </div>                                        
+                        </div>
+                        <div class="card_group_widget">
+                            <div class=""></div>
+                        </div>
+                    </div>                        
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div> 
+    <div class="container txt2">
+        <h3>Data Luar Kandang</h3>
+        <div class="wrapper">
+            <div class="card_gauge">
+                <div class="judul_widget">Suhu Luar</div>
+                <div class="skill">
+                    <div class="outer">
+                        <div class="inner">
+                            <div id="number">
+                                <span class="keterangan widget1" id="suhu_luar"></span><span>°</span>
+                            </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="38vw" height="38vw">
+                            <defs>
+                            <linearGradient id="GradientColor">
+                                <stop offset="0%" stop-color="#e91e63" />
+                                <stop offset="100%" stop-color="#673ab7" />
+                            </linearGradient>
+                            </defs>
+                            <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke-dashoffset: -2vw;"/>
+                            <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke:red;" id="crc_shl"/>  
+                        </svg>
+                        <div class="ket_gauge_kiri">20</div>
+                        <div class="ket_gauge_kanan">40</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card_gauge">
+                <div class="judul_widget">Kelembapan Luar</div>
+                <div class="skill">
+                    <div class="outer">
+                        <div class="inner">
+                            <div id="number">
+                                <span class="keterangan widget1" id="kelembapan_luar"></span><span>%</span>
+                            </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="38vw" height="38vw">
+                            <defs>
+                            <linearGradient id="GradientColor">
+                                <stop offset="0%" stop-color="#e91e63" />
+                                <stop offset="100%" stop-color="#673ab7" />
+                            </linearGradient>
+                            </defs>
+                            <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke-dashoffset: -2vw;"/>
+                            <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke: rgb(0, 218, 251);" id="crc_kll"/>  
+                        </svg>
+                        <div class="ket_gauge_kiri">0</div>
+                        <div class="ket_gauge_kanan">100</div>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="card_gauge">
+                <div class="judul_widget">Heat Index Luar</div>
+                <div class="skill">
+                    <div class="outer">
+                        <div class="inner">
+                            <div id="number">
+                                <span class="keterangan widget1" id="heat_index_luar"></span><span></span>
+                            </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="38vw" height="38vw">
+                            <defs>
+                            <linearGradient id="GradientColor">
+                                <stop offset="0%" stop-color="#e91e63" />
+                                <stop offset="100%" stop-color="#673ab7" />
+                            </linearGradient>
+                            </defs>
+                            <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke-dashoffset: -2vw;"/>
+                            <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke:url(#GradientColor);" id="crc_hil"/>  
+                        </svg>
+                        <div class="ket_gauge_kiri">100</div>
+                        <div class="ket_gauge_kanan">200</div>
+                    </div>
+                </div>
+            </div>-->
+        </div>
+    </div> 
+    <div class="container txt2">
+        <h3>Daya Listrik</h3>
+        <div class="wrapper">
+            <div class="card2">
+                <div class="container_group_widget txt1" style="width: 40vw;">
+                    <h4 class="txt1">Power</h4>
+                    <div class="wrapper_group_widget" style="flex-wrap: nowrap;width:50vw; justify-content: left;">
+                        <div class="card_group_widget ">
+                            <div class="card_group_widget logo_listrik">
+                                <div class="gambar_widget" style="width: 10vw; height: 10vw;">
+                                    <img class="logo_listrik" src="https://www.svgrepo.com/show/20303/lightning.svg" alt="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="txt1 keterangan_huruf">
+                                <span class="">Daya :</span>
+                                <span id="power">0</span>
+                                <span>W</span>
+                            </div>
+                            <div class="txt1 keterangan_huruf">
+                                <span class="">Volt :</span>
+                                <span id="volt">0</span>
+                                <span>V</span>
+                            </div>
+                            <div class="txt1 keterangan_huruf">
+                                <span class="">Amp :</span>
+                                <span id="amp">0</span>
+                                <span>A</span>
+                            </div>                  
+                        </div>
+                        <div class="card_group_widget">
+                            <div class=""></div>
+                        </div>
+                    </div>    
+                </div>     
+                <div class="container_group_widget txt1" style="width: 40vw;">
+                    <div class="wrapper_group_widget" style="flex-wrap: wrap;width:50vw; justify-content: left;">
+                        <div class="card_group_widget ">
+                            <div class="wrapper_group_widget" style="flex-wrap: nowrap;justify-content: left;">
+                                <div class="txt1 keterangan_huruf">
+                                    <span class="">Power Factor :</span>
+                                    <span id="pf">0</span>
+                                </div>
+                            </div>
+                            <div class="wrapper_group_widget" style="flex-wrap: nowrap;">
+                                <div class="keterangan_bar_pf">0</div>
+                                <div class="card_group_widget">
+                                    <div class="progres_bar">
+                                        <div class="progres_bar progres_bar_listrik" id="bar_pf"></div>
+                                    </div>
+                                </div>
+                                <div class="keterangan_bar_pf">1</div>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="txt1 keterangan_huruf">
+                                <span class="">Energy :</span>
+                                <span id="energy">0</span>
+                                <span>kWh</span>
+                            </div>      
+                            <div class="txt1 keterangan_huruf">
+                                <span class="">Freq :</span>
+                                <span class="" id="freq">0</span>
+                                <span class="">Hz</span>
+                            </div>           
+                        </div>
+                        <div class="card_group_widget">
+                            <div class=""></div>
+                        </div>
+                    </div>    
+                </div>               
+            </div>
+        </div>
+    </div>   
+    <div class="judul_container_kipas txt1">
+        <h3>Kipas</h3>
+    </div>
+    <div class="container_kipas">
+        <div class="kipas_1 kipas" style="width: 15vw;height: 15vw" id="square1"></div>
+        <div class="kipas_2 kipas" id="square2"></div>
+        <div class="kipas_3 kipas" id="square3"></div>
+        <div class="kipas_4 kipas" id="square4"></div>
+        <div class="kipas_5 kipas" style="width: 15vw;height: 15vw" id="square5"></div>
+    </div>
+    <div class="container_keterangan_kipas">
+        <div class="card_keterangan_kipas txt1">
+            <span id="rpm1">100</span>
+        </div>
+        <div class="card_keterangan_kipas txt1">
+            <span id="rpm2">100</span>
+        </div>
+        <div class="card_keterangan_kipas txt1">
+            <span id="rpm3">100</span>
+        </div>
+        <div class="card_keterangan_kipas txt1">
+            <span id="rpm4">100</span>
+        </div>
+        <div class="card_keterangan_kipas txt1">
+            <span id="rpm5">100</span>
+        </div>
+    </div>
+    <div style="margin-left: 5vw;">
+        <span>Mode Kipas : </span>
+        <span id="mode_kipas"></span><br>
+        <span>Timer Kipas : </span>
+        <span id="timer_kipas"></span><br><br>
+        <button class="txt3" id="button_detail_kipas">Sembunyikan Detail</button>
+        <div id="hidden_detail_kipas" style="display: block;">
+            <span id="detail_kipas"></span>
+        </div>
+    </div>
+    <br>
+    <button class="txt3" id="button_calculator" style="margin-left: 3vw;border: 0.1vw solid rgb(255, 255, 255);padding: 1vw;background-color: rgb(248, 248, 248);width: 94vw;">Lihat Kalkulator Ayam</button>
+    <br>
+        <div id="hidden_calculator" style="display: none;">
+            <div class="container_input">
+            <button id="addButton">Tambahkan Bakul</button>
+            <div id="resultContainer">
+                <h3>Data yang Di-submit:</h3>
+            </div>
+                <div id="modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Input Data Bakul</h2>
+                        <br>
+                        <div class="input-group">
+                            <label for="tanggal">Tanggal</label>
+                            <input type="date" id="tanggal" placeholder="">
+                        </div>
+                        <div class="input-group">
+                            <label for="namaBakul">Nama Bakul</label>
+                            <input type="text" id="namaBakul" placeholder="">
+                        </div>
+                        <div class="input-group">
+                            <label for="platNomor">Plat Nomor</label>
+                            <input type="text" id="platNomor" placeholder="">
+                        </div>
+                        <div class="input-group">
+                            <label for="jumlahEkor">Jumlah Ekor Ambil</label>
+                            <input type="number" id="jumlahEkor" placeholder="">
+                        </div>
+                        <div class="input-group">
+                            <label for="totalKg">Jumlah kg Ambil</label>
+                            <input type="number" id="totalKg" placeholder="">
+                        </div>
+                        <button id="submitButton">Kirim</button>
+                    </div>
+                </div>
+            <br>
+                <!-- Form input -->
+                <div class="input-group">
+                    <label for="input_kalkulator_1">Umur Ayam</label>
+                    <input type="number" min="1" max="45" id="input_kalkulator_1" placeholder="">
+                </div>
+                <div class="input-group">
+                    <label for="input_kalkulator_2">Jumlah Ayam Awal</label>
+                    <input type="number" min="0" max="100000" step="100" id="input_kalkulator_2" placeholder="">
+                </div>
+                <div class="input-group">
+                    <label for="input_kalkulator_3">Jumlah Ayam Mati</label>
+                    <input type="number" min="0" max="100000" id="input_kalkulator_3" placeholder="">
+                </div>
+                <div class="input-group">
+                    <label for="input_kalkulator_4">Jumlah Pakan (sak)</label>
+                    <input type="number" min="0" max="100000" id="input_kalkulator_4" placeholder="">
+                </div>
+                <div class="input-group">
+                    <label for="input_kalkulator_5">Bobot Rata-rata</label>
+                    <input type="number" min="0" max="100000" step="0.1" id="input_kalkulator_5" placeholder="">
+                </div>
+                <div class="input-group">
+                    <label for="input_kalkulator_6">Harga Kontrak Ayam</label>
+                    <input type="number" min="0" max="100000" id="input_kalkulator_6" placeholder="">
+                </div>
+                <div class="input-group">
+                    <label for="input_kalkulator_7">Harga Bibit/Ekor</label>
+                    <input type="number" min="0" max="100000" id="input_kalkulator_7" placeholder="">
+                </div>
+                <div class="input-group">
+                    <label for="input_kalkulator_8">Harga Obat dll</label>
+                    <input type="number" min="0" max="100000000" id="input_kalkulator_8" placeholder="">
+                </div>
+                <div class="input-group">
+                    <label for="input_kalkulator_9">Harga Pakan/kg</label>
+                    <input type="number" min="0" max="100000" id="input_kalkulator_9" placeholder="">
+                </div>
+                <div class="output-group">
+                    <div><span>FCR :</span> <span id="output_kalkulator_fcr"></span></div>
+                    <div><span>IP :</span> <span id="output_kalkulator_ip"></span></div>
+                    <div><span>Deplesi :</span> <span id="output_kalkulator_deplesi"></span></div>
+                    <div><span>Perkiraan Hasil :</span> <span id="output_kalkulator_perkiraan_pendapatan"></span></div>
+                    <div><span>Keuntungan per Ekor :</span> <span id="perkiraan_keuntungan_per_ekor"></span></div>
+                    <br>
+                    <div style="color: red;"><span id="output_kalkulator_keterangan"></span></div>
+                    <br>
+                    <input type="text" id="input_test_kosong" placeholder="">
+                    <button id="toggleButton2" style="margin: 1vw;">set</button>
+                </div>
+            </div>
+        </div>
+        
+    <button id="toggleButton" style="margin: 3vw;">Lihat Teks Data</button>
+    <div id="hiddenText" style="display: none;">
+        <div class="container" style="box-shadow: none;">
+            <div class="wrapper">
+                <div class="card txt1" style="overflow-y: auto;" id="messages"></div>
+            </div>
+        </div>
+    </div>
+    <div style="margin: 30vw;"></div>
+    <div class="mrg3" style="font-size: 3vw;">
+        <span>Pembaruan Web terbaru dapat dilihat pada</span>
+        <span><a href="https://maps.app.goo.gl/4qVmETM1T7DM4zv79" target="_blank">Link menuju google maps Kandang Ayam Rakha Farandy</a></span>
+        <span>yang ada di bagian deskripsi maps.</span>
+    </div>
+    <div id="tks1"></div>
+    <div class="loading_1" id="loading_1"></div>     
+    <div class="mrg3" style="font-size: 3vw;">
+        <span>Rakha</span>    
+    </div>
+    
+<style>
+
+</style>
+<script>
+    
+</script>
+<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</body>
+</html>
