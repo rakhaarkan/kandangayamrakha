@@ -115,12 +115,14 @@ function eksekutor(){
 }
 
 async function fetchData() {
-  try {
-    const response = await fetch('/.netlify/functions/fetchData');
-    dataabc = await response.json();
-  } catch (error) {
-    dataabc = "Error fetching data";
-  }
+    try {
+        const response = await fetch('/.netlify/functions/fetchData');
+        const data = await response.json();
+        console.log(data);
+        document.getElementById('dataOutput').textContent = JSON.stringify(data, null, 2);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
 }
 
 
