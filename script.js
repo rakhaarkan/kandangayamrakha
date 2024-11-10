@@ -110,6 +110,7 @@ function eksekutor(){
     analisa_realtime();
     kalkulator();
     animasi_chart();
+    //fetchData();
 }
 
 function mapNilai(nilai, dariMin, dariMax, keMin, keMax) {
@@ -778,11 +779,21 @@ window.onclick = function(event) {
 
 // Fungsi untuk mengumpulkan dan menyimpan data
 submitButton.onclick = function() {
-    const namaBakul = document.getElementById("namaBakul").value;
-    const platNomor = document.getElementById("platNomor").value;
-    const tanggal = document.getElementById("tanggal").value;
-    const jumlahEkor = document.getElementById("jumlahEkor").value;
-    const totalKg = document.getElementById("totalKg").value;
+    const testData = {
+        tanggal: '2024-11-10',
+        nama_bakul: 'Bakulan 1',
+        plat_nomor: 'AB 1234 XY',
+        jumlah_ekor_ambil: 50,
+        jumlah_kg_ambil: 200,
+      };
+      postData(testData)
+      //document.getElementById('submit-btn').addEventListener('click', () => postData(testData));
+    /*  
+    const tanggal = document.getElementById("tanggal");
+    const namaBakul = document.getElementById("nama_bakul");
+    const platNomor = document.getElementById("plat_nomor");
+    const jumlahEkor = document.getElementById("jumlah_ekor_ambil");
+    const totalKg = document.getElementById("jumlah_kg_ambil");
 
     // Simpan data ke dalam variabel atau array di JavaScript
     const dataBakul = {
@@ -792,6 +803,17 @@ submitButton.onclick = function() {
         jumlahEkor: parseInt(jumlahEkor),
         totalKg: parseFloat(totalKg)
     };
+
+    const databkl = {
+        tanggal: namaBakul,
+        nama_bakul: platNomor,
+        plat_nomor: tanggal,
+        jumlah_ekor_ambil: parseInt(jumlahEkor),
+        jumlah_kg_ambil: parseFloat(totalKg)
+    };
+    
+      // Mengirim data ke serverless function untuk menulis ke database
+        postData(databkl);
 
     //alert("Data tersimpan:", dataBakul); // Anda bisa mengganti ini dengan fungsi lain sesuai kebutuhan
     const resultItem = document.createElement("div");
@@ -818,11 +840,11 @@ submitButton.onclick = function() {
 
     // Event listener untuk tombol Edit
     editButton.onclick = function() {
-        document.getElementById("namaBakul").value = dataBakul.namaBakul;
-        document.getElementById("platNomor").value = dataBakul.platNomor;
+        document.getElementById("nama_bakul").value = dataBakul.namaBakul;
+        document.getElementById("plat_nomor").value = dataBakul.platNomor;
         document.getElementById("tanggal").value = dataBakul.tanggal;
-        document.getElementById("jumlahEkor").value = dataBakul.jumlahEkor;
-        document.getElementById("totalKg").value = dataBakul.totalKg;
+        document.getElementById("jumlah_ekor_ambil").value = dataBakul.jumlahEkor;
+        document.getElementById("jumlah_kg_ambil").value = dataBakul.totalKg;
         modal.style.display = "block";
         
         // Setelah edit selesai, perbarui data saat disubmit ulang
@@ -861,13 +883,13 @@ submitButton.onclick = function() {
 
     // Tutup modal setelah submit
     modal.style.display = "none";
-
+*/
     // Reset input
-    document.getElementById("namaBakul").value = '';
-    document.getElementById("platNomor").value = '';
+    /*document.getElementById("nama_bakul").value = '';
+    document.getElementById("plat_nomor").value = '';
     document.getElementById("tanggal").value = '';
-    document.getElementById("jumlahEkor").value = '';
-    document.getElementById("totalKg").value = '';
+    document.getElementById("jumlah_ekor_ambil").value = '';
+    document.getElementById("jumlah_kg_ambil").value = '';*/
 }
 
 
@@ -899,25 +921,36 @@ async function fetchData() {
         }
       }
       
-      window.addEventListener('DOMContentLoaded', fetchData);
+      window.addEventListener('DOMContentLoaded', fetchData());
+
+      async function postData(data) {
+        const container = document.getElementById('data-output');
+        container.innerHTML = ''; // Reset output
       
-/*  
-const socket = new WebSocket('ws://localhost:8080');
-
-// Saat terhubung
-socket.addEventListener('open', (event) => {
-  console.log('Connected to WebSocket server');
-  // Mengirim pesan ke server
-  socket.send('Hello from client');
-});
-
-// Saat menerima pesan
-socket.addEventListener('message', (event) => {
-  const data = JSON.parse(event.data);
-  console.log('Data received from server:', data);
-  
-  // Tampilkan data di halaman HTML (misal ke div dengan id 'data-output')
-  const output = document.getElementById('data-output');
-  output.textContent = JSON.stringify(data, null, 2);
-});
-*/
+        try {
+          console.log('Mengirim data:', data);
+      
+          const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          });
+      
+          console.log('Response:', response);
+      
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+      
+          const result = await response.json();
+          container.innerHTML = `<p>${result.message}</p>`;
+        } catch (error) {
+          console.error('Error:', error);
+          container.innerHTML = `<p>Error sending data: ${error.message}</p>`;
+        }
+      }
+      
+      // Tes fungsi dengan data dummy
+      
