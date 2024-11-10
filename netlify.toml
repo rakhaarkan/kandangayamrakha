@@ -1,6 +1,6 @@
 [build]
-  functions = "netlify/functions"
-  publish = "/"
+  publish = "./"    # Menggunakan root sebagai direktori publik
+  functions = ".netlify/functions"
 
 [[redirects]]
   from = "/api/*"

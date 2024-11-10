@@ -873,36 +873,34 @@ submitButton.onclick = function() {
 
 // script.js
 async function fetchData() {
-    const container = document.getElementById('data-output');
-    container.innerHTML = '<p>Loading data...</p>';
-  
-    try {
-      const response = await fetch('/.netlify/functions/fetchData');        // Mengambil data dari API Netlify
-      const data = await response.json();
-  
-      if (data.error) {
-        container.innerHTML = `<p>Error: ${data.details}</p>`;
-        return;
+        const container = document.getElementById('data-output');
+      
+        try {
+          // Mengambil data dari serverless function
+          const response = await fetch('/api/fetchData'); 
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const data = await response.json();
+          container.innerHTML = '';
+      
+          if (data.error) {
+            container.innerHTML = `<p>Error: ${data.details}</p>`;
+            return;
+          }
+      
+          data.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.textContent = `Data ${index + 1}: ${JSON.stringify(item)}`;
+            container.appendChild(div);
+          });
+        } catch (error) {
+          container.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+        }
       }
-  
-      // Kosongkan container sebelum menambahkan data
-      container.innerHTML = '';
-  
-      // Tampilkan data
-      data.forEach((item, index) => {
-        const row = document.createElement('div');
-        row.classList.add('data-row');
-        row.innerHTML = `<strong>Data ${index + 1}:</strong> ${JSON.stringify(item)}`;
-        container.appendChild(row);
-      });
-    } catch (error) {
-      container.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
-    }
-  }
-  
-  // Panggil fungsi fetchData saat halaman selesai dimuat
-  window.addEventListener('DOMContentLoaded', fetchData);
-  
+      
+      window.addEventListener('DOMContentLoaded', fetchData);
+      
 /*  
 const socket = new WebSocket('ws://localhost:8080');
 
