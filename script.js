@@ -930,7 +930,7 @@ async function fetchData() {
         try {
           console.log('Mengirim data:', data);
       
-          const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData', {
+          const response = await fetch('https://kandangayamrakha.netlify.app/api/sendData', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
