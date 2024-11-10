@@ -1,6 +1,6 @@
 [build]
   command = "npm run build"
-  publish = ".next"
+  publish = "my-nextjs-app/pages/index.js"
 
 [[redirects]]
   from = "/*"
