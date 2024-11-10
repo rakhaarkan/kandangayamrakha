@@ -1,3 +1,21 @@
 {
-	"siteId": "c3d989a2-da3e-4d47-b195-8759e478c198"
+	"siteId": "c3d989a2-da3e-4d47-b195-8759e478c198",
+	"geolocation": {
+		"data": {
+			"city": "Yogyakarta",
+			"country": {
+				"code": "ID",
+				"name": "Indonesia"
+			},
+			"subdivision": {
+				"code": "YO",
+				"name": "Yogyakarta"
+			},
+			"timezone": "Asia/Jakarta",
+			"latitude": -7.8035,
+			"longitude": 110.3646,
+			"postalCode": "55581"
+		},
+		"timestamp": 1731224755951
+	}
 }

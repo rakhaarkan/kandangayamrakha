@@ -14,7 +14,7 @@ exports.handler = async function (event, context) {
 
     try {
       // Melakukan query ke database
-      const result = await client.query('SELECT * FROM playing_with_neon LIMIT 10');
+      const result = await client.query('SELECT * FROM data_bakul LIMIT 20');
       
       // Mengembalikan hasil query sebagai response
       return {
