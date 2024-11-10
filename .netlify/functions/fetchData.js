@@ -14,7 +14,7 @@ exports.handler = async function (event, context) {
 
     try {
       // Melakukan query ke database
-      const result = await client.query('SELECT * FROM playing_with_neon');
+      const result = await client.query('SELECT * FROM data_bakul');
       
       // Mengembalikan hasil query sebagai response
       return {
