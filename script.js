@@ -809,6 +809,7 @@ submitButton.onclick = function() {
             };
             postData(testData)
             modal.style.display = "none";
+            
         }
 
     //document.getElementById('submit-btn').addEventListener('click', () => postData(testData));
@@ -918,7 +919,7 @@ submitButton.onclick = function() {
 
 
 // script.js/
-/*
+
 async function fetchData() {
         const container = document.getElementById('data-output');
       
@@ -946,7 +947,7 @@ async function fetchData() {
         }
       }
       
-      window.addEventListener('DOMContentLoaded', fetchData());*/
+      window.addEventListener('DOMContentLoaded', fetchData());
 
       async function postData(data) {
         const container = document.getElementById('data-output');
@@ -967,6 +968,8 @@ async function fetchData() {
       
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
+          }else{
+            fetchData();
           }
       
           const result = await response.json();
