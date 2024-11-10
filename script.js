@@ -877,7 +877,7 @@ async function fetchData() {
       
         try {
           // Mengambil data dari serverless function
-          const response = await fetch('/api/fetchData'); 
+          const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData'); 
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
