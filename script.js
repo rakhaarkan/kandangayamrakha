@@ -760,6 +760,8 @@ const submitButton = document.getElementById("submitButton");
 
 // Fungsi untuk membuka modal
 if(getCookie("owner") == 1){
+    hidden_detail_kipas.style.display = "none";
+    button_detail_kipas.textContent = "Lihat Detail Kipas";
     addButton.style.display = "block";
     dt_bakul.style.display = "block";
     addButton.onclick = function() {
@@ -767,6 +769,7 @@ if(getCookie("owner") == 1){
     dt_bakul.style.display = "block";
     }
 }else{
+    hidden_detail_kipas.style.display = "block";
     addButton.style.display = "none";
     dt_bakul.style.display = "block";
 }
