@@ -329,6 +329,8 @@ toggleButton2.addEventListener('click', function() {
         setCookie("owner", myVar, 7); 
         setDefaultValue();
         addButton.style.display = "block";
+        dt_bakul.style.display = "block";
+        fetchData();
     } else if (input_cookie == '') {
         //alert("kosong");
     } else {
@@ -336,6 +338,7 @@ toggleButton2.addEventListener('click', function() {
         setCookie("owner", myVar, 7); 
         setDefaultValue();
         addButton.style.display = "none";
+        dt_bakul.style.display = "none";
         //alert("oke");
     }
 });
@@ -750,6 +753,7 @@ function wkt_on(){
 
 // Referensi ke elemen modal dan tombol
 const modal = document.getElementById("modal");
+const dt_bakul = document.getElementById("resultContainer");
 const addButton = document.getElementById("addButton");
 const closeButton = document.querySelector(".close");
 const submitButton = document.getElementById("submitButton");
@@ -757,11 +761,14 @@ const submitButton = document.getElementById("submitButton");
 // Fungsi untuk membuka modal
 if(getCookie("owner") == 1){
     addButton.style.display = "block";
+    dt_bakul.style.display = "block";
     addButton.onclick = function() {
     modal.style.display = "block";
+    dt_bakul.style.display = "block";
     }
 }else{
     addButton.style.display = "none";
+    dt_bakul.style.display = "block";
 }
 
 
@@ -921,7 +928,8 @@ submitButton.onclick = function() {
 // script.js/
 
 async function fetchData() {
-        const container = document.getElementById('data-output');
+    if(getCookie("owner") == 1){
+        const container = document.getElementById('resultContainer');
       
         try {
           // Mengambil data dari serverless function
@@ -938,47 +946,54 @@ async function fetchData() {
           }
       
           data.forEach((item, index) => {
-            const div = document.createElement('div');
-            div.textContent = `Data ${index + 1}: ${JSON.stringify(item)}`;
-            container.appendChild(div);
-          });
+            const resultItem = document.createElement('div');
+            resultItem.classList.add("result-item");
+            resultItem.innerHTML = `
+                <strong>Nama Bakul:</strong> ${item.nama_bakul}<br>
+                <strong>Plat Nomor:</strong> ${item.plat_nomor}<br>
+                <strong>Tanggal:</strong> ${item.tanggal}<br>
+                <strong>Jumlah Ekor Ambil:</strong> ${item.jumlah_ekor_ambil}<br>
+                <strong>Total KG:</strong> ${parseFloat(item.jumlah_kg_ambil).toFixed(1)}
+            `;
+            container.appendChild(resultItem);
+        });
+        
         } catch (error) {
           container.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
         }
       }
+    }
       
       window.addEventListener('DOMContentLoaded', fetchData());
 
-      async function postData(data) {
-        const container = document.getElementById('data-output');
-        container.innerHTML = ''; // Reset output
+async function postData(data) {
+    const container = document.getElementById('data-output');
+    container.innerHTML = ''; // Reset output
+  
+    try {
+        console.log('Mengirim data:', data);
       
-        try {
-          console.log('Mengirim data:', data);
-      
-          const response = await fetch('https://kandangayamrakha.netlify.app/api/sendData', {
+        const response = await fetch('https://kandangayamrakha.netlify.app/api/sendData', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
-          });
+        });
       
-          console.log('Response:', response);
+        console.log('Response:', response);
       
-          if (!response.ok) {
+        if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
-          }else{
-            fetchData();
-          }
-      
-          const result = await response.json();
-          container.innerHTML = `<p>${result.message}</p>`;
-        } catch (error) {
-          console.error('Error:', error);
-          container.innerHTML = `<p>Error sending data: ${error.message}</p>`;
+        }else{
+             fetchData();
         }
-      }
       
-      // Tes fungsi dengan data dummy
-      
+        const result = await response.json();
+        container.innerHTML = `<p>${result.message}</p>`;
+    } catch (error) {
+      console.error('Error:', error);
+      container.innerHTML = `<p>Error sending data: ${error.message}</p>`;
+    }
+}
+    
