@@ -110,7 +110,7 @@ function eksekutor(){
     analisa_realtime();
     kalkulator();
     animasi_chart();
-    //fetchData();
+    fetchData();
 }
 
 function mapNilai(nilai, dariMin, dariMax, keMin, keMax) {
