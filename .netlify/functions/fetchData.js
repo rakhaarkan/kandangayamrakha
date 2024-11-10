@@ -20,6 +20,9 @@ exports.handler = async function (event, context) {
       return {
         statusCode: 200,
         body: JSON.stringify(result.rows),
+        headers: {
+          'Access-Control-Allow-Origin': '*', // Menambahkan header CORS
+        },
       };
     } finally {
       // Mengembalikan koneksi ke pool setelah selesai
@@ -30,6 +33,9 @@ exports.handler = async function (event, context) {
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Database error', details: error.message }),
+      headers: {
+        'Access-Control-Allow-Origin': '*', // Menambahkan header CORS
+      },
     };
   }
 };
