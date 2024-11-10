@@ -877,7 +877,7 @@ async function fetchData() {
     container.innerHTML = '<p>Loading data...</p>';
   
     try {
-      const response = await fetch('/api/fetchData'); // Mengambil data dari API Netlify
+      const response = await fetch('/.netlify/functions/fetchData');        // Mengambil data dari API Netlify
       const data = await response.json();
   
       if (data.error) {
