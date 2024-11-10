@@ -872,7 +872,38 @@ submitButton.onclick = function() {
 
 
 // script.js
-
+async function fetchData() {
+    const container = document.getElementById('data-output');
+    container.innerHTML = '<p>Loading data...</p>';
+  
+    try {
+      const response = await fetch('/api/fetchData'); // Mengambil data dari API Netlify
+      const data = await response.json();
+  
+      if (data.error) {
+        container.innerHTML = `<p>Error: ${data.details}</p>`;
+        return;
+      }
+  
+      // Kosongkan container sebelum menambahkan data
+      container.innerHTML = '';
+  
+      // Tampilkan data
+      data.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.classList.add('data-row');
+        row.innerHTML = `<strong>Data ${index + 1}:</strong> ${JSON.stringify(item)}`;
+        container.appendChild(row);
+      });
+    } catch (error) {
+      container.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+    }
+  }
+  
+  // Panggil fungsi fetchData saat halaman selesai dimuat
+  window.addEventListener('DOMContentLoaded', fetchData);
+  
+/*  
 const socket = new WebSocket('ws://localhost:8080');
 
 // Saat terhubung
@@ -891,3 +922,4 @@ socket.addEventListener('message', (event) => {
   const output = document.getElementById('data-output');
   output.textContent = JSON.stringify(data, null, 2);
 });
+*/
