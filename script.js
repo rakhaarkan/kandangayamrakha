@@ -110,7 +110,7 @@ function eksekutor(){
     analisa_realtime();
     kalkulator();
     animasi_chart();
-    fetchData();
+    //fetchData();
 }
 
 function mapNilai(nilai, dariMin, dariMax, keMin, keMax) {
@@ -777,23 +777,47 @@ window.onclick = function(event) {
     }
 }
 
+
+
+function validateInput() {
+    if (!tanggal || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
+        alert("Semua kolom harus diisi!");
+        return false; // Menghentikan pengiriman data jika ada input yang kosong
+    }
+
+    // Jika semua input valid, lanjutkan
+    return true;
+}
+
 // Fungsi untuk mengumpulkan dan menyimpan data
 submitButton.onclick = function() {
-    const testData = {
-        tanggal: '2024-11-10',
-        nama_bakul: 'Bakulan 1',
-        plat_nomor: 'AB 1234 XY',
-        jumlah_ekor_ambil: 50,
-        jumlah_kg_ambil: 200,
-      };
-      postData(testData)
-      //document.getElementById('submit-btn').addEventListener('click', () => postData(testData));
+    var tanggal = document.getElementById("tanggal").value;
+    var nama_bakul = document.getElementById("nama_bakul").value;
+    var plat_nomor = document.getElementById("plat_nomor").value;
+    var jumlah_ekor_ambil = document.getElementById("jumlah_ekor_ambil").value;
+    var jumlah_kg_ambil = document.getElementById("jumlah_kg_ambil").value;
+        if (!tanggal || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
+            alert("Semua kolom harus diisi!");
+            //return false; // Menghentikan pengiriman data jika ada input yang kosong
+        }else{
+            const testData = {
+                tanggal: tanggal,
+                nama_bakul: nama_bakul,
+                plat_nomor: plat_nomor,
+                jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),  // Pastikan data yang dikirim adalah angka
+                jumlah_kg_ambil: parseInt(jumlah_kg_ambil),      // Pastikan data yang dikirim adalah angka
+            };
+            postData(testData)
+            modal.style.display = "none";
+        }
+
+    //document.getElementById('submit-btn').addEventListener('click', () => postData(testData));
     /*  
-    const tanggal = document.getElementById("tanggal");
-    const namaBakul = document.getElementById("nama_bakul");
-    const platNomor = document.getElementById("plat_nomor");
-    const jumlahEkor = document.getElementById("jumlah_ekor_ambil");
-    const totalKg = document.getElementById("jumlah_kg_ambil");
+    var tanggal = document.getElementById("tanggal");
+    var nama_bakul = document.getElementById("nama_bakul");
+    var plat_nomor = document.getElementById("plat_nomor");
+    var jumlah_ekor_ambil = document.getElementById("jumlah_ekor_ambil");
+    var jumlah_kg_ambil = document.getElementById("jumlah_kg_ambil");
 
     // Simpan data ke dalam variabel atau array di JavaScript
     const dataBakul = {
@@ -893,7 +917,8 @@ submitButton.onclick = function() {
 }
 
 
-// script.js
+// script.js/
+/*
 async function fetchData() {
         const container = document.getElementById('data-output');
       
@@ -921,7 +946,7 @@ async function fetchData() {
         }
       }
       
-      window.addEventListener('DOMContentLoaded', fetchData());
+      window.addEventListener('DOMContentLoaded', fetchData());*/
 
       async function postData(data) {
         const container = document.getElementById('data-output');
