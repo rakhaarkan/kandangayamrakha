@@ -869,3 +869,25 @@ submitButton.onclick = function() {
     document.getElementById("jumlahEkor").value = '';
     document.getElementById("totalKg").value = '';
 }
+
+
+// script.js
+
+const socket = new WebSocket('ws://localhost:8080');
+
+// Saat terhubung
+socket.addEventListener('open', (event) => {
+  console.log('Connected to WebSocket server');
+  // Mengirim pesan ke server
+  socket.send('Hello from client');
+});
+
+// Saat menerima pesan
+socket.addEventListener('message', (event) => {
+  const data = JSON.parse(event.data);
+  console.log('Data received from server:', data);
+  
+  // Tampilkan data di halaman HTML (misal ke div dengan id 'data-output')
+  const output = document.getElementById('data-output');
+  output.textContent = JSON.stringify(data, null, 2);
+});
