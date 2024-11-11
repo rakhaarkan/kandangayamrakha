@@ -723,7 +723,6 @@ function kalkulator(){
     document.getElementById('output_kalkulator_perkiraan_pendapatan').innerHTML = formatRupiah(perkiraan_pendapatan);
     document.getElementById('perkiraan_keuntungan_per_ekor').innerHTML = formatRupiah(perkiraan_keuntungan_per_ekor);
     document.getElementById('output_kalkulator_keterangan').innerHTML = keterangan;
-    document.getElementById("total_ambil").innerHTML = ' '+sisa_ayam_hidup;
 }
 
 function setDefaultValue() {
@@ -1008,7 +1007,7 @@ async function fetchData() {
 let myPieChart;
 
 async function createPieChart() {
-    const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData');
+     const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData');
     const result = await response.json();
   
     // Cek apakah data yang diterima tidak kosong
@@ -1017,7 +1016,26 @@ async function createPieChart() {
         return;
     }
 
-    // Data yang akan digunakan
+    const dataKalkulatorChartDiv = document.getElementById('data_calc_total');
+    
+    // Mengisi HTML secara langsung
+    dataKalkulatorChartDiv.innerHTML = `
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="padding: 8px;"><strong>Ayam tersisa saat ini : </strong></td>
+                <td style="padding: 8px;">${sisa_ayam_hidup+' Ekor'}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;"><strong>Total bobot dipanen   : </strong></td>
+                <td style="padding: 8px;">${total_kg_diambil+' Kg'}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;"><strong>Kerataan bobot   : </strong></td>
+                <td style="padding: 8px;">${(total_kg_diambil/total_ayam_dipanen).toFixed(2)+' Kg'}</td>
+            </tr>
+        </table><br>
+    `;
+   // Data yang akan digunakan
     const labels = ['Ayam Hidup', 'Ayam dipanen', 'Ayam Mati'];
     const dataValues = [sisa_ayam_hidup, total_ayam_dipanen, calc_ayam_mati];
 
