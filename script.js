@@ -843,14 +843,16 @@ async function fetchData() {
             container.innerHTML = `<p>Error: ${data.details}</p>`;
             return;
           }
+
+          data.sort((a, b) => a.id - b.id);
       
           data.forEach((item, index) => {
             const resultItem = document.createElement('div');
             resultItem.classList.add("result-item");
             resultItem.innerHTML = `
                 <strong>Nama Bakul:</strong> ${item.nama_bakul}<br>
+                <strong>Tanggal:</strong> ${item.tanggal.split('T')[0]}<br>
                 <strong>Plat Nomor:</strong> ${item.plat_nomor}<br>
-                <strong>Tanggal:</strong> ${item.tanggal}<br>
                 <strong>Jumlah Ekor Ambil:</strong> ${item.jumlah_ekor_ambil}<br>
                 <strong>Total KG:</strong> ${parseFloat(item.jumlah_kg_ambil).toFixed(1)}
             `;
@@ -881,13 +883,14 @@ async function fetchData() {
 
             editButton.onclick = function() {
                 modal.style.display = "block";
+                document.getElementById("tanggal").value = item.tanggal.split('T')[0];
+                document.getElementById("nama_bakul").value = item.nama_bakul;
+                document.getElementById("plat_nomor").value = item.plat_nomor;
+                document.getElementById("jumlah_ekor_ambil").value = item.jumlah_ekor_ambil;
+                document.getElementById("jumlah_kg_ambil").value = item.jumlah_kg_ambil;
+                    
                 submitButton.onclick = function() {
-                    /*var tanggal = item.tanggal;
-                    var nama_bakul = item.nama_bakul;
-                    var plat_nomor = item.plat_nomor;
-                    var jumlah_ekor_ambil = item.jumlah_ekor_ambil;
-                    var jumlah_kg_ambil = item.jumlah_kg_ambil;
-                     */
+                     
                     var tanggal = document.getElementById("tanggal").value;
                     var nama_bakul = document.getElementById("nama_bakul").value;
                     var plat_nomor = document.getElementById("plat_nomor").value;
