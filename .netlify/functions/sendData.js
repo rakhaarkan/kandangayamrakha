@@ -35,7 +35,7 @@ exports.handler = async function (event, context) {
         VALUES ($1, $2, $3, $4, $5) RETURNING *;
       `;
         result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil]);
-    } else if (action === 'hapus') {
+    } else if (action === 'delete') {
         query = `DELETE FROM data_bakul WHERE id = $1 RETURNING *;`;
         result = await client.query(query, [id]);
     } else if (action === 'droop') {
