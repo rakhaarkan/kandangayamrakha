@@ -882,6 +882,12 @@ async function fetchData() {
             editButton.onclick = function() {
                 modal.style.display = "block";
                 submitButton.onclick = function() {
+                    /*var tanggal = item.tanggal;
+                    var nama_bakul = item.nama_bakul;
+                    var plat_nomor = item.plat_nomor;
+                    var jumlah_ekor_ambil = item.jumlah_ekor_ambil;
+                    var jumlah_kg_ambil = item.jumlah_kg_ambil;
+                     */
                     var tanggal = document.getElementById("tanggal").value;
                     var nama_bakul = document.getElementById("nama_bakul").value;
                     var plat_nomor = document.getElementById("plat_nomor").value;

@@ -42,8 +42,13 @@ exports.handler = async function (event, context) {
         query = `DROP TABLE IF EXISTS data_bakul;`;
         result = await client.query(query);
     } else if (action === 'edit') {
-        query = `UPDATE data_bakul SET tanggal = $1, nama_bakul = $2, plat_nomor = $3, jumlah_ekor_ambil = $4, jumlah_kg_ambil = $5 WHERE id = $6;`;
-        result = await client.query(query);
+        query = `
+        UPDATE data_bakul 
+        SET tanggal = $1, nama_bakul = $2, plat_nomor = $3, jumlah_ekor_ambil = $4, jumlah_kg_ambil = $5 
+        WHERE id = $6 
+        RETURNING *;
+        `;
+        result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, id]);
     } else {
         throw new Error('Unsupported action');
     }
