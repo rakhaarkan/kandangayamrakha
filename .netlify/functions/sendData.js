@@ -23,17 +23,28 @@ exports.handler = async function (event, context) {
   try {
     const client = await pool.connect();
     const body = JSON.parse(event.body);
-
-    const { tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil } = body;
-
-    console.log('Data yang diterima:', body);
-
-    const query = `
-      INSERT INTO data_bakul (tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil)
-      VALUES ($1, $2, $3, $4, $5) RETURNING *;
-    `;
+    const { action, tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, id } = body;
     
-    const result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil]);
+    console.log('Action yang diterima:', action);
+    let query, result;
+
+    // Cek jenis perintah SQL berdasarkan action
+    if (action === 'insert') {
+      query = `
+        INSERT INTO data_bakul (tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil)
+        VALUES ($1, $2, $3, $4, $5) RETURNING *;
+      `;
+      result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil]);
+    } else if (action === 'delete') {
+      query = `DELETE FROM data_bakul WHERE id = $1 RETURNING *;`;
+      result = await client.query(query, [id]);
+    } else if (action === 'drop') {
+      query = `DROP TABLE IF EXISTS data_bakul;`;
+      result = await client.query(query);
+    } else {
+      throw new Error('Unsupported action');
+    }
+
     console.log('Hasil query:', result.rows);
 
     client.release();
@@ -41,7 +52,7 @@ exports.handler = async function (event, context) {
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ message: 'Data berhasil ditambahkan', data: result.rows }),
+      body: JSON.stringify({ message: 'Operasi berhasil', data: result.rows }),
     };
   } catch (error) {
     console.error('Database error:', error.message);

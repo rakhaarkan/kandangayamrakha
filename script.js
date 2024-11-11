@@ -811,6 +811,7 @@ submitButton.onclick = function() {
             //return false; // Menghentikan pengiriman data jika ada input yang kosong
         }else{
             const testData = {
+                action: 'insert',
                 tanggal: tanggal,
                 nama_bakul: nama_bakul,
                 plat_nomor: plat_nomor,
