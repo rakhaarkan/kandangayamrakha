@@ -969,7 +969,8 @@ async function fetchData() {
         } catch (error) {
           container.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
         }
-      }          
+      }         
+      createPieChart(); 
     }
     
     window.addEventListener('DOMContentLoaded', fetchData());
