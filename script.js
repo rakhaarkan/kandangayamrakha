@@ -711,7 +711,7 @@ function kalkulator(){
     var ip = ((persen_ayam_hidup*calc_bobot_rata)/(fcr*calc_usia_ayam)*100).toFixed(0);
     var deplesi = (100 - persen_ayam_hidup).toFixed(1);
     var perkiraan_pendapatan = (calc_bobot_rata * ayam_tersisa * calc_harga_kontrak_ayam)-(calc_harga_bibit * calc_ayam_awal) - (calc_harga_obat_dll) - (calc_harga_pakan_per_kilo * jumlah_pakan);
-    var perkiraan_keuntungan_per_ekor = perkiraan_pendapatan/calc_usia_ayam;
+    var perkiraan_keuntungan_per_ekor = perkiraan_pendapatan/calc_ayam_awal;
     var keterangan = '';
     sisa_ayam_hidup = ayam_tersisa-total_ayam_dipanen;
     if(((calc_usia_ayam<7)&&(fcr < 1))||(ip > 550)||(perkiraan_pendapatan > calc_ayam_awal*8000)||(deplesi > 100)){
