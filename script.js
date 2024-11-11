@@ -732,7 +732,7 @@ function setDefaultValue() {
         hidden_calculator.style.display = "block";
         document.getElementById('input_kalkulator_1').value = usia_ayam;
         document.getElementById('input_kalkulator_2').value = 5000;
-        //document.getElementById('input_kalkulator_3').value = 0;
+        document.getElementById('input_kalkulator_3').value = 180;
         document.getElementById('input_kalkulator_6').value = 20200;
         document.getElementById('input_kalkulator_7').value = 7700;
         document.getElementById('input_kalkulator_8').value = 2500000;
@@ -921,8 +921,9 @@ async function fetchData() {
                         id: item.id // ID data yang ingin dihapus
                     };
                     postData(dataDelete);
-                    alert("Data berhasil dihapus");
+                    alert("Data berhasil dihapus");    
                 }
+                createPieChart(); 
             };
 
             editButton.onclick = function() {
@@ -960,6 +961,7 @@ async function fetchData() {
                     resultItem.appendChild(deleteButton);
                     modal.style.display = "none";
                 }
+                createPieChart(); 
             };
 
 
