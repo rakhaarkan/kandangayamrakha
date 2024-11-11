@@ -850,12 +850,30 @@ async function fetchData() {
             const resultItem = document.createElement('div');
             resultItem.classList.add("result-item");
             resultItem.innerHTML = `
-                <strong>Nama Bakul:</strong> ${item.nama_bakul}<br>
-                <strong>Tanggal:</strong> ${item.tanggal.split('T')[0]}<br>
-                <strong>Plat Nomor:</strong> ${item.plat_nomor}<br>
-                <strong>Jumlah Ekor Ambil:</strong> ${item.jumlah_ekor_ambil}<br>
-                <strong>Total KG:</strong> ${parseFloat(item.jumlah_kg_ambil).toFixed(1)}
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Nama Bakul:</strong></td>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.nama_bakul}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Tanggal:</strong></td>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.tanggal.split('T')[0]}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Plat Nomor:</strong></td>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.plat_nomor}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Jumlah Ekor Ambil:</strong></td>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.jumlah_ekor_ambil}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Total KG:</strong></td>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${parseFloat(item.jumlah_kg_ambil).toFixed(1)}</td>
+                </tr>
+            </table>
             `;
+
             const id_bakul = item.id;
             const editButton = document.createElement("button");
             editButton.classList.add("edit-button");
@@ -929,35 +947,113 @@ async function fetchData() {
     }
       
       window.addEventListener('DOMContentLoaded', fetchData());
-
-async function postData(data) {
-    const container = document.getElementById('data-output');
-    container.innerHTML = ''; // Reset output
-  
-    try {
-        console.log('Mengirim data:', data);
+      async function postData(data) {
+        const container = document.getElementById('data-output');
+        container.innerHTML = ''; // Reset output
       
-        const response = await fetch('https://kandangayamrakha.netlify.app/api/sendData', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
+        try {
+            console.log('Mengirim data:', data);
+          
+            const response = await fetch('https://kandangayamrakha.netlify.app/api/sendData', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+          
+            console.log('Response:', response);
+          
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }else{
+                 fetchData();
+            }
+          
+            const result = await response.json();
+            container.innerHTML = `<p>${result.message}</p>`;
+        } catch (error) {
+          console.error('Error:', error);
+          container.innerHTML = `<p>Error sending data: ${error.message}</p>`;
+        }
+    }
+        
+      async function createPieChart() {
+        const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData');
+        const result = await response.json();
       
-        console.log('Response:', response);
-      
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }else{
-             fetchData();
+        // Cek apakah data yang diterima tidak kosong
+        if (!result || result.length === 0) {
+          console.error("Data kosong");
+          return;
         }
       
-        const result = await response.json();
-        container.innerHTML = `<p>${result.message}</p>`;
-    } catch (error) {
-      console.error('Error:', error);
-      container.innerHTML = `<p>Error sending data: ${error.message}</p>`;
-    }
-}
+        const labels = result.map(item => item.nama_bakul);
+        const dataValues = result.map(item => item.jumlah_kg_ambil);
+      
+        // Hitung total jumlah_kg_ambil sebelum mendefinisikan data untuk chart
+        const total = dataValues.reduce((acc, val) => {
+          // Pastikan kita hanya menjumlahkan angka yang valid
+          return (typeof val === 'number' && !isNaN(val)) ? acc + val : acc;
+        }, 0);
+      
+        // Debugging: Cek nilai total
+        console.log('Total:', total);
+      
+        // Jika total = 0, tampilkan peringatan atau tangani sesuai kebutuhan
+        if (total === 0) {
+          console.warn('Total data adalah 0. Periksa data yang dikirim.');
+          //return;
+        }
+      
+        const data = {
+          labels: labels,
+          datasets: [{
+            label: 'Jumlah KG Ambil',
+            data: dataValues,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.6)',
+              'rgba(54, 162, 235, 0.6)',
+              'rgba(255, 206, 86, 0.6)',
+              'rgba(75, 192, 192, 0.6)'
+            ],
+          }]
+        };
+      
+        const config = {
+          type: 'doughnut',
+          data: data,
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              tooltip: {
+                enabled: true
+              },
+              datalabels: {
+                formatter: (value, context) => {
+                  // Hitung persentase menggunakan total yang sudah dihitung sebelumnya
+                  let percentage = ((value / total) * 100).toFixed(2);
+                  return percentage + '%'; // Menampilkan persentase
+                },
+                color: 'white', // Warna font
+                font: {
+                  weight: 'bold',
+                },
+                anchor: 'center',
+                align: 'center',
+              }
+            }
+          },
+          plugins: [ChartDataLabels] // Menambahkan plugin chartjs-plugin-datalabels
+        };
+      
+        const ctx = document.getElementById('myPieChart').getContext('2d');
+        new Chart(ctx, config);
+      }
+      
+      createPieChart();
+      
     
