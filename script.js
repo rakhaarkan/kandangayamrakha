@@ -958,6 +958,25 @@ async function fetchData() {
                 <strong>Jumlah Ekor Ambil:</strong> ${item.jumlah_ekor_ambil}<br>
                 <strong>Total KG:</strong> ${parseFloat(item.jumlah_kg_ambil).toFixed(1)}
             `;
+            const editButton = document.createElement("button");
+            editButton.classList.add("edit-button");
+            editButton.textContent = "Edit";
+            resultItem.appendChild(editButton);
+
+            // Tombol Hapus untuk menghapus resultItem
+            const deleteButton = document.createElement("button");
+            deleteButton.classList.add("delete-button");
+            deleteButton.textContent = "Hapus";
+            resultItem.appendChild(deleteButton);
+
+            deleteButton.onclick = function() {
+                const confirmDelete = confirm("Apakah Anda yakin ingin menghapusnya?");
+                if (confirmDelete) {
+                    resultContainer.removeChild(resultItem);
+                    alert("Data berhasil dihapus");
+                }
+            };
+
             container.appendChild(resultItem);
         });
         
