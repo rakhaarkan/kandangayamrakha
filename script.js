@@ -330,7 +330,9 @@ toggleButton2.addEventListener('click', function() {
         setDefaultValue();
         addButton.style.display = "block";
         dt_bakul.style.display = "block";
+        dt_calc_chart.style.display = "block";
         fetchData();
+        createPieChart();
     } else if (input_cookie == '') {
         //alert("kosong");
     } else {
@@ -339,6 +341,7 @@ toggleButton2.addEventListener('click', function() {
         setDefaultValue();
         addButton.style.display = "none";
         dt_bakul.style.display = "none";
+        dt_calc_chart.style.display = "none";
         //alert("oke");
     }
 });
@@ -680,16 +683,25 @@ function hasil_analisa(target_suhu,suhu_minimal,suhu_maksimal,target_heat_index)
     }
 }
 
+var calc_ayam_awal;
+var calc_ayam_mati;
+var sisa_ayam_hidup;
+var cmt; 
 function kalkulator(){
     var calc_usia_ayam = document.getElementById('input_kalkulator_1').value;
-    var calc_ayam_awal = document.getElementById('input_kalkulator_2').value;
-    var calc_ayam_mati = document.getElementById('input_kalkulator_3').value;
+    calc_ayam_awal = document.getElementById('input_kalkulator_2').value;
+    calc_ayam_mati = document.getElementById('input_kalkulator_3').value;
     var calc_jumlah_pakan = document.getElementById('input_kalkulator_4').value;
     var calc_bobot_rata = document.getElementById('input_kalkulator_5').value;
     var calc_harga_kontrak_ayam = document.getElementById('input_kalkulator_6').value;
     var calc_harga_bibit = document.getElementById('input_kalkulator_7').value;
     var calc_harga_obat_dll = document.getElementById('input_kalkulator_8').value;
     var calc_harga_pakan_per_kilo = document.getElementById('input_kalkulator_9').value;
+
+    if((cmt!= calc_ayam_mati)&&(getCookie("owner") == 1)){
+        createPieChart();
+        cmt = calc_ayam_mati;
+    };
 
     var ayam_tersisa = calc_ayam_awal - calc_ayam_mati;
     var persen_ayam_hidup = (ayam_tersisa/calc_ayam_awal)*100;
@@ -701,6 +713,7 @@ function kalkulator(){
     var perkiraan_pendapatan = (calc_bobot_rata * ayam_tersisa * calc_harga_kontrak_ayam)-(calc_harga_bibit * calc_ayam_awal) - (calc_harga_obat_dll) - (calc_harga_pakan_per_kilo * jumlah_pakan);
     var perkiraan_keuntungan_per_ekor = perkiraan_pendapatan/calc_usia_ayam;
     var keterangan = '';
+    sisa_ayam_hidup = ayam_tersisa-total_ayam_dipanen;
     if(((calc_usia_ayam<7)&&(fcr < 1))||(ip > 550)||(perkiraan_pendapatan > calc_ayam_awal*8000)||(deplesi > 100)){
         keterangan = 'Hasil perhitungan tidak realistis karena anda memasukkan input nilai yang asal.';
     }
@@ -710,7 +723,7 @@ function kalkulator(){
     document.getElementById('output_kalkulator_perkiraan_pendapatan').innerHTML = formatRupiah(perkiraan_pendapatan);
     document.getElementById('perkiraan_keuntungan_per_ekor').innerHTML = formatRupiah(perkiraan_keuntungan_per_ekor);
     document.getElementById('output_kalkulator_keterangan').innerHTML = keterangan;
-    
+    document.getElementById("total_ambil").innerHTML = ' '+sisa_ayam_hidup;
 }
 
 function setDefaultValue() {
@@ -720,10 +733,12 @@ function setDefaultValue() {
         hidden_calculator.style.display = "block";
         document.getElementById('input_kalkulator_1').value = usia_ayam;
         document.getElementById('input_kalkulator_2').value = 5000;
+        //document.getElementById('input_kalkulator_3').value = 0;
         document.getElementById('input_kalkulator_6').value = 20200;
         document.getElementById('input_kalkulator_7').value = 7700;
         document.getElementById('input_kalkulator_8').value = 2500000;
-        document.getElementById('input_kalkulator_9').value = 9100;    
+        document.getElementById('input_kalkulator_9').value = 9100;  
+        createPieChart();  
     }else{
 
     }
@@ -754,6 +769,7 @@ function wkt_on(){
 // Referensi ke elemen modal dan tombol
 const modal = document.getElementById("modal");
 const dt_bakul = document.getElementById("resultContainer");
+const dt_calc_chart = document.getElementById("data_kalkulator_chart");
 const addButton = document.getElementById("addButton");
 const closeButton = document.querySelector(".close");
 const submitButton = document.getElementById("submitButton");
@@ -764,14 +780,17 @@ if(getCookie("owner") == 1){
     button_detail_kipas.textContent = "Lihat Detail Kipas";
     addButton.style.display = "block";
     dt_bakul.style.display = "block";
+    dt_calc_chart.style.display = "block"; 
     addButton.onclick = function() {
     modal.style.display = "block";
     dt_bakul.style.display = "block";
+    dt_calc_chart.style.display = "block"; 
     }
 }else{
     hidden_detail_kipas.style.display = "block";
     addButton.style.display = "none";
-    dt_bakul.style.display = "block";
+    dt_bakul.style.display = "none";
+    dt_calc_chart.style.display = "none";
 }
 
 
@@ -826,10 +845,15 @@ submitButton.onclick = function() {
 
 // script.js/
 
+var total_ayam_dipanen;
+var total_kg_diambil;
+
 async function fetchData() {
+    
     if(getCookie("owner") == 1){
         const container = document.getElementById('resultContainer');
-      
+        total_ayam_dipanen = 0;
+        total_kg_diambil = 0;
         try {
           // Mengambil data dari serverless function
           const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData'); 
@@ -852,28 +876,31 @@ async function fetchData() {
             resultItem.innerHTML = `
             <table style="width: 100%; border-collapse: collapse;">
                 <tr>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Nama Bakul:</strong></td>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Nama Bakul</strong></td>
                     <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.nama_bakul}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Tanggal:</strong></td>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Tanggal</strong></td>
                     <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.tanggal.split('T')[0]}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Plat Nomor:</strong></td>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Plat Nomor</strong></td>
                     <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.plat_nomor}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Jumlah Ekor Ambil:</strong></td>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Jumlah Ekor Ambil</strong></td>
                     <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.jumlah_ekor_ambil}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Total KG:</strong></td>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Total KG</strong></td>
                     <td style="padding: 8px; border-bottom: 1px solid #ddd;">${parseFloat(item.jumlah_kg_ambil).toFixed(1)}</td>
                 </tr>
             </table>
             `;
-
+            // Mengakumulasi total jumlah ekor dan total kg
+            total_ayam_dipanen += parseInt(item.jumlah_ekor_ambil);
+            total_kg_diambil += parseFloat(item.jumlah_kg_ambil);
+            
             const id_bakul = item.id;
             const editButton = document.createElement("button");
             editButton.classList.add("edit-button");
@@ -943,10 +970,10 @@ async function fetchData() {
         } catch (error) {
           container.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
         }
-      }
+      }          
     }
-      
-      window.addEventListener('DOMContentLoaded', fetchData());
+    
+    window.addEventListener('DOMContentLoaded', fetchData());
       async function postData(data) {
         const container = document.getElementById('data-output');
         container.innerHTML = ''; // Reset output
@@ -977,83 +1004,82 @@ async function fetchData() {
           container.innerHTML = `<p>Error sending data: ${error.message}</p>`;
         }
     }
-        
-      async function createPieChart() {
-        const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData');
-        const result = await response.json();
-      
-        // Cek apakah data yang diterima tidak kosong
-        if (!result || result.length === 0) {
-          console.error("Data kosong");
-          return;
-        }
-      
-        const labels = result.map(item => item.nama_bakul);
-        const dataValues = result.map(item => item.jumlah_kg_ambil);
-      
-        // Hitung total jumlah_kg_ambil sebelum mendefinisikan data untuk chart
-        const total = dataValues.reduce((acc, val) => {
-          // Pastikan kita hanya menjumlahkan angka yang valid
-          return (typeof val === 'number' && !isNaN(val)) ? acc + val : acc;
-        }, 0);
-      
-        // Debugging: Cek nilai total
-        console.log('Total:', total);
-      
-        // Jika total = 0, tampilkan peringatan atau tangani sesuai kebutuhan
-        if (total === 0) {
-          console.warn('Total data adalah 0. Periksa data yang dikirim.');
-          //return;
-        }
-      
-        const data = {
-          labels: labels,
-          datasets: [{
-            label: 'Jumlah KG Ambil',
+// Variabel global untuk menyimpan instance chart
+let myPieChart;
+
+async function createPieChart() {
+    const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData');
+    const result = await response.json();
+  
+    // Cek apakah data yang diterima tidak kosong
+    if (!result || result.length === 0) {
+        console.error("Data kosong");
+        return;
+    }
+
+    // Data yang akan digunakan
+    const labels = ['Ayam Hidup', 'Ayam dipanen', 'Ayam Mati'];
+    const dataValues = [sisa_ayam_hidup, total_ayam_dipanen, calc_ayam_mati];
+
+    // Hitung total nilai sebelum mendefinisikan data untuk chart
+    const total = dataValues.reduce((acc, val) => acc + val, 0);
+
+    // Data untuk chart
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'Data Ayam',
             data: dataValues,
             backgroundColor: [
-              'rgba(255, 99, 132, 0.6)',
-              'rgba(54, 162, 235, 0.6)',
-              'rgba(255, 206, 86, 0.6)',
-              'rgba(75, 192, 192, 0.6)'
+                'rgba(54, 162, 235, 0.6)', // Biru (Ayam Hidup)
+                'rgba(255, 206, 86, 0.6)', // Kuning (Ayam dipanen)
+                'rgba(255, 99, 132, 0.6)'  // Merah (Ayam Mati)
             ],
-          }]
-        };
-      
-        const config = {
-          type: 'doughnut',
-          data: data,
-          options: {
+        }]
+    };
+
+    // Konfigurasi chart
+    const config = {
+        type: 'doughnut',
+        data: data,
+        options: {
             responsive: true,
             plugins: {
-              legend: {
-                position: 'top',
-              },
-              tooltip: {
-                enabled: true
-              },
-              datalabels: {
-                formatter: (value, context) => {
-                  // Hitung persentase menggunakan total yang sudah dihitung sebelumnya
-                  let percentage = ((value / total) * 100).toFixed(2);
-                  return percentage + '%'; // Menampilkan persentase
+                legend: {
+                    position: 'top',
                 },
-                color: 'white', // Warna font
-                font: {
-                  weight: 'bold',
+                tooltip: {
+                    enabled: true
                 },
-                anchor: 'center',
-                align: 'center',
-              }
+                datalabels: {
+                    formatter: (value, context) => {
+                        // Hitung persentase menggunakan total yang sudah dihitung sebelumnya
+                        let percentage = ((value / calc_ayam_awal) * 100).toFixed(1);
+                        return `${value} (${percentage}%)`; // Menampilkan nilai dan persentase
+                    },
+                    color: 'black', // Warna font
+                    font: {
+                        //weight: 'bold',
+                        size: 14
+                    },
+                    anchor: 'center',
+                    align: 'center',
+                }
             }
-          },
-          plugins: [ChartDataLabels] // Menambahkan plugin chartjs-plugin-datalabels
-        };
-      
-        const ctx = document.getElementById('myPieChart').getContext('2d');
-        new Chart(ctx, config);
-      }
-      
-      createPieChart();
-      
-    
+        },
+        plugins: [ChartDataLabels] // Menambahkan plugin chartjs-plugin-datalabels
+    };
+
+    const ctx = document.getElementById('myPieChart').getContext('2d');
+
+    // Cek apakah chart sudah ada, jika ada maka update data, jika tidak buat chart baru
+    if (myPieChart) {
+        // Update data dan refresh chart
+        myPieChart.data = data;
+        myPieChart.update();
+    } else {
+        // Buat chart baru
+        myPieChart = new Chart(ctx, config);
+    }
+}
+
