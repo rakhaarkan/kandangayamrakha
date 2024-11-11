@@ -34,15 +34,18 @@ exports.handler = async function (event, context) {
         INSERT INTO data_bakul (tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil)
         VALUES ($1, $2, $3, $4, $5) RETURNING *;
       `;
-      result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil]);
+        result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil]);
     } else if (action === 'delete') {
-      query = `DELETE FROM data_bakul WHERE id = $1 RETURNING *;`;
-      result = await client.query(query, [id]);
-    } else if (action === 'drop') {
-      query = `DROP TABLE IF EXISTS data_bakul;`;
-      result = await client.query(query);
-    } else {
-      throw new Error('Unsupported action');
+        query = `DELETE FROM data_bakul WHERE id = $1 RETURNING *;`;
+        result = await client.query(query, [id]);
+    } else if (action === 'droop') {
+        query = `DROP TABLE IF EXISTS data_bakul;`;
+        result = await client.query(query);
+    } else if (action === 'edit') {
+        query = `UPDATE data_bakul SET tanggal = $1, nama_bakul = $2, plat_nomor = $3, jumlah_ekor_ambil = $4, jumlah_kg_ambil = $5 WHERE id = $6;`;
+        result = await client.query(query);
+    } else {{
+        throw new Error('Unsupported action');
     }
 
     console.log('Hasil query:', result.rows);

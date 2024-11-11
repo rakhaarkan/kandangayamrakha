@@ -806,126 +806,21 @@ submitButton.onclick = function() {
     var plat_nomor = document.getElementById("plat_nomor").value;
     var jumlah_ekor_ambil = document.getElementById("jumlah_ekor_ambil").value;
     var jumlah_kg_ambil = document.getElementById("jumlah_kg_ambil").value;
-        if (!tanggal || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
-            alert("Semua kolom harus diisi!");
-            //return false; // Menghentikan pengiriman data jika ada input yang kosong
-        }else{
-            const testData = {
-                action: 'insert',
-                tanggal: tanggal,
-                nama_bakul: nama_bakul,
-                plat_nomor: plat_nomor,
-                jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),  // Pastikan data yang dikirim adalah angka
-                jumlah_kg_ambil: parseInt(jumlah_kg_ambil),      // Pastikan data yang dikirim adalah angka
-            };
-            postData(testData)
-            modal.style.display = "none";
-            
-        }
-
-    //document.getElementById('submit-btn').addEventListener('click', () => postData(testData));
-    /*  
-    var tanggal = document.getElementById("tanggal");
-    var nama_bakul = document.getElementById("nama_bakul");
-    var plat_nomor = document.getElementById("plat_nomor");
-    var jumlah_ekor_ambil = document.getElementById("jumlah_ekor_ambil");
-    var jumlah_kg_ambil = document.getElementById("jumlah_kg_ambil");
-
-    // Simpan data ke dalam variabel atau array di JavaScript
-    const dataBakul = {
-        namaBakul,
-        platNomor,
-        tanggal,
-        jumlahEkor: parseInt(jumlahEkor),
-        totalKg: parseFloat(totalKg)
-    };
-
-    const databkl = {
-        tanggal: namaBakul,
-        nama_bakul: platNomor,
-        plat_nomor: tanggal,
-        jumlah_ekor_ambil: parseInt(jumlahEkor),
-        jumlah_kg_ambil: parseFloat(totalKg)
-    };
-    
-      // Mengirim data ke serverless function untuk menulis ke database
-        postData(databkl);
-
-    //alert("Data tersimpan:", dataBakul); // Anda bisa mengganti ini dengan fungsi lain sesuai kebutuhan
-    const resultItem = document.createElement("div");
-    resultItem.classList.add("result-item");
-    resultItem.innerHTML = `
-        <strong>Nama Bakul:</strong> ${dataBakul.namaBakul}<br>
-        <strong>Plat Nomor:</strong> ${dataBakul.platNomor}<br>
-        <strong>Tanggal:</strong> ${dataBakul.tanggal}<br>
-        <strong>Jumlah Ekor Ambil:</strong> ${dataBakul.jumlahEkor}<br>
-        <strong>Total KG:</strong> ${dataBakul.totalKg.toFixed(1)}
-    `;
-
-    // Tombol Edit untuk mengedit resultItem
-    const editButton = document.createElement("button");
-    editButton.classList.add("edit-button");
-    editButton.textContent = "Edit";
-    resultItem.appendChild(editButton);
-
-    // Tombol Hapus untuk menghapus resultItem
-    const deleteButton = document.createElement("button");
-    deleteButton.classList.add("delete-button");
-    deleteButton.textContent = "Hapus";
-    resultItem.appendChild(deleteButton);
-
-    // Event listener untuk tombol Edit
-    editButton.onclick = function() {
-        document.getElementById("nama_bakul").value = dataBakul.namaBakul;
-        document.getElementById("plat_nomor").value = dataBakul.platNomor;
-        document.getElementById("tanggal").value = dataBakul.tanggal;
-        document.getElementById("jumlah_ekor_ambil").value = dataBakul.jumlahEkor;
-        document.getElementById("jumlah_kg_ambil").value = dataBakul.totalKg;
-        modal.style.display = "block";
-        
-        // Setelah edit selesai, perbarui data saat disubmit ulang
-        submitButton.onclick = function() {
-            dataBakul.namaBakul = document.getElementById("namaBakul").value;
-            dataBakul.platNomor = document.getElementById("platNomor").value;
-            dataBakul.tanggal = document.getElementById("tanggal").value;
-            dataBakul.jumlahEkor = parseInt(document.getElementById("jumlahEkor").value);
-            dataBakul.totalKg = parseFloat(document.getElementById("totalKg").value);
-
-            resultItem.innerHTML = `
-                <strong>Nama Bakul:</strong> ${dataBakul.namaBakul}<br>
-                <strong>Plat Nomor:</strong> ${dataBakul.platNomor}<br>
-                <strong>Tanggal:</strong> ${dataBakul.tanggal}<br>
-                <strong>Jumlah Ekor Ambil:</strong> ${dataBakul.jumlahEkor}<br>
-                <strong>Total KG:</strong> ${dataBakul.totalKg.toFixed(1)}
-            `;
-            resultItem.appendChild(editButton);
-            resultItem.appendChild(deleteButton);
-            modal.style.display = "none";
-        }
-    };
-
-    // Event listener untuk tombol Hapus
-    deleteButton.onclick = function() {
-        const confirmDelete = confirm("Apakah Anda yakin ingin menghapusnya?");
-        if (confirmDelete) {
-            resultContainer.removeChild(resultItem);
-            alert("Data berhasil dihapus");
-        }
-    };
-
-    // Tambahkan resultItem ke resultContainer
-    resultContainer.appendChild(resultItem);
-
-
-    // Tutup modal setelah submit
-    modal.style.display = "none";
-*/
-    // Reset input
-    /*document.getElementById("nama_bakul").value = '';
-    document.getElementById("plat_nomor").value = '';
-    document.getElementById("tanggal").value = '';
-    document.getElementById("jumlah_ekor_ambil").value = '';
-    document.getElementById("jumlah_kg_ambil").value = '';*/
+    if (!tanggal || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
+        alert("Semua kolom harus diisi!");
+        //return false; // Menghentikan pengiriman data jika ada input yang kosong
+    }else{
+        const testData = {
+            action: 'insert',
+            tanggal: tanggal,
+            nama_bakul: nama_bakul,
+            plat_nomor: plat_nomor,
+            jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),  // Pastikan data yang dikirim adalah angka
+            jumlah_kg_ambil: parseInt(jumlah_kg_ambil),      // Pastikan data yang dikirim adalah angka
+        };
+        postData(testData)
+        modal.style.display = "none";            
+    }
 }
 
 
@@ -959,6 +854,7 @@ async function fetchData() {
                 <strong>Jumlah Ekor Ambil:</strong> ${item.jumlah_ekor_ambil}<br>
                 <strong>Total KG:</strong> ${parseFloat(item.jumlah_kg_ambil).toFixed(1)}
             `;
+            const id_bakul = item.id;
             const editButton = document.createElement("button");
             editButton.classList.add("edit-button");
             editButton.textContent = "Edit";
@@ -974,9 +870,45 @@ async function fetchData() {
                 const confirmDelete = confirm("Apakah Anda yakin ingin menghapusnya?");
                 if (confirmDelete) {
                     resultContainer.removeChild(resultItem);
+                    const dataDelete = {
+                        action: 'delete',
+                        id: item.id // ID data yang ingin dihapus
+                    };
+                    postData(dataDelete);
                     alert("Data berhasil dihapus");
                 }
             };
+
+            editButton.onclick = function() {
+                modal.style.display = "block";
+                submitButton.onclick = function() {
+                    var tanggal = document.getElementById("tanggal").value;
+                    var nama_bakul = document.getElementById("nama_bakul").value;
+                    var plat_nomor = document.getElementById("plat_nomor").value;
+                    var jumlah_ekor_ambil = document.getElementById("jumlah_ekor_ambil").value;
+                    var jumlah_kg_ambil = document.getElementById("jumlah_kg_ambil").value;
+                    if (!tanggal || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
+                        alert("Semua kolom harus diisi!");
+                        //return false; // Menghentikan pengiriman data jika ada input yang kosong
+                    }else{
+                        const testData = {
+                            action: 'edit',
+                            tanggal: tanggal,
+                            nama_bakul: nama_bakul,
+                            plat_nomor: plat_nomor,
+                            jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),  // Pastikan data yang dikirim adalah angka
+                            jumlah_kg_ambil: parseInt(jumlah_kg_ambil),      // Pastikan data yang dikirim adalah angka
+                            id: item.id
+                        };
+                        postData(testData)
+                        modal.style.display = "none";            
+                    }
+                    resultItem.appendChild(editButton);
+                    resultItem.appendChild(deleteButton);
+                    modal.style.display = "none";
+                }
+            };
+
 
             container.appendChild(resultItem);
         });
