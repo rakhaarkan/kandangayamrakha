@@ -644,7 +644,7 @@ function updateTime() {
     document.getElementById('current-date').textContent = currentDate;
     document.getElementById('current-time').textContent = currentTime;
 
-    usia_ayam = Math.ceil(differenceInDays);
+    usia_ayam =  array_kipas_pusat[1];//Math.ceil(differenceInDays);
     if(mode_usia_ayam == 3){
         document.getElementById('usia_ayam').textContent = 'Selesai Panen';
     }else{
