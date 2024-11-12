@@ -616,6 +616,7 @@ var default_input = false;
     
 function updateTime() {
     var array_data = penampung_json_1.dat;
+    var array_kipas_pusat = penampung_json_4.kpa;
     const now = new Date();
     const waktu_thingspeak = new Date(penampung_data_waktu);
     const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -647,7 +648,7 @@ function updateTime() {
     if(mode_usia_ayam == 3){
         document.getElementById('usia_ayam').textContent = 'Selesai Panen';
     }else{
-        document.getElementById('usia_ayam').textContent = Math.ceil(differenceInDays) + ' hari';
+        document.getElementById('usia_ayam').textContent = array_kipas_pusat[1] + ' hari';//Math.ceil(differenceInDays) + ' hari';
     } 
     if(!default_input){
         setDefaultValue();
