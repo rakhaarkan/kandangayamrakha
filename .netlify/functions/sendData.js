@@ -2,7 +2,7 @@ const { Pool } = require('pg');
 
 // Membuat pool koneksi PostgreSQL
 const pool = new Pool({
-  connectionString: 'psql "postgres://default:arnUWC6QSi7c@ep-dry-sound-a1g58z5n.ap-southeast-1.aws.neon.tech:5432/verceldb?sslmode=require"',
+  connectionString: 'psql "postgresql://kandangrakha_owner:5Psm3KGwHfdO@ep-winter-cloud-a1b56pb2.ap-southeast-1.aws.neon.tech/kandangrakha?sslmode=require',
   ssl: { rejectUnauthorized: false },
 });
 
