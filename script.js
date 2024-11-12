@@ -1098,7 +1098,7 @@ async function createPieChart() {
     const Data_kalkulasi_panen = {
         d1: { label: 'Ayam tersisa saat ini ', value: `${sisa_ayam_hidup+' Ekor'}` },
         d2: { label: 'Total bobot dipanen   ', value: `${total_kg_diambil+' Kg'}` },
-        d3: { label: 'Kerataan bobot   ', value: `${(total_kg_diambil/total_ayam_dipanen).toFixed(2)+' Kg'}` },
+        d3: { label: 'Kerataan bobot panen', value: `${(total_kg_diambil/total_ayam_dipanen).toFixed(2)+' Kg'}` },
     };
     
     // Mengisi elemen dengan id "output_group_container" dengan HTML yang dihasilkan
