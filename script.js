@@ -77,7 +77,9 @@ function data_thingspeak(){
             
 }
 
-setInterval(data_thingspeak,randomValue)
+setInterval(data_thingspeak,randomValue);
+setInterval(eksekutor,100);
+
 
 function eksekutor(){
     var array_suhu = penampung_json_1.shu;
@@ -86,6 +88,23 @@ function eksekutor(){
     var array_liter_air = penampung_json_1.air;
     var array_listrik = penampung_json_1.lst;
     var array_angin = penampung_json_1.agn;
+    const gaugesHTML_atas = `
+        <div class="wrapper">
+        ${createGaugeCard('Suhu Atas', 'suhu_atas', 'crc_sha', '20', '40', 'red')}
+        ${createGaugeCard('Kelembapan Atas', 'kelembapan_atas', 'crc_kla', '0', '100', 'rgb(0, 218, 251)')}
+        ${createGaugeCard('Heat Index Atas', 'heat_index_atas', 'crc_hia', '100', '200', 'url(#GradientColor)')}
+        </div>
+    `;
+    const gaugesHTML_luar = `
+        <div class="wrapper">
+        ${createGaugeCard('Suhu Atas', 'suhu_luar', 'crc_shl', '20', '40', 'red')}
+        ${createGaugeCard('Kelembapan Atas', 'kelembapan_luar', 'crc_kll', '0', '100', 'rgb(0, 218, 251)')}
+        </div>
+    `;
+
+// Mengisi elemen dengan id "container_gauges" dengan HTML yang dihasilkan
+    document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
+    document.getElementById('container_gauges_kandang_luar').innerHTML = gaugesHTML_luar;
     document.getElementById("suhu_atas").innerHTML = hpsnull(array_suhu[0]/10).toFixed(1);
     document.getElementById("suhu_luar").innerHTML = hpsnull(array_suhu[2]/10).toFixed(1);
     document.getElementById("kelembapan_atas").innerHTML = hpsnull(array_kelembapan[0]/10).toFixed(1);
@@ -253,7 +272,7 @@ function parseAndDisplay(input) {
                     break;
                 
                 case 0:
-                    outputText = `Suhu < ${suhu_rendah}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                    outputText = `Suhu < ${suhu_rendah}° = kipas default hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
                     break;
 
                 default:
@@ -297,6 +316,35 @@ function animasi_bar(){
 
 function animasi_tombol(){
 
+}
+
+function createGaugeCard(title, idSpan, idCircle, minLabel, maxLabel, color) {
+    return `
+        <div class="card_gauge">
+            <div class="judul_widget">${title}</div>
+            <div class="skill">
+                <div class="outer">
+                    <div class="inner">
+                        <div id="number">
+                            <span class="keterangan widget1" id="${idSpan}"></span><span>${title.includes('Kelembapan') ? '%' : '°'}</span>
+                        </div>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="38vw" height="38vw">
+                        <defs>
+                        <linearGradient id="GradientColor">
+                            <stop offset="0%" stop-color="#e91e63" />
+                            <stop offset="100%" stop-color="#673ab7" />
+                        </linearGradient>
+                        </defs>
+                        <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke-dashoffset: -2vw;"/>
+                        <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke:${color};" id="${idCircle}"/>  
+                    </svg>
+                    <div class="ket_gauge_kiri">${minLabel}</div>
+                    <div class="ket_gauge_kanan">${maxLabel}</div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 const toggleButton = document.getElementById("toggleButton");
