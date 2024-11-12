@@ -102,6 +102,7 @@ function eksekutor(){
         </div>
     `;
 
+    
 // Mengisi elemen dengan id "container_gauges" dengan HTML yang dihasilkan
     document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
     document.getElementById('container_gauges_kandang_luar').innerHTML = gaugesHTML_luar;
@@ -346,6 +347,27 @@ function createGaugeCard(title, idSpan, idCircle, minLabel, maxLabel, color) {
         </div>
     `;
 }
+
+function createOutputTable(data,padding) {
+    // Memulai dengan elemen pembuka tabel
+    let tableHTML = `<table style="width: 100%; border-collapse: collapse;">`;
+    
+    // Iterasi melalui setiap item di dalam objek data
+    Object.keys(data).forEach(key => {
+        tableHTML += `
+            <tr>
+                <td style="padding: ${padding}px;"><strong>${data[key].label} :</strong></td>
+                <td style="padding: ${padding}px;">${data[key].value}</td>
+            </tr>
+        `;
+    });
+
+    // Menutup elemen tabel
+    tableHTML += `</table><br>`;
+    return tableHTML;
+}
+
+// Data untuk output kalkulator ayam
 
 const toggleButton = document.getElementById("toggleButton");
 const toggleButton2 = document.getElementById("toggleButton2");
@@ -765,12 +787,18 @@ function kalkulator(){
     if(((calc_usia_ayam<7)&&(fcr < 1))||(ip > 550)||(perkiraan_pendapatan > calc_ayam_awal*8000)||(deplesi > 100)){
         keterangan = 'Hasil perhitungan tidak realistis karena anda memasukkan input nilai yang asal.';
     }
-    document.getElementById('output_kalkulator_fcr').innerHTML = fcr;
-    document.getElementById('output_kalkulator_ip').innerHTML = ip;
-    document.getElementById('output_kalkulator_deplesi').innerHTML = deplesi +'%';
-    document.getElementById('output_kalkulator_perkiraan_pendapatan').innerHTML = formatRupiah(perkiraan_pendapatan);
-    document.getElementById('perkiraan_keuntungan_per_ekor').innerHTML = formatRupiah(perkiraan_keuntungan_per_ekor);
     document.getElementById('output_kalkulator_keterangan').innerHTML = keterangan;
+    const kalkulatorData = {
+        fcr: { label: 'FCR', value: `${fcr}` },
+        ip: { label: 'IP', value: `${ip}` },
+        deplesi: { label: 'Deplesi', value: `${deplesi+'%'}` },
+        perkiraanPendapatan: { label: 'Perkiraan Hasil', value: `${formatRupiah(perkiraan_pendapatan)}` },
+        keuntunganPerEkor: { label: 'Keuntungan per Ekor', value: `${formatRupiah(perkiraan_keuntungan_per_ekor)}` }
+    };
+    
+    // Mengisi elemen dengan id "output_group_container" dengan HTML yang dihasilkan
+    document.getElementById('output_group_container').innerHTML = createOutputTable(kalkulatorData,2);
+
 }
 
 function setDefaultValue() {
@@ -1064,28 +1092,18 @@ async function createPieChart() {
     // Cek apakah data yang diterima tidak kosong
     if (!result || result.length === 0) {
         console.error("Data kosong");
-        return;
+        //return;
     }
 
-    const dataKalkulatorChartDiv = document.getElementById('data_calc_total');
+    const Data_kalkulasi_panen = {
+        d1: { label: 'Ayam tersisa saat ini ', value: `${sisa_ayam_hidup+' Ekor'}` },
+        d2: { label: 'Total bobot dipanen   ', value: `${total_kg_diambil+' Kg'}` },
+        d3: { label: 'Kerataan bobot   ', value: `${(total_kg_diambil/total_ayam_dipanen).toFixed(2)+' Kg'}` },
+    };
     
-    // Mengisi HTML secara langsung
-    dataKalkulatorChartDiv.innerHTML = `
-        <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-                <td style="padding: 8px;"><strong>Ayam tersisa saat ini : </strong></td>
-                <td style="padding: 8px;">${sisa_ayam_hidup+' Ekor'}</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px;"><strong>Total bobot dipanen   : </strong></td>
-                <td style="padding: 8px;">${total_kg_diambil+' Kg'}</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px;"><strong>Kerataan bobot   : </strong></td>
-                <td style="padding: 8px;">${(total_kg_diambil/total_ayam_dipanen).toFixed(2)+' Kg'}</td>
-            </tr>
-        </table><br>
-    `;
+    // Mengisi elemen dengan id "output_group_container" dengan HTML yang dihasilkan
+    document.getElementById('data_calc_total').innerHTML = createOutputTable(Data_kalkulasi_panen,8);
+
    // Data yang akan digunakan
     const labels = ['Ayam Hidup', 'Ayam dipanen', 'Ayam Mati'];
     const dataValues = [sisa_ayam_hidup, total_ayam_dipanen, calc_ayam_mati];
