@@ -3,7 +3,7 @@ const { Pool } = require('pg');
 
 // Membuat pool koneksi PostgreSQL
 const pool = new Pool({
-  connectionString: 'postgresql://datakandangayamrakha_owner:QPR73rjkFcoS@ep-nameless-band-a1x2caxb.ap-southeast-1.aws.neon.tech/datakandangayamrakha?sslmode=require',
+  connectionString: 'postgres://default:arnUWC6QSi7c@ep-dry-sound-a1g58z5n-pooler.ap-southeast-1.aws.neon.tech:5432/verceldb?sslmode=require',
   ssl: { rejectUnauthorized: false }, // Menonaktifkan validasi SSL pada koneksi
 });
 
