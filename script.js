@@ -79,9 +79,15 @@ function data_thingspeak(){
 
 setInterval(data_thingspeak,randomValue);
 setInterval(eksekutor,100);
-
+setInterval(keterangan_air, 10000);
+    
+var sekali = 0;
 
 function eksekutor(){
+    if(sekali==0){
+        keterangan_air();
+        sekali = 1;
+    }
     var array_suhu = penampung_json_1.shu;
     var array_kelembapan = penampung_json_1.klb;
     var array_heat_index = penampung_json_1.dhi;
@@ -90,31 +96,23 @@ function eksekutor(){
     var array_angin = penampung_json_1.agn;
     const gaugesHTML_atas = `
         <div class="wrapper">
-        ${createGaugeCard('Suhu Atas', 'suhu_atas', 'crc_sha', '20', '40', 'red')}
-        ${createGaugeCard('Kelembapan Atas', 'kelembapan_atas', 'crc_kla', '0', '100', 'rgb(0, 218, 251)')}
-        ${createGaugeCard('Heat Index Atas', 'heat_index_atas', 'crc_hia', '100', '200', 'url(#GradientColor)')}
+        ${createGaugeCard('Suhu Atas', hpsnull(array_suhu[0]/10).toFixed(1), mapNilai(array_suhu[0]/10,20,40,42.7,-2), '20', '40', 'red')}
+        ${createGaugeCard('Kelembapan Atas', hpsnull(array_kelembapan[0]/10).toFixed(1), mapNilai(array_kelembapan[0]/10,0,100,42.7,-2), '0', '100', 'rgb(0, 218, 251)')}
+        ${createGaugeCard('Heat Index Atas', hpsnull(array_heat_index[0]/100).toFixed(2), mapNilai(array_heat_index[0]/100,100,200,42.7,-2), '100', '200', 'url(#GradientColor)')}
         </div>
     `;
     const gaugesHTML_luar = `
         <div class="wrapper">
-        ${createGaugeCard('Suhu Atas', 'suhu_luar', 'crc_shl', '20', '40', 'red')}
-        ${createGaugeCard('Kelembapan Atas', 'kelembapan_luar', 'crc_kll', '0', '100', 'rgb(0, 218, 251)')}
+        ${createGaugeCard('Suhu Atas', hpsnull(array_suhu[2]/10).toFixed(1), mapNilai(array_suhu[2]/10,20,40,42.7,-2), '20', '40', 'red')}
+        ${createGaugeCard('Kelembapan Atas', hpsnull(array_kelembapan[2]/10).toFixed(1), mapNilai(array_kelembapan[2]/10,0,100,42.7,-2), '0', '100', 'rgb(0, 218, 251)')}
         </div>
     `;
 
-    
-// Mengisi elemen dengan id "container_gauges" dengan HTML yang dihasilkan
     document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
     document.getElementById('container_gauges_kandang_luar').innerHTML = gaugesHTML_luar;
-    document.getElementById("suhu_atas").innerHTML = hpsnull(array_suhu[0]/10).toFixed(1);
-    document.getElementById("suhu_luar").innerHTML = hpsnull(array_suhu[2]/10).toFixed(1);
-    document.getElementById("kelembapan_atas").innerHTML = hpsnull(array_kelembapan[0]/10).toFixed(1);
-    document.getElementById("kelembapan_luar").innerHTML = hpsnull(array_kelembapan[2]/10).toFixed(1);
-    document.getElementById("heat_index_atas").innerHTML = hpsnull(array_heat_index[0]/100).toFixed(2);
-    //document.getElementById("heat_index_luar").innerHTML = hpsnull(array_heat_index[2]/100).toFixed(2);
     document.getElementById("kecepatan_angin_atas").innerHTML = hpsnull(array_angin[0]/100).toFixed(2);
-    document.getElementById("liter_air_atas").innerHTML = hpsnull(array_liter_air[0]).toFixed(0);
-    document.getElementById("persen_air_atas").innerHTML = hpsnull(array_liter_air[2]).toFixed(0);
+    document.getElementById("liter_air_atas").innerHTML = hpsnull(array_liter_air[0]/10).toFixed(0);
+    document.getElementById("persen_air_atas").innerHTML = hpsnull(array_liter_air[2]/100).toFixed(0);
     document.getElementById("volt").innerHTML = hpsnull(array_listrik[0]/100).toFixed(1);
     document.getElementById("amp").innerHTML = hpsnull(array_listrik[1]/100).toFixed(2);
     document.getElementById("power").innerHTML = hpsnull(array_listrik[2]/100).toFixed(1);
@@ -123,7 +121,6 @@ function eksekutor(){
     var loading_1 = document.getElementById("loading_1");
     loading_1.style.display = "none";
     updateTime();
-    animasi_gauge();
     animasi_kipas();
     animasi_bar();
     animasi_tombol();
@@ -138,24 +135,6 @@ function mapNilai(nilai, dariMin, dariMax, keMin, keMax) {
     return (nilai - dariMin) * (keMax - keMin) / (dariMax - dariMin) + keMin;
 }
 
-function animasi_gauge(){
-    var array_suhu = penampung_json_1.shu;
-    var array_kelembapan = penampung_json_1.klb;
-    var array_heat_index = penampung_json_1.dhi;
-    var cir1 = document.getElementById("crc_sha");
-    var cir2 = document.getElementById("crc_kla");
-    var cir3 = document.getElementById("crc_hia");
-    var crc_shl = document.getElementById("crc_shl");
-    var crc_kl = document.getElementById("crc_kll");
-    //var crc_hil = document.getElementById("crc_hil");
-    cir1.style.strokeDashoffset = mapNilai(array_suhu[0]/10,20,40,42.7,-2) + 'vw';
-    cir2.style.strokeDashoffset = mapNilai(array_kelembapan[0]/10,0,100,42.7,-2) + 'vw';
-    cir3.style.strokeDashoffset = mapNilai(array_heat_index[0]/100,100,200,42.7,-2) + 'vw';
-    crc_shl.style.strokeDashoffset = mapNilai(array_suhu[2]/10,20,40,42.7,-2) + 'vw';
-    crc_kl.style.strokeDashoffset = mapNilai(array_kelembapan[2]/10,0,100,42.7,-2) + 'vw';
-    //crc_hil.style.strokeDashoffset = mapNilai(array_heat_index[2]/100,100,200,42.7,-2) + 'vw';
-
-}
 
 var rpm_kps1 = document.getElementById('square1');
 var rpm_kps2 = document.getElementById('square2');
@@ -319,7 +298,7 @@ function animasi_tombol(){
 
 }
 
-function createGaugeCard(title, idSpan, idCircle, minLabel, maxLabel, color) {
+function createGaugeCard(title, value_gauge, idCircle, minLabel, maxLabel, color) {
     return `
         <div class="card_gauge">
             <div class="judul_widget">${title}</div>
@@ -327,18 +306,18 @@ function createGaugeCard(title, idSpan, idCircle, minLabel, maxLabel, color) {
                 <div class="outer">
                     <div class="inner">
                         <div id="number">
-                            <span class="keterangan widget1" id="${idSpan}"></span><span>${title.includes('Kelembapan') ? '%' : '°'}</span>
+                            <span class="keterangan widget1" >${value_gauge}</span><span>${title.includes('Kelembapan') ? '%' : '°'}</span>
                         </div>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="38vw" height="38vw">
                         <defs>
                         <linearGradient id="GradientColor">
                             <stop offset="0%" stop-color="#e91e63" />
-                            <stop offset="100%" stop-color="#673ab7" />
+                            <stop offset="100%" stop-color="#673ab7"/>
                         </linearGradient>
                         </defs>
                         <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke-dashoffset: -2vw;"/>
-                        <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke:${color};" id="${idCircle}"/>  
+                        <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke:${color};stroke-dashoffset: ${idCircle}vw"/>  
                     </svg>
                     <div class="ket_gauge_kiri">${minLabel}</div>
                     <div class="ket_gauge_kanan">${maxLabel}</div>
@@ -610,8 +589,8 @@ function gts(){
 
 
 var waktu_online2;
-var skr;
 var usia_ayam;
+var skr;
 var default_input = false;
     
 function updateTime() {
@@ -1170,4 +1149,42 @@ async function createPieChart() {
         myPieChart = new Chart(ctx, config);
     }
 }
+// Fungsi untuk menghindari nilai null atau undefined
+function hpsnull(value) {
+    return value ? value : 0;
+}
 
+// Fungsi utama untuk mengatur ketinggian air
+// Fungsi untuk menghindari nilai null atau undefined
+// Fungsi utama untuk mengatur ketinggian air dengan fluktuasi yang lebih halus
+function keterangan_air() {
+    var array_liter_air = penampung_json_1.air; // Mengambil data dari array
+    let persen_air = hpsnull(array_liter_air[2] / 100).toFixed(0); // Menghitung persen air
+
+    let baseLevel = parseInt(persen_air); // Mengatur level dasar air
+    let fluctuation = 0; // Variabel untuk fluktuasi
+    let direction = 1; // 1 untuk naik, -1 untuk turun
+    let smoothness = 0.05; // Mengatur kelancaran fluktuasi
+    let maxFluctuation = 2; // Batas fluktuasi ±5%
+
+    const waterElement = document.getElementById("water");
+
+    // Fungsi untuk mengupdate tinggi air dengan fluktuasi yang lebih halus
+    function updateWaterLevel() {
+        fluctuation += smoothness * direction;
+
+        // Membalikkan arah fluktuasi jika sudah mencapai batas ±5%
+        if (fluctuation >= maxFluctuation || fluctuation <= -maxFluctuation) {
+            direction *= -1;
+        }
+
+        // Mengatur ketinggian air berdasarkan base level dan fluktuasi
+        waterElement.style.height = `${baseLevel + fluctuation}%`;
+
+        // Memanggil animasi setiap frame untuk kelancaran
+        requestAnimationFrame(updateWaterLevel);
+    }
+
+    // Mulai animasi
+    updateWaterLevel();
+}
