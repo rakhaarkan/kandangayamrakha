@@ -1179,7 +1179,7 @@ function keterangan_air() {
         }
 
         // Mengatur ketinggian air berdasarkan base level dan fluktuasi
-        waterElement.style.height = `${baseLevel + fluctuation}%`;
+        waterElement.style.height = `${baseLevel + fluctuation - 10}%`;
 
         // Memanggil animasi setiap frame untuk kelancaran
         requestAnimationFrame(updateWaterLevel);
