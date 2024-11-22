@@ -79,7 +79,7 @@ function data_thingspeak(){
 
 setInterval(data_thingspeak,randomValue);
 setInterval(eksekutor,100);
-setInterval(keterangan_air, 10000);
+setInterval(keterangan_air, 8000);
     
 var sekali = 0;
 
@@ -249,6 +249,13 @@ function parseAndDisplay(input) {
             
                 case 6:                    
                     outputText = `Suhu < ${suhu_rendah}° = mode intermitten. kipas ${valueArray.join(', ')}`;
+                    break;
+                
+                case 7:
+                    const suhu = valueArray[0]/10;
+                    const kipas = valueArray.slice(1);
+                    outputText = `Suhu > ${suhu}° = kipas hidup ${kipas.length}, nomor ${kipas.join(', ')}`;
+                    cekrdh(suhu_rendah, suhu);
                     break;
                 
                 case 0:
@@ -1149,42 +1156,23 @@ async function createPieChart() {
         myPieChart = new Chart(ctx, config);
     }
 }
-// Fungsi untuk menghindari nilai null atau undefined
-function hpsnull(value) {
-    return value ? value : 0;
-}
 
-// Fungsi utama untuk mengatur ketinggian air
-// Fungsi untuk menghindari nilai null atau undefined
-// Fungsi utama untuk mengatur ketinggian air dengan fluktuasi yang lebih halus
 function keterangan_air() {
-    var array_liter_air = penampung_json_1.air; // Mengambil data dari array
-    let persen_air = hpsnull(array_liter_air[2] / 100).toFixed(0); // Menghitung persen air
-
-    let baseLevel = parseInt(persen_air); // Mengatur level dasar air
-    let fluctuation = 0; // Variabel untuk fluktuasi
-    let direction = 1; // 1 untuk naik, -1 untuk turun
-    let smoothness = 0.05; // Mengatur kelancaran fluktuasi
-    let maxFluctuation = 2; // Batas fluktuasi ±5%
-
+    var array_liter_air = penampung_json_1.air;
+    let persen_air = hpsnull(array_liter_air[2] / 100).toFixed(0);
+    let baseLevel = parseInt(persen_air);
+    let fluctuation = 0;
+    let direction = 1;
+    let smoothness = 0.05;
+    let maxFluctuation = 2;
     const waterElement = document.getElementById("water");
-
-    // Fungsi untuk mengupdate tinggi air dengan fluktuasi yang lebih halus
     function updateWaterLevel() {
         fluctuation += smoothness * direction;
-
-        // Membalikkan arah fluktuasi jika sudah mencapai batas ±5%
         if (fluctuation >= maxFluctuation || fluctuation <= -maxFluctuation) {
             direction *= -1;
         }
-
-        // Mengatur ketinggian air berdasarkan base level dan fluktuasi
-        waterElement.style.height = `${baseLevel + fluctuation - 5}%`;
-
-        // Memanggil animasi setiap frame untuk kelancaran
+        waterElement.style.height = `${baseLevel + fluctuation}%`;
         requestAnimationFrame(updateWaterLevel);
     }
-
-    // Mulai animasi
     updateWaterLevel();
 }
