@@ -108,16 +108,22 @@ function eksekutor(){
         </div>
     `;
 
+    const volt = hpsnull(array_listrik[0]/100).toFixed(1);
+    const amp = (hpsnull(array_listrik[1]/100)*hpsnull(array_listrik[5]/100)).toFixed(2);
+    const power = hpsnull(array_listrik[2]/100).toFixed(1);
+    const energy = hpsnull(array_listrik[2]/100).toFixed(1);
+    const freq = hpsnull(array_listrik[4]/100).toFixed(1);
+
     document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
     document.getElementById('container_gauges_kandang_luar').innerHTML = gaugesHTML_luar;
     document.getElementById("kecepatan_angin_atas").innerHTML = hpsnull(array_angin[0]/100).toFixed(2);
     document.getElementById("liter_air_atas").innerHTML = hpsnull(array_liter_air[0]/10).toFixed(0);
     document.getElementById("persen_air_atas").innerHTML = hpsnull(array_liter_air[2]/100).toFixed(0);
-    document.getElementById("volt").innerHTML = hpsnull(array_listrik[0]/100).toFixed(1);
-    document.getElementById("amp").innerHTML = hpsnull(array_listrik[1]/100).toFixed(2);
-    document.getElementById("power").innerHTML = hpsnull(array_listrik[2]/100).toFixed(1);
-    document.getElementById("energy").innerHTML = hpsnull(array_listrik[3]/100).toFixed(2);
-    document.getElementById("freq").innerHTML = hpsnull(array_listrik[4]/100).toFixed(1);
+    document.getElementById("volt").innerHTML = volt;
+    document.getElementById("amp").innerHTML = amp;
+    document.getElementById("power").innerHTML = power;
+    document.getElementById("energy").innerHTML = energy;
+    document.getElementById("freq").innerHTML = freq;
     var loading_1 = document.getElementById("loading_1");
     loading_1.style.display = "none";
     updateTime();
