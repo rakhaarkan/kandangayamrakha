@@ -798,14 +798,15 @@ function setDefaultValue() {
     // Mengatur nilai default menggunakan JavaScript
     const retrievedVar = getCookie("owner")
     if(retrievedVar == 1){
+        var array_kipas_pusat = penampung_json_4.mtd;
         hidden_calculator.style.display = "block";
         document.getElementById('input_kalkulator_1').value = usia_ayam;
-        document.getElementById('input_kalkulator_2').value = 5000;
-        document.getElementById('input_kalkulator_3').value = 180;
-        document.getElementById('input_kalkulator_6').value = 20200;
-        document.getElementById('input_kalkulator_7').value = 7700;
-        document.getElementById('input_kalkulator_8').value = 2500000;
-        document.getElementById('input_kalkulator_9').value = 9100;  
+        document.getElementById('input_kalkulator_2').value = array_kipas_pusat[1];
+        document.getElementById('input_kalkulator_3').value = array_kipas_pusat[3];
+        document.getElementById('input_kalkulator_6').value = array_kipas_pusat[6];
+        document.getElementById('input_kalkulator_7').value = array_kipas_pusat[4];
+        document.getElementById('input_kalkulator_8').value = array_kipas_pusat[2];
+        document.getElementById('input_kalkulator_9').value = array_kipas_pusat[0];
         createPieChart();  
     }else{
 
