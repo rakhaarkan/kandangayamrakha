@@ -103,8 +103,8 @@ function eksekutor(){
     `;
     const gaugesHTML_luar = `
         <div class="wrapper">
-        ${createGaugeCard('Suhu Atas', hpsnull(array_suhu[2]/10).toFixed(1), mapNilai(array_suhu[2]/10,20,40,42.7,-2), '20', '40', 'red')}
-        ${createGaugeCard('Kelembapan Atas', hpsnull(array_kelembapan[2]/10).toFixed(1), mapNilai(array_kelembapan[2]/10,0,100,42.7,-2), '0', '100', 'rgb(0, 218, 251)')}
+        ${createGaugeCard('Suhu Luar', hpsnull(array_suhu[2]/10).toFixed(1), mapNilai(array_suhu[2]/10,20,40,42.7,-2), '20', '40', 'red')}
+        ${createGaugeCard('Kelembapan Luar', hpsnull(array_kelembapan[2]/10).toFixed(1), mapNilai(array_kelembapan[2]/10,0,100,42.7,-2), '0', '100', 'rgb(0, 218, 251)')}
         </div>
     `;
 
