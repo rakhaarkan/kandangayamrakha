@@ -111,7 +111,7 @@ function eksekutor(){
     const volt = hpsnull(array_listrik[0]/100).toFixed(1);
     const amp = (hpsnull(array_listrik[1]/100)*hpsnull(array_listrik[5]/100)).toFixed(2);
     const power = hpsnull(array_listrik[2]/100).toFixed(1);
-    const energy = hpsnull(array_listrik[2]/100).toFixed(1);
+    const energy = hpsnull(array_listrik[3]/100).toFixed(1);
     const freq = hpsnull(array_listrik[4]/100).toFixed(1);
 
     document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
