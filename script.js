@@ -774,7 +774,7 @@ function kalkulator(){
     var ip = ((persen_ayam_hidup*calc_bobot_rata)/(fcr*calc_usia_ayam)*100).toFixed(0);
     var deplesi = (100 - persen_ayam_hidup).toFixed(1);
     var perkiraan_pendapatan = (calc_bobot_rata * ayam_tersisa * calc_harga_kontrak_ayam)-(calc_harga_bibit * calc_ayam_awal) - (calc_harga_obat_dll) - (calc_harga_pakan_per_kilo * jumlah_pakan);
-    var perkiraan_keuntungan_per_ekor = perkiraan_pendapatan/calc_ayam_awal;
+    var perkiraan_keuntungan_per_ekor = (perkiraan_pendapatan/calc_ayam_awal).toFixed(0);
     var keterangan = '';
     sisa_ayam_hidup = ayam_tersisa-total_ayam_dipanen;
     if(((calc_usia_ayam<7)&&(fcr < 1))||(ip > 550)||(perkiraan_pendapatan > calc_ayam_awal*8000)||(deplesi > 100)){
@@ -803,6 +803,7 @@ function setDefaultValue() {
         document.getElementById('input_kalkulator_1').value = usia_ayam;
         document.getElementById('input_kalkulator_2').value = array_kipas_pusat[1];
         document.getElementById('input_kalkulator_3').value = array_kipas_pusat[3];
+        document.getElementById('input_kalkulator_4').value = array_kipas_pusat[5];
         document.getElementById('input_kalkulator_6').value = array_kipas_pusat[6];
         document.getElementById('input_kalkulator_7').value = array_kipas_pusat[4];
         document.getElementById('input_kalkulator_8').value = array_kipas_pusat[2];
