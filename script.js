@@ -1037,7 +1037,7 @@ async function fetchData() {
                             nama_bakul: capitalizeWords(nama_bakul),
                             plat_nomor: plat_nomor,
                             jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),  // Pastikan data yang dikirim adalah angka
-                            jumlah_kg_ambil: parseInt(jumlah_kg_ambil),      // Pastikan data yang dikirim adalah angka
+                            jumlah_kg_ambil: parseFloat(jumlah_kg_ambil),      // Pastikan data yang dikirim adalah angka
                             id: item.id,
                             nama_do: capitalizeWords(nama_do)
                         };
@@ -1095,7 +1095,8 @@ async function fetchData() {
     }
 // Variabel global untuk menyimpan instance chart
 let myPieChart;
-
+var first_total_bobot = 0;
+    
 async function createPieChart() {
      const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData');
     const result = await response.json();
@@ -1105,13 +1106,12 @@ async function createPieChart() {
         console.error("Data kosong");
         //return;
     }
-
     const Data_kalkulasi_panen = {
         d1: { label: 'Ayam tersisa saat ini ', value: `${sisa_ayam_hidup+' Ekor'}` },
         d2: { label: 'Total bobot dipanen   ', value: `${total_kg_diambil+' Kg'}` },
         d3: { label: 'Kerataan bobot panen', value: `${(total_kg_diambil/total_ayam_dipanen).toFixed(2)+' Kg'}` },
+        
     };
-    
     // Mengisi elemen dengan id "output_group_container" dengan HTML yang dihasilkan
     document.getElementById('data_calc_total').innerHTML = createOutputTable(Data_kalkulasi_panen,8);
 
