@@ -1112,6 +1112,13 @@ async function createPieChart() {
         d3: { label: 'Kerataan bobot panen', value: `${(total_kg_diambil/total_ayam_dipanen).toFixed(2)+' Kg'}` },
         
     };
+    if(first_total_bobot==0){
+        var hsl_rtrt = (total_kg_diambil/total_ayam_dipanen).toFixed(2);
+        if(hsl_rtrt>0){
+            document.getElementById('input_kalkulator_5').value = (total_kg_diambil/total_ayam_dipanen).toFixed(2);
+        }
+        first_total_bobot=1;
+    }
     // Mengisi elemen dengan id "output_group_container" dengan HTML yang dihasilkan
     document.getElementById('data_calc_total').innerHTML = createOutputTable(Data_kalkulasi_panen,8);
 
