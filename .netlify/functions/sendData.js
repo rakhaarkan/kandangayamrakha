@@ -23,7 +23,7 @@ exports.handler = async function (event, context) {
   try {
     const client = await pool.connect();
     const body = JSON.parse(event.body);
-    const { action, tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, id, nama_do} = body;
+    const { action, tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, id } = body;
     
     console.log('Action yang diterima:', action);
     let query, result;
@@ -31,10 +31,10 @@ exports.handler = async function (event, context) {
     // Cek jenis perintah SQL berdasarkan action
     if (action === 'insert') {
       query = `
-        INSERT INTO data_bakul (tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, nama_do)
-        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
+        INSERT INTO data_bakul (tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil)
+        VALUES ($1, $2, $3, $4, $5) RETURNING *;
       `;
-        result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, nama_do]);
+        result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil]);
     } else if (action === 'delete') {
         query = `DELETE FROM data_bakul WHERE id = $1 RETURNING *;`;
         result = await client.query(query, [id]);
@@ -44,11 +44,11 @@ exports.handler = async function (event, context) {
     } else if (action === 'edit') {
         query = `
         UPDATE data_bakul 
-        SET tanggal = $1, nama_bakul = $2, plat_nomor = $3, jumlah_ekor_ambil = $4, jumlah_kg_ambil = $5, nama_do = $7 
+        SET tanggal = $1, nama_bakul = $2, plat_nomor = $3, jumlah_ekor_ambil = $4, jumlah_kg_ambil = $5 
         WHERE id = $6 
         RETURNING *;
         `;
-        result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, id, nama_do]);
+        result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, id]);
     } else {
         throw new Error('Unsupported action');
     }
