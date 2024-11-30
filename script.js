@@ -914,11 +914,11 @@ submitButton.onclick = function() {
         const testData = {
             action: 'insert',
             tanggal: tanggal,
-            nama_bakul: nama_bakul,
-            plat_nomor: plat_nomor,
+            nama_bakul: capitalizeWords(nama_bakul),
+            plat_nomor: capitalizeWords(plat_nomor),
             jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),  // Pastikan data yang dikirim adalah angka
             jumlah_kg_ambil: parseFloat(jumlah_kg_ambil), 
-            nama_do: nama_do     
+            nama_do: capitalizeWords(nama_do)     
         };
         postData(testData)
         modal.style.display = "none";            
@@ -1034,12 +1034,12 @@ async function fetchData() {
                         const testData = {
                             action: 'edit',
                             tanggal: tanggal,
-                            nama_bakul: nama_bakul,
+                            nama_bakul: capitalizeWords(nama_bakul),
                             plat_nomor: plat_nomor,
                             jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),  // Pastikan data yang dikirim adalah angka
                             jumlah_kg_ambil: parseInt(jumlah_kg_ambil),      // Pastikan data yang dikirim adalah angka
                             id: item.id,
-                            nama_do: nama_do
+                            nama_do: capitalizeWords(nama_do)
                         };
                         postData(testData)
                         modal.style.display = "none";            
@@ -1199,4 +1199,12 @@ function keterangan_air() {
         requestAnimationFrame(updateWaterLevel);
     }
     updateWaterLevel();
+}
+
+function capitalizeWords(text) {
+    return text
+        .toLowerCase() // Mengubah seluruh teks menjadi huruf kecil terlebih dahulu
+        .split(' ')    // Memisahkan teks berdasarkan spasi
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Kapitalisasi huruf pertama setiap kata
+        .join(' ');    // Menggabungkan kembali teks menjadi satu string
 }
