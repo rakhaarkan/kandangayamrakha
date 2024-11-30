@@ -96,17 +96,18 @@ function eksekutor(){
     var array_angin = penampung_json_1.agn;
     const gaugesHTML_atas = `
         <div class="wrapper">
-        ${createGaugeCard('Suhu Atas', hpsnull(array_suhu[0]/10).toFixed(1), mapNilai(array_suhu[0]/10,20,40,42.7,-2), '20', '40', 'red')}
-        ${createGaugeCard('Kelembapan Atas', hpsnull(array_kelembapan[0]/10).toFixed(1), mapNilai(array_kelembapan[0]/10,0,100,42.7,-2), '0', '100', 'rgb(0, 218, 251)')}
-        ${createGaugeCard('Heat Index Atas', hpsnull(array_heat_index[0]/100).toFixed(2), mapNilai(array_heat_index[0]/100,100,200,42.7,-2), '100', '200', 'url(#GradientColor)')}
+        ${createGaugeCard('Suhu Atas', hpsnull(array_suhu[0]/10).toFixed(1), 40, '20', '40', 'red')}
+        ${createGaugeCard('Kelembapan Atas', hpsnull(array_kelembapan[0]/10).toFixed(1),40, '0', '100', 'rgb(0, 218, 251)')}
+        ${createGaugeCard('Heat Index Atas', hpsnull(array_heat_index[0]/100).toFixed(2),40, '100', '200', 'url(#GradientColor)')}
         </div>
     `;
     const gaugesHTML_luar = `
         <div class="wrapper">
-        ${createGaugeCard('Suhu Luar', hpsnull(array_suhu[2]/10).toFixed(1), mapNilai(array_suhu[2]/10,20,40,42.7,-2), '20', '40', 'red')}
-        ${createGaugeCard('Kelembapan Luar', hpsnull(array_kelembapan[2]/10).toFixed(1), mapNilai(array_kelembapan[2]/10,0,100,42.7,-2), '0', '100', 'rgb(0, 218, 251)')}
+        ${createGaugeCard('Suhu Luar', hpsnull(array_suhu[2]/10).toFixed(1), 40, '20', '40', 'red')}
+        ${createGaugeCard('Kelembapan Luar', hpsnull(array_kelembapan[2]/10).toFixed(1), 40, '0', '100', 'rgb(0, 218, 251)')}
         </div>
     `;
+    const gaugesha = createGaugeCard('Suhu Atas', hpsnull(array_suhu[0]/10).toFixed(1), 50, '20', '40', 'red');
 
     const volt = hpsnull(array_listrik[0]/100).toFixed(1);
     const amp = (hpsnull(array_listrik[1]/100)*hpsnull(array_listrik[5]/100)).toFixed(2);
@@ -116,6 +117,7 @@ function eksekutor(){
 
     document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
     document.getElementById('container_gauges_kandang_luar').innerHTML = gaugesHTML_luar;
+    //document.getElementById('gaugesha').innerHTML = gaugesha;
     document.getElementById("kecepatan_angin_atas").innerHTML = hpsnull(array_angin[0]/100).toFixed(2);
     document.getElementById("liter_air_atas").innerHTML = hpsnull(array_liter_air[0]/10).toFixed(0);
     document.getElementById("persen_air_atas").innerHTML = hpsnull(array_liter_air[2]/100).toFixed(0);
@@ -311,26 +313,33 @@ function animasi_tombol(){
 
 }
 
-function createGaugeCard(title, value_gauge, idCircle, minLabel, maxLabel, color) {
+function createGaugeCard(title, value_gauge, ukuran_1, minLabel, maxLabel, color, size = 10) {
+    var ukuran_2 = (-0.1 * ukuran_1 ** 2) + (14 * ukuran_1) - 150;;
+    var lingkar_gauge = mapNilai(value_gauge, minLabel, maxLabel, ukuran_2, ukuran_2*0.25);
+    
     return `
-        <div class="card_gauge">
+        <div class="card_gauge" style="grid-template-rows: 1fr auto; gap: 1em;">
             <div class="judul_widget">${title}</div>
-            <div class="skill">
-                <div class="outer">
+            <div class="skill" style="width: calc(20vw*var(--rasio-gauge));height: calc(20vw*var(--rasio-gauge));">
+                <div class="outer" style="width: 100%; height: 100%;">
                     <div class="inner">
                         <div id="number">
-                            <span class="keterangan widget1" >${value_gauge}</span><span>${title.includes('Kelembapan') ? '%' : '°'}</span>
+                            <span class="keterangan widget1">${value_gauge}</span>
+                            <span>${title.includes('Kelembapan') ? '%' : '°'}</span>
                         </div>
                     </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="38vw" height="38vw">
+                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" 
+                         viewBox="0 0 100 100" style="width: 100%; height: 100%;">
                         <defs>
-                        <linearGradient id="GradientColor">
-                            <stop offset="0%" stop-color="#e91e63" />
-                            <stop offset="100%" stop-color="#673ab7"/>
-                        </linearGradient>
+                            <linearGradient id="GradientColor">
+                                <stop offset="0%" stop-color="#e91e63" />
+                                <stop offset="100%" stop-color="#673ab7"/>
+                            </linearGradient>
                         </defs>
-                        <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke-dashoffset: -2vw;"/>
-                        <circle cx="12.2vw" cy="12.2vw" r="9.7vw" stroke-linecap="round" style="stroke:${color};stroke-dashoffset: ${idCircle}vw"/>  
+                        <circle cx="50" cy="50" r="${ukuran_1}" stroke-linecap="round" 
+                                style="stroke-dasharray: ${ukuran_2}; stroke-dashoffset: calc(0.25*${ukuran_2});"/>
+                        <circle cx="50" cy="50" r="${ukuran_1}" stroke-linecap="round" 
+                                style="stroke:${color}; stroke-dasharray: ${ukuran_2}; stroke-dashoffset: calc(${lingkar_gauge});"/>  
                     </svg>
                     <div class="ket_gauge_kiri">${minLabel}</div>
                     <div class="ket_gauge_kanan">${maxLabel}</div>
@@ -339,6 +348,7 @@ function createGaugeCard(title, value_gauge, idCircle, minLabel, maxLabel, color
         </div>
     `;
 }
+
 
 function createOutputTable(data,padding) {
     // Memulai dengan elemen pembuka tabel
@@ -750,6 +760,7 @@ var calc_ayam_awal;
 var calc_ayam_mati;
 var sisa_ayam_hidup;
 var cmt; 
+
 function kalkulator(){
     var calc_usia_ayam = document.getElementById('input_kalkulator_1').value;
     calc_ayam_awal = document.getElementById('input_kalkulator_2').value;
@@ -879,7 +890,7 @@ window.onclick = function(event) {
 
 
 function validateInput() {
-    if (!tanggal || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
+    if (!tanggal || !nama_do || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
         alert("Semua kolom harus diisi!");
         return false; // Menghentikan pengiriman data jika ada input yang kosong
     }
@@ -891,11 +902,12 @@ function validateInput() {
 // Fungsi untuk mengumpulkan dan menyimpan data
 submitButton.onclick = function() {
     var tanggal = document.getElementById("tanggal").value;
+    var nama_do = document.getElementById("nama_do").value;
     var nama_bakul = document.getElementById("nama_bakul").value;
     var plat_nomor = document.getElementById("plat_nomor").value;
     var jumlah_ekor_ambil = document.getElementById("jumlah_ekor_ambil").value;
     var jumlah_kg_ambil = document.getElementById("jumlah_kg_ambil").value;
-    if (!tanggal || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
+    if (!tanggal || !nama_do || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
         alert("Semua kolom harus diisi!");
         //return false; // Menghentikan pengiriman data jika ada input yang kosong
     }else{
@@ -905,7 +917,8 @@ submitButton.onclick = function() {
             nama_bakul: nama_bakul,
             plat_nomor: plat_nomor,
             jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),  // Pastikan data yang dikirim adalah angka
-            jumlah_kg_ambil: parseInt(jumlah_kg_ambil),      // Pastikan data yang dikirim adalah angka
+            jumlah_kg_ambil: parseFloat(jumlah_kg_ambil), 
+            nama_do: nama_do     
         };
         postData(testData)
         modal.style.display = "none";            
@@ -946,8 +959,8 @@ async function fetchData() {
             resultItem.innerHTML = `
             <table style="width: 100%; border-collapse: collapse;">
                 <tr>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Nama Bakul</strong></td>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.nama_bakul}</td>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Nama DO/Bakul</strong></td>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.nama_do+"/"+item.nama_bakul}</td>
                 </tr>
                 <tr>
                     <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Tanggal</strong></td>
@@ -1000,6 +1013,7 @@ async function fetchData() {
             editButton.onclick = function() {
                 modal.style.display = "block";
                 document.getElementById("tanggal").value = item.tanggal.split('T')[0];
+                document.getElementById("nama_do").value = item.nama_do;
                 document.getElementById("nama_bakul").value = item.nama_bakul;
                 document.getElementById("plat_nomor").value = item.plat_nomor;
                 document.getElementById("jumlah_ekor_ambil").value = item.jumlah_ekor_ambil;
@@ -1008,11 +1022,12 @@ async function fetchData() {
                 submitButton.onclick = function() {
                      
                     var tanggal = document.getElementById("tanggal").value;
+                    var nama_do = document.getElementById("nama_do").value;
                     var nama_bakul = document.getElementById("nama_bakul").value;
                     var plat_nomor = document.getElementById("plat_nomor").value;
                     var jumlah_ekor_ambil = document.getElementById("jumlah_ekor_ambil").value;
                     var jumlah_kg_ambil = document.getElementById("jumlah_kg_ambil").value;
-                    if (!tanggal || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
+                    if (!tanggal || !nama_do || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
                         alert("Semua kolom harus diisi!");
                         //return false; // Menghentikan pengiriman data jika ada input yang kosong
                     }else{
@@ -1023,7 +1038,8 @@ async function fetchData() {
                             plat_nomor: plat_nomor,
                             jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),  // Pastikan data yang dikirim adalah angka
                             jumlah_kg_ambil: parseInt(jumlah_kg_ambil),      // Pastikan data yang dikirim adalah angka
-                            id: item.id
+                            id: item.id,
+                            nama_do: nama_do
                         };
                         postData(testData)
                         modal.style.display = "none";            

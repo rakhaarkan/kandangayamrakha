@@ -6,6 +6,152 @@
     font-style: normal;
 }
 
+.header_judul{
+    grid-area: header;
+}
+.gauge_sha{
+    grid-area: gaugesha;
+}
+.gauge_kla{
+    grid-area: gaugekla;
+}
+.gauge_hia{
+    grid-area: gaugehia;
+}
+.gauge_shl{
+    grid-area: gaugeshl;
+}
+.gauge_kll{
+    grid-area: gaugekll;
+}
+.card_usia{
+    grid-area: cardusia;
+}
+.kontainer{
+    grid-area: kontainer;
+}
+.grafik_1{
+    grid-area: grafik1;
+}
+.judul_header1{
+    grid-area: judul_head1;
+}
+.judul_header2{
+    grid-area: judul_head2;
+}
+.kipas_0{
+    grid-area: kipas_0;
+}
+
+.menu {
+    grid-area: menu;
+    background: lightcoral;
+}
+
+.content {
+    grid-area: content;
+    background: lightgreen;
+}
+
+.sidebar {
+    grid-area: sidebar;
+    background: lightgoldenrodyellow;
+}
+
+.footer {
+    grid-area: footer;
+    background: lightgray;
+}
+
+.grid-container{
+    display: grid;
+    grid-template-areas:
+        "header";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 10px;
+}
+
+.grid-card_header{
+    height: auto;
+    padding: 1%;
+    background-color: white;
+    color: white;
+    margin: 0% 0% 2% 0%;
+    box-shadow: 0vw 0vw 5vw 0vw rgba(0, 0, 0, 0.3); 
+    display: grid;
+    grid-template-columns: 40% 20% 40%;
+    padding-left: 5%;
+    
+}
+
+.grid-judul_header{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+        "judul_head1 judul_head1 judul_head1 judul_head1"
+        "judul_head2 judul_head2 judul_head2 kipas_0"
+    }
+
+@media (min-width: 500px) {
+    .grid-container {
+        grid-template-areas:
+            "header header"
+            "menu content"
+            "sidebar content"
+            "footer footer";
+        grid-template-columns: 1fr 2fr;
+    }
+    .grid-card_header{
+        height: 10vh;
+    }
+}
+
+/* Desktop (min-width: 1024px) */
+
+.tx1{
+    font-size: 2rem;
+    color: black;
+}
+.tx2{
+    font-size: 1.6rem;
+    color: black;
+}
+.tx3{
+    font-size: 1.2rem;
+    color: black;
+}
+.tx4{
+    font-size: 0.8rem;
+    color: black;
+}
+.tx5{
+    font-size: 0.4rem;
+    color: black;
+}
+.tx6{
+    font-size: 2rem;
+    color: black;
+}
+.tx7{
+    font-size: 1.6rem;
+    color: black;
+}
+.tx8{
+    font-size: 0.6rem;
+    color: black;
+}
+.tx9{
+    font-size: 0.4rem;
+    color: black;
+}
+.tx10{
+    font-size: 0.2rem;
+    color: black;
+}
+
+
 .txt1{
     font-size: 4.2vw;
 }
@@ -53,13 +199,7 @@
 }
 
 .header_container{
-    width: 100%;
-    height: auto;
-    padding: 1%;
-    background-color: white;
-    color: white;
-    margin: 0% 0% 2% 0%;
-    box-shadow: 0vw 0vw 5vw 0vw rgba(0, 0, 0, 0.3); 
+    
 }
 
 .header_wrapper{
@@ -83,10 +223,10 @@
 
 .indikator_online{
     position: absolute;
-    top: 2.5vw;
-    left: 94vw;
-    width: 5vw;
-    height: 5vw;
+    top: 0.4rem;
+    right: 0.4rem;
+    width: 1.2rem;
+    height: 1.2rem;
     background-color: rgb(59, 225, 89);    
     border: black solid 0vw;
     border-radius: 10%;
@@ -155,8 +295,6 @@
 }
 
 .skill{
-    width: calc(20vw*var(--rasio-gauge));
-    height: calc(20vw*var(--rasio-gauge));
     /*border: 1px solid black;
     /*background: cornflowerblue;*/
     margin: calc(1vw*var(--rasio-gauge)) calc(0vw*var(--rasio-gauge)) calc(10vw*var(--rasio-gauge)) calc(2vw*var(--rasio-gauge));
@@ -190,15 +328,17 @@
 circle{
     fill: none;
     stroke: rgb(220, 220, 220);
-    stroke-width: calc(1.7vw*var(--rasio-gauge));
+    stroke-width: calc(8%);
     stroke-dasharray: calc(39vw*var(--rasio-gauge));
     stroke-dashoffset: calc(39vw*var(--rasio-gauge));
 }
 
 svg{
+    width: 100%;
+    height: 100%;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 7%;
+    left: 7%;
 }
 
 .ket_gauge_kiri{
@@ -310,10 +450,10 @@ svg{
 }
 
 .kipas0 {
-    width: 6vw;
-    height: 6vw;
-    top: 27%;
-    left: 13%;
+    width: 1.5rem;
+    height: 1.5rem;
+    top: 50%;
+    left: 0%;
     position: relative;
     background-image: url(https://www.svgrepo.com/show/126808/propeller.svg);
     background-size: cover;

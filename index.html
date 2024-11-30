@@ -12,27 +12,43 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 </head>
 <body>
-    <div class="header_container">
-        <div class="header_wrapper">
-            <div class="header_card txt1" style="width:40vw;">
-                <h1>Kandang</h1>
-                <h1>Ayam</h1>
-                <div class="kipas0"></div>
+    <div class="grid-container">
+        <div class="grid-card_header header_judul">
+            <div class="grid-judul_header tx2">
+                <div class="judul_header1">Kandang</div>
+                <div class="judul_header2" style="display: grid;">Ayam</div>
+                <div class="kipas_0">
+                    <div class="kipas0"></div>
+                </div>
             </div>
-            <div class="header_card txt1" style="width:20vw;"></div>
-            <div class="header_card txt3" style="margin-top: 5vw;justify-content: left;">
-                <div class=""></div>
-                <h5>terakhir diperbarui:</h5>
-                <p><span class="txt2" id="current-date"></span></p>
-                <p><span class="txt2" id="current-time"></span></p>
-            </div>
-            <div class="header_card txt1" style="width:5vw;">
-                <div class="indikator_online" id="ind_online">
-                    <div id="data-container" class="txt2" style="margin-top: 0.3vw;"></div>
+            <div></div>
+            <div class="header_container">
+                <div class="header_wrapper">
+                    <div class="header_card tx5" style="margin-top: 5%;vw;justify-content: left;">
+                        <div class=""></div>
+                        <span>terakhir diperbarui:</span>
+                        <p><span class="tx4" id="current-date"></span></p>
+                        <p><span class="tx4" id="current-time"></span></p>
+                    </div>
+                    <div class="header_card tx1" style="width:5vw;">
+                        <div class="indikator_online" id="ind_online">
+                            <div id="data-container" class="tx4" style="margin-top: 0.3vw;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <!--<div class="gauge_sha" id="gaugesha">gauge_sha</div>
+        <div class="gauge_kla">gauge_kla</div>
+        <div class="gauge_hia">gauge_hia</div>
+        <div class="gauge_shl">gauge_shl</div>
+        <div class="gauge_kll">gauge_kll</div>
+    <div class="menu">Menu</div>
+    <div class="content">Content</div>
+    <div class="sidebar">Sidebar</div>
+    <div class="footer">Footer</div>-->
     </div>
+    
     <div class="container txt2">
         <h3>Kandang Ayam Atas</h3>
         <div id="container_gauges_kandang_atas"></div>
@@ -261,6 +277,10 @@
                         <div class="input-group">
                             <label for="tanggal">Tanggal</label>
                             <input type="date" id="tanggal" placeholder="">
+                        </div>
+                        <div class="input-group">
+                            <label for="nama_do">Nama DO</label>
+                            <input type="text" id="nama_do" placeholder="">
                         </div>
                         <div class="input-group">
                             <label for="nama_bakul">Nama Bakul</label>
