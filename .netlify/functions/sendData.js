@@ -31,7 +31,7 @@ exports.handler = async function (event, context) {
     // Cek jenis perintah SQL berdasarkan action
     if (action === 'insert') {
       query = `
-        INSERT INTO data_bakul (tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, nama_do: body.nama_do || '')
+        INSERT INTO data_bakul (tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, nama_do)
         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
       `;
         result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, nama_do]);
