@@ -63,6 +63,10 @@
     background: lightgray;
 }
 
+.grid{
+    display: grid;
+}
+
 .grid-container{
     display: grid;
     grid-template-areas:
@@ -73,25 +77,25 @@
 }
 
 .grid-card_header{
-    height: auto;
-    padding: 1%;
+    height: 5rem;
+    padding: 0.3rem;
     background-color: white;
     color: white;
-    margin: 0% 0% 2% 0%;
-    box-shadow: 0vw 0vw 5vw 0vw rgba(0, 0, 0, 0.3); 
+    padding-bottom: 1rem;
+    margin-bottom: 2%;
+    box-shadow: 0rem 0rem 1.5rem 0rem rgba(0, 0, 0, 0.3); 
     display: grid;
-    grid-template-columns: 40% 20% 40%;
-    padding-left: 5%;
+    grid-template-columns: 1rem 7rem 1fr 8rem 0.5rem;
     
 }
 
 .grid-judul_header{
     display: grid;
-    grid-template-columns: repeat(4,1fr);
+    grid-template-columns: 1fr;
     grid-template-rows: 1fr 1fr;
     grid-template-areas:
-        "judul_head1 judul_head1 judul_head1 judul_head1"
-        "judul_head2 judul_head2 judul_head2 kipas_0"
+        "judul_head1"
+        "judul_head2"
     }
 
 @media (min-width: 500px) {
@@ -453,7 +457,7 @@ svg{
     width: 1.5rem;
     height: 1.5rem;
     top: 50%;
-    left: 0%;
+    left: 50%;
     position: relative;
     background-image: url(https://www.svgrepo.com/show/126808/propeller.svg);
     background-size: cover;

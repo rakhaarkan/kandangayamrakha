@@ -222,62 +222,63 @@ function parseAndDisplay(input) {
         div.innerHTML = "Pengaturan automatis kipas hari ini :";
         detailKipas.appendChild(div);
         const parts = input.split('|');
+        if(input!="---"){
+            parts.forEach(part => {
+                const [mode, values] = part.split(':');
+                const valueArray = values.split(',');
 
-        parts.forEach(part => {
-            const [mode, values] = part.split(':');
-            const valueArray = values.split(',');
+                let outputText = '';
 
-            let outputText = '';
-
-            switch (parseInt(mode, 10)) {
-                case 1:
-                    outputText = `Suhu > ${shmin}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
-                    cekrdh(suhu_rendah,shmin);
-                    break;
-                
-                case 2:
-                    outputText = `Suhu > ${sb_min}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
-                    cekrdh(suhu_rendah,sb_min);
-                    break;
-                
-                case 3:
-                    outputText = `Suhu > ${trgtsh}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
-                    cekrdh(suhu_rendah,trgtsh);
-                    break;
-                
-                case 4:
-                    outputText = `Suhu > ${sb_max}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
-                    cekrdh(suhu_rendah,sb_max);
-                    break;
-        
-                case 5:                    
-                    outputText = `Suhu > ${shmax}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
-                    cekrdh(suhu_rendah,shmax);
-                    break;
+                switch (parseInt(mode, 10)) {
+                    case 1:
+                        outputText = `Suhu > ${shmin}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                        cekrdh(suhu_rendah,shmin);
+                        break;
+                    
+                    case 2:
+                        outputText = `Suhu > ${sb_min}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                        cekrdh(suhu_rendah,sb_min);
+                        break;
+                    
+                    case 3:
+                        outputText = `Suhu > ${trgtsh}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                        cekrdh(suhu_rendah,trgtsh);
+                        break;
+                    
+                    case 4:
+                        outputText = `Suhu > ${sb_max}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                        cekrdh(suhu_rendah,sb_max);
+                        break;
             
-                case 6:                    
-                    outputText = `Suhu < ${suhu_rendah}° = mode intermitten. kipas ${valueArray.join(', ')}`;
-                    break;
+                    case 5:                    
+                        outputText = `Suhu > ${shmax}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                        cekrdh(suhu_rendah,shmax);
+                        break;
                 
-                case 7:
-                    const suhu = valueArray[0]/10;
-                    const kipas = valueArray.slice(1);
-                    outputText = `Suhu > ${suhu}° = kipas hidup ${kipas.length}, nomor ${kipas.join(', ')}`;
-                    cekrdh(suhu_rendah, suhu);
-                    break;
-                
-                case 0:
-                    outputText = `Suhu < ${suhu_rendah}° = kipas default hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
-                    break;
+                    case 6:                    
+                        outputText = `Suhu < ${suhu_rendah}° = mode intermitten. kipas ${valueArray.join(', ')}`;
+                        break;
+                    
+                    case 7:
+                        const suhu = valueArray[0]/10;
+                        const kipas = valueArray.slice(1);
+                        outputText = `Suhu > ${suhu}° = kipas hidup ${kipas.length}, nomor ${kipas.join(', ')}`;
+                        cekrdh(suhu_rendah, suhu);
+                        break;
+                    
+                    case 0:
+                        outputText = `Suhu < ${suhu_rendah}° = kipas default hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                        break;
 
-                default:
-                    outputText = `Mode ${mode} tidak dikenal`;
-            }
+                    default:
+                        outputText = `Mode ${mode} tidak dikenal`;
+                }
 
-            const div = document.createElement("div");
-            div.innerHTML = outputText;
-            detailKipas.appendChild(div);
-        });
+                const div = document.createElement("div");
+                div.innerHTML = outputText;
+                detailKipas.appendChild(div);
+            });
+        }
     }else if(mode_kandang == 2) {
         var div = document.createElement("div");
         div.innerHTML = "Kipas mode manual dengan smartphone";
@@ -915,7 +916,7 @@ submitButton.onclick = function() {
             action: 'insert',
             tanggal: tanggal,
             nama_bakul: capitalizeWords(nama_bakul),
-            plat_nomor: capitalizeWords(plat_nomor),
+            plat_nomor: formatPlatNomor(plat_nomor),
             jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),  // Pastikan data yang dikirim adalah angka
             jumlah_kg_ambil: parseFloat(jumlah_kg_ambil), 
             nama_do: capitalizeWords(nama_do)     
@@ -1035,7 +1036,7 @@ async function fetchData() {
                             action: 'edit',
                             tanggal: tanggal,
                             nama_bakul: capitalizeWords(nama_bakul),
-                            plat_nomor: plat_nomor,
+                            plat_nomor: formatPlatNomor(plat_nomor),
                             jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),  // Pastikan data yang dikirim adalah angka
                             jumlah_kg_ambil: parseFloat(jumlah_kg_ambil),      // Pastikan data yang dikirim adalah angka
                             id: item.id,
@@ -1214,4 +1215,19 @@ function capitalizeWords(text) {
         .split(' ')    // Memisahkan teks berdasarkan spasi
         .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Kapitalisasi huruf pertama setiap kata
         .join(' ');    // Menggabungkan kembali teks menjadi satu string
+}
+
+function formatPlatNomor(plat) {
+    // Pisahkan bagian berdasarkan spasi
+    const parts = plat.split(' ');
+
+    if (parts.length === 3) {
+        const kodeWilayah = parts[0].toUpperCase(); // Bagian kode wilayah (AB)
+        const angka = parts[1];                   // Bagian angka (1234)
+        const hurufAkhir = parts[2].toUpperCase(); // Bagian huruf akhir (XYZ)
+        return `${kodeWilayah} ${angka} ${hurufAkhir}`;
+    }
+
+    // Jika format tidak sesuai, kembalikan teks asli
+    return plat.toUpperCase();
 }

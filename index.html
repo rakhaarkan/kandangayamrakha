@@ -14,30 +14,28 @@
 <body>
     <div class="grid-container">
         <div class="grid-card_header header_judul">
+            <div></div>
             <div class="grid-judul_header tx2">
                 <div class="judul_header1">Kandang</div>
-                <div class="judul_header2" style="display: grid;">Ayam</div>
-                <div class="kipas_0">
+                <div class="judul_header2" style="display: grid;grid-template-columns: auto auto;">
+                    <div>Ayam</div>
                     <div class="kipas0"></div>
                 </div>
             </div>
             <div></div>
-            <div class="header_container">
+            <div class="grid" style="grid-template-rows: auto auto auto auto;padding-top: 5%;">
+                <div class="tx5">terakhir diperbarui:</div>
+                <div class="tx4" id="current-date"></div>
+                <div class="tx4" id="current-time"></div>
                 <div class="header_wrapper">
-                    <div class="header_card tx5" style="margin-top: 5%;vw;justify-content: left;">
-                        <div class=""></div>
-                        <span>terakhir diperbarui:</span>
-                        <p><span class="tx4" id="current-date"></span></p>
-                        <p><span class="tx4" id="current-time"></span></p>
-                    </div>
-                    <div class="header_card tx1" style="width:5vw;">
-                        <div class="indikator_online" id="ind_online">
-                            <div id="data-container" class="tx4" style="margin-top: 0.3vw;"></div>
-                        </div>
+                <div class="header_card tx1" style="width:5vw;">
+                    <div class="indikator_online" id="ind_online">
+                        <div id="data-container" class="tx4" style="margin-top: 0.3vw;"></div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
         <!--<div class="gauge_sha" id="gaugesha">gauge_sha</div>
         <div class="gauge_kla">gauge_kla</div>
         <div class="gauge_hia">gauge_hia</div>
