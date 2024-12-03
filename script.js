@@ -960,24 +960,28 @@ async function fetchData() {
             resultItem.innerHTML = `
             <table style="width: 100%; border-collapse: collapse;">
                 <tr>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Nama DO/Bakul</strong></td>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.nama_do+"/"+item.nama_bakul}</td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;"><strong>Nama DO/Bakul</strong></td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${item.nama_do+"/"+item.nama_bakul}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Tanggal</strong></td>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.tanggal.split('T')[0]}</td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;"><strong>Tanggal</strong></td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${item.tanggal.split('T')[0]}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Plat Nomor</strong></td>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.plat_nomor}</td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;"><strong>Plat Nomor</strong></td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${item.plat_nomor}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Jumlah Ekor Ambil</strong></td>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.jumlah_ekor_ambil}</td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;"><strong>Jumlah Ekor Ambil</strong></td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${item.jumlah_ekor_ambil}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Total KG</strong></td>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${parseFloat(item.jumlah_kg_ambil).toFixed(1)}</td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;"><strong>Total KG</strong></td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${parseFloat(item.jumlah_kg_ambil).toFixed(1)}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;"><strong>Rata Rata</strong></td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${((parseFloat(item.jumlah_kg_ambil).toFixed(1))/(parseInt(item.jumlah_ekor_ambil))).toFixed(2)}</td>
                 </tr>
             </table>
             `;
