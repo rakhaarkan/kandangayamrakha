@@ -1113,7 +1113,7 @@ async function createPieChart() {
     }
     const Data_kalkulasi_panen = {
         d1: { label: 'Ayam tersisa saat ini ', value: `${sisa_ayam_hidup+' Ekor'}` },
-        d2: { label: 'Total bobot dipanen   ', value: `${total_kg_diambil+' Kg'}` },
+        d2: { label: 'Total bobot dipanen   ', value: `${total_kg_diambil.toFixed(1)+' Kg'}` },
         d3: { label: 'Kerataan bobot panen', value: `${(total_kg_diambil/total_ayam_dipanen).toFixed(2)+' Kg'}` },
         
     };
