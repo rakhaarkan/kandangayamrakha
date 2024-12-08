@@ -45,6 +45,112 @@ var penampung_data_waktu;
 const randomFraction = Math.random();
 const randomValue = 5000;//Math.floor(randomFraction * (5000 - 2000 + 1)) + 2000;
 
+var suhu_atas = 0;
+var suhu_tengah = 0;
+var suhu_bawah = 0;
+var suhu_luar = 0;
+var suhu_depan = 0;
+var suhu_belakang = 0;
+var suhu_greenhouse = 0;
+var kelembapan_atas = 0;
+var kelembapan_tengah = 0;
+var kelembapan_bawah = 0;
+var kelembapan_luar = 0;
+var kelembapan_depan = 0;
+var kelembapan_belakang = 0;
+var kelembapan_greenhouse = 0;
+var data_HI_atas = 0;
+var data_HI_tengah = 0;
+var data_HI_bawah = 0;
+var data_HI_luar = 0;
+var data_HI_depan = 0;
+var data_HI_belakang = 0;
+var data_HI_greenhouse = 0;
+var ppm_gas_atas = 0;
+var ppm_gas_tengah = 0;
+var ppm_gas_bawah = 0;
+var kecepatan_angin = 0;
+var kecepatan_angin_atas = 0;
+var kecepatan_angin_tengah = 0;
+var kecepatan_angin_bawah = 0;
+var intensitas_cahaya_atas = 0;
+var intensitas_cahaya_tengah = 0;
+var intensitas_cahaya_bawah = 0;
+var liter_tong_atas = 0.00;
+var liter_tong_bawah = 0.00;
+var persen_air_atas = 0.00;
+var persen_air_bawah = 0.00;
+var nomor_perangkat;
+var indikator_ultrasonik = 0;
+var intensitas_cahaya;
+var jarak_ultrasonik;
+var ult;
+var tinggi_air_1;
+var tinggi_air_2;
+var indikator_p1 = 0;
+var indikator_p2 = 0;
+var indikator_p3 = 0;
+var indikator_p4 = 0;
+var indikator_p5 = 0;
+var indikator_p6 = 0;
+var target_heat_index = 155;
+var target_suhu_atas_maksimal = 33;
+var kipas_1 = 0;
+var kipas_2 = 0;
+var kipas_3 = 0;
+var kipas_4 = 0;
+var kipas_5 = 0;
+var kipas_6 = 0;
+var kipas_7 = 0;
+var kipas_8 = 0;
+var kipas_9 = 0;
+var kipas_10 = 0;
+var rpm_kipas;
+var grafik_waktu;
+var grafik_suhu_atas;
+var grafik_suhu_luar;
+var grafik_kelembapan_atas;
+var voltage = 0;
+var current = 0;
+var power = 0;
+var energy = 0;
+var frequency = 0;
+var pf = 0;
+var jam = 0;
+var lampu_luar = 0;
+var kode_cuaca = 0;
+var teks_cuaca = "";
+var indikator_cuaca = 0;
+var tanggal_masuk_ayam;
+var tanggal_masuk_ayam_hari;
+var tanggal_masuk_ayam_bulan;
+var tanggal_masuk_ayam_tahun;
+var mode_kandang = 1;
+var usia_ayam = 0;
+var target_suhu;
+var suhu_minimal;
+var suhu_maksimal;
+var kipas_relay_1;
+var kipas_relay_2;
+var kipas_relay_3;
+var kipas_relay_4;
+var kipas_relay_5;
+var waktu_hidup = 0;
+var waktu_mati = 0;
+var status_timer = 0;
+var detail_kipas = "---";
+var debug_155 = "---";
+var jumlah_ayam_awal = 0;
+var jumlah_ayam_mati = 0;
+var jumlah_pakan_sak = 0;
+var bobot_rata_rata = 0;
+var harga_kontrak_ayam = 0;
+var harga_bibit_ayam = 0;
+var harga_obat_ayam = 0;
+var harga_pakan_kg = 0;
+var epr_jumlah_ayam_mati;
+var epr_jumlah_pakan_sak;
+
 function data_thingspeak(){
     const url = 'https://api.thingspeak.com/channels/2172969/feeds.json?results=2';
     
@@ -69,14 +175,195 @@ function data_thingspeak(){
                 penampung_json_3 = objek3;
                 penampung_json_4 = objek4;
                 penampung_data_waktu = lastUpdateTime;
+                penguraiJson(1,fieldData_1,1);
+                penguraiJson(1,fieldData_2,2);
+                penguraiJson(1,fieldData_3,3);
+                penguraiJson(1,fieldData_4,4);
                 //document.getElementById('tks1').innerHTML = fieldData_2;
                 document.getElementById('messages').innerHTML = 'field1 : ' + fieldData_1 + ', field2 : ' + fieldData_2 + ', field3 : ' + fieldData_3 + ', field4 : ' + fieldData_4;
+                var loading_1 = document.getElementById("loading_1");
+                loading_1.style.display = "none";
                 eksekutor();
             })
             //.catch(error => console.error('Error fetching data:', error));
             
 }
 
+const server_pusat_data = "http://192.168.0.150/";
+const server_sensor_dalam = "http://192.168.0.151/";
+const server_sensor_tangki_air = "http://192.168.0.152/";
+const server_sensor_kipas = "http://192.168.0.153/";
+const server_sensor_listrik = "http://192.168.0.154/";
+const server_pusat_kipas_atas = "http://192.168.0.155/";
+const server_kebun_kandang = "http://192.168.0.156/";
+const server_saklar_cuaca_relay = "http://192.168.0.157/";
+
+function data_server_lokal(){
+    //getDataLocalServer(server_pusat_data);
+    getDataLocalServer(server_sensor_dalam);
+    getDataLocalServer(server_sensor_tangki_air);
+    //getDataLocalServer(server_sensor_kipas);
+    getDataLocalServer(server_sensor_listrik);
+    getDataLocalServer(server_pusat_kipas_atas);
+    //getDataLocalServer(server_kebun_kandang);
+    //getDataLocalServer(server_saklar_cuaca_relay);
+}
+async function getDataLocalServer(url_local_server) {
+    try {
+      // Mengirimkan permintaan HTTP GET ke server
+      const response = await fetch(url_local_server);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      // Mendapatkan respons dalam bentuk teks
+      const groupSensor = await response.text();
+  
+      // Memproses data JSON menggunakan fungsi penguraiJson
+      penguraiJson(2,groupSensor);
+    } catch (error) {
+      console.error("Error fetching data:", error.message);
+    }
+  }
+
+function penguraiJson(kode,dataHttp,kode_2=0) {
+    if(kode == 1){
+        data_json = JSON.parse(dataHttp);
+        if(kode_2 == 1){
+            var array_suhu = data_json.shu;
+            var array_kelembapan = data_json.klb;
+            var array_heat_index = data_json.dhi;
+            var array_liter_air = data_json.air;
+            var array_kipas = data_json.kps;
+            var array_listrik = data_json.lst;
+            var array_angin = data_json.agn;
+            suhu_atas = hpsnull(array_suhu[0]/10).toFixed(1);
+            suhu_bawah = hpsnull(array_suhu[1]/10).toFixed(1);
+            suhu_luar = hpsnull(array_suhu[2]/10).toFixed(1);
+            kelembapan_atas = hpsnull(array_kelembapan[0]/10).toFixed(1);
+            kelembapan_bawah = hpsnull(array_kelembapan[1]/10).toFixed(1);
+            kelembapan_luar = hpsnull(array_kelembapan[2]/10).toFixed(1);
+            data_HI_atas = hpsnull(array_heat_index[0]/100).toFixed(2);
+            data_HI_bawah = hpsnull(array_heat_index[1]/100).toFixed(2);
+            liter_tong_atas = hpsnull(array_liter_air[0]/10).toFixed(0);
+            liter_tong_bawah = hpsnull(array_liter_air[1]/10).toFixed(0);
+            persen_air_atas = hpsnull(array_liter_air[2]/100).toFixed(0);
+            persen_air_bawah = hpsnull(array_liter_air[3]/100).toFixed(0);
+            kipas_1 = array_kipas[0];
+            kipas_2 = array_kipas[1];
+            kipas_3 = array_kipas[2];
+            kipas_4 = array_kipas[3];
+            kipas_5 = array_kipas[4];
+            kipas_6 = array_kipas[5];
+            kipas_7 = array_kipas[6];
+            kipas_8 = array_kipas[7];
+            kipas_9 = array_kipas[8];
+            kipas_10 = array_kipas[9];
+            voltage = hpsnull(array_listrik[0]/100).toFixed(1);
+            current = (hpsnull(array_listrik[1]/100)*hpsnull(array_listrik[5]/100)).toFixed(2);
+            power = hpsnull(array_listrik[2]/100).toFixed(1);
+            energy = hpsnull(array_listrik[3]/100).toFixed(1);
+            frequency = hpsnull(array_listrik[4]/100).toFixed(1);
+            pf = array_listrik[5];
+            kecepatan_angin_atas = hpsnull(array_angin[0]/100).toFixed(2);
+        }else if(kode_2 == 2){
+            grafik_waktu = data_json.gwk;
+            grafik_suhu_atas = data_json.gsa;
+            grafik_kelembapan_atas = data_json.gka;  
+        }else if(kode_2 == 3){
+            grafik_suhu_bawah = data_json.gsb;
+        }else if(kode_2 == 4){
+            mode_kandang = data_json.kpa[0];
+            usia_ayam = data_json.kpa[1];
+            target_suhu = data_json.kpa[2];
+            suhu_minimal = data_json.kpa[3];
+            suhu_maksimal = data_json.kpa[4];
+            kipas_relay_1 = data_json.kpa[5];
+            kipas_relay_2 = data_json.kpa[6];
+            kipas_relay_3 = data_json.kpa[7];
+            kipas_relay_4 = data_json.kpa[8];
+            kipas_relay_5 = data_json.kpa[9];
+            status_timer = data_json.kpa[10];
+            waktu_hidup = data_json.kpa[11];
+            waktu_mati = data_json.kpa[12];
+            detail_kipas = data_json.kpa[13];
+            debug_155 = data_json.kpa[14];
+            lampu_luar = data_json.cry[0];
+            indikator_cuaca = data_json.cry[1];
+            kode_cuaca = data_json.cry[2];
+            teks_cuaca = data_json.cry[3];
+            harga_pakan_kg = data_json.mtd[0];
+            jumlah_ayam_awal = data_json.mtd[1];
+            harga_obat_ayam = data_json.mtd[2];
+            jumlah_ayam_mati = data_json.mtd[3];
+            harga_bibit_ayam = data_json.mtd[4];
+            jumlah_pakan_sak = data_json.mtd[5];
+            harga_kontrak_ayam = data_json.mtd[6];
+            bobot_rata_rata = data_json.mtd[7];
+        }
+    }else if(kode == 2){
+        try {
+        const terimaJson = JSON.parse(dataHttp);
+        const nomorJson = terimaJson.dta[0];
+        if (nomorJson === 1) {
+            suhu_atas = terimaJson.shu[0];
+            suhu_bawah = terimaJson.shu[1];
+            kelembapan_atas = terimaJson.klb[0];
+            kelembapan_bawah = terimaJson.klb[1];
+            data_HI_atas = terimaJson.dhi[0];
+            data_HI_bawah = terimaJson.dhi[1];
+        } else if (nomorJson === 2) {
+            liter_tong_atas = terimaJson.air[0];
+            persen_air_atas = terimaJson.air[1];
+            liter_tong_bawah = terimaJson.air[2];
+            persen_air_bawah = terimaJson.air[3];
+        } else if (nomorJson === 3) {
+            kipas_1 = terimaJson.kps[0];
+            kipas_2 = terimaJson.kps[1];
+            kipas_3 = terimaJson.kps[2];
+            kipas_4 = terimaJson.kps[3];
+            kipas_5 = terimaJson.kps[4];
+        } else if (nomorJson === 4) {
+            if (terimaJson.lst[0] !== 0) voltage = terimaJson.lst[0];
+            current = terimaJson.lst[1];
+            power = terimaJson.lst[2];
+            if (terimaJson.lst[3] !== 0) energy = terimaJson.lst[3];
+            frequency = terimaJson.lst[4];
+            pf = terimaJson.lst[5];
+        } else if (nomorJson === 5) {
+            mode_kandang = terimaJson.kpa[0];
+            tanggal_masuk_ayam_hari = terimaJson.kpa[1];
+            tanggal_masuk_ayam_bulan = terimaJson.kpa[2];
+            tanggal_masuk_ayam_tahun = terimaJson.kpa[3];
+            usia_ayam = terimaJson.kpa[4];
+            target_suhu = terimaJson.kpa[5];
+            suhu_minimal = terimaJson.kpa[6];
+            suhu_maksimal = terimaJson.kpa[7];
+            kipas_relay_1 = terimaJson.kpa[8];
+            kipas_relay_2 = terimaJson.kpa[9];
+            kipas_relay_3 = terimaJson.kpa[10];
+            kipas_relay_4 = terimaJson.kpa[11];
+            kipas_relay_5 = terimaJson.kpa[12];
+            status_timer = terimaJson.kpa[13];
+            waktu_hidup = terimaJson.kpa[14];
+            waktu_mati = terimaJson.kpa[15];
+            detail_kipas = terimaJson.kpa[16];
+            debug_155 = terimaJson.kpa[18];
+        } else if (nomorJson === 6) {
+            // nothing
+        } else if (nomorJson === 7) {
+            lampu_luar = terimaJson.cry[0];
+            indikator_cuaca = terimaJson.cry[1];
+            kode_cuaca = terimaJson.cry[2];
+            teks_cuaca = String(terimaJson.cry[3]);
+        }
+        } catch (error) {
+        // Handle error jika JSON tidak valid
+        console.error("JSON parsing error:", error.message);
+        }
+    }
+}
+  
 setInterval(data_thingspeak,randomValue);
 setInterval(eksekutor,100);
 setInterval(keterangan_air, 8000);
@@ -88,46 +375,31 @@ function eksekutor(){
         keterangan_air();
         sekali = 1;
     }
-    var array_suhu = penampung_json_1.shu;
-    var array_kelembapan = penampung_json_1.klb;
-    var array_heat_index = penampung_json_1.dhi;
-    var array_liter_air = penampung_json_1.air;
-    var array_listrik = penampung_json_1.lst;
-    var array_angin = penampung_json_1.agn;
     const gaugesHTML_atas = `
         <div class="wrapper">
-        ${createGaugeCard('Suhu Atas', hpsnull(array_suhu[0]/10).toFixed(1), 40, '20', '40', 'red')}
-        ${createGaugeCard('Kelembapan Atas', hpsnull(array_kelembapan[0]/10).toFixed(1),40, '0', '100', 'rgb(0, 218, 251)')}
-        ${createGaugeCard('Heat Index Atas', hpsnull(array_heat_index[0]/100).toFixed(2),40, '100', '200', 'url(#GradientColor)')}
+        ${createGaugeCard('Suhu Atas', suhu_atas, 40, '20', '40', 'red')}
+        ${createGaugeCard('Kelembapan Atas', kelembapan_atas, 40, '0', '100', 'rgb(0, 218, 251)')}
+        ${createGaugeCard('Heat Index Atas', data_HI_atas,40, '100', '200', 'url(#GradientColor)')}
         </div>
     `;
     const gaugesHTML_luar = `
         <div class="wrapper">
-        ${createGaugeCard('Suhu Luar', hpsnull(array_suhu[2]/10).toFixed(1), 40, '20', '40', 'red')}
-        ${createGaugeCard('Kelembapan Luar', hpsnull(array_kelembapan[2]/10).toFixed(1), 40, '0', '100', 'rgb(0, 218, 251)')}
+        ${createGaugeCard('Suhu Luar', suhu_luar, 40, '20', '40', 'red')}
+        ${createGaugeCard('Kelembapan Luar', kelembapan_luar, 40, '0', '100', 'rgb(0, 218, 251)')}
         </div>
     `;
-    const gaugesha = createGaugeCard('Suhu Atas', hpsnull(array_suhu[0]/10).toFixed(1), 50, '20', '40', 'red');
-
-    const volt = hpsnull(array_listrik[0]/100).toFixed(1);
-    const amp = (hpsnull(array_listrik[1]/100)*hpsnull(array_listrik[5]/100)).toFixed(2);
-    const power = hpsnull(array_listrik[2]/100).toFixed(1);
-    const energy = hpsnull(array_listrik[3]/100).toFixed(1);
-    const freq = hpsnull(array_listrik[4]/100).toFixed(1);
-
+    
     document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
     document.getElementById('container_gauges_kandang_luar').innerHTML = gaugesHTML_luar;
     //document.getElementById('gaugesha').innerHTML = gaugesha;
-    document.getElementById("kecepatan_angin_atas").innerHTML = hpsnull(array_angin[0]/100).toFixed(2);
-    document.getElementById("liter_air_atas").innerHTML = hpsnull(array_liter_air[0]/10).toFixed(0);
-    document.getElementById("persen_air_atas").innerHTML = hpsnull(array_liter_air[2]/100).toFixed(0);
-    document.getElementById("volt").innerHTML = volt;
-    document.getElementById("amp").innerHTML = amp;
+    document.getElementById("kecepatan_angin_atas").innerHTML = kecepatan_angin_atas;
+    document.getElementById("liter_air_atas").innerHTML = liter_tong_atas;
+    document.getElementById("persen_air_atas").innerHTML = persen_air_atas;
+    document.getElementById("volt").innerHTML = voltage;
+    document.getElementById("amp").innerHTML = current;
     document.getElementById("power").innerHTML = power;
     document.getElementById("energy").innerHTML = energy;
-    document.getElementById("freq").innerHTML = freq;
-    var loading_1 = document.getElementById("loading_1");
-    loading_1.style.display = "none";
+    document.getElementById("freq").innerHTML = frequency;
     updateTime();
     animasi_kipas();
     animasi_bar();
@@ -150,32 +422,25 @@ var rpm_kps3 = document.getElementById('square3');
 var rpm_kps4 = document.getElementById('square4');
 var rpm_kps5 = document.getElementById('square5');
     
-var mode_kandang;
-    
 function animasi_kipas(){
-    var array_rpm_kipas = penampung_json_1.kps;
-    var array_kipas_pusat = penampung_json_4.kpa;
-    var kps1 = mapNilai(parseFloat(array_kipas_pusat[5]),0.0,1.0,0.0,0.5).toFixed(1);
-    var kps2 = mapNilai(parseFloat(array_kipas_pusat[6]),0.0,1.0,0.0,0.5).toFixed(1);
-    var kps3 = mapNilai(parseFloat(array_kipas_pusat[7]),0.0,1.0,0.0,0.5).toFixed(1);
-    var kps4 = mapNilai(parseFloat(array_kipas_pusat[8]),0.0,1.0,0.0,0.5).toFixed(1);
-    var kps5 = mapNilai(parseFloat(array_kipas_pusat[9]),0.0,1.0,0.0,0.5).toFixed(1);
-    document.getElementById("rpm1").innerHTML = hpsnull(array_kipas_pusat[5]).toFixed(0);
-    document.getElementById("rpm2").innerHTML = hpsnull(array_kipas_pusat[6]).toFixed(0);
-    document.getElementById("rpm3").innerHTML = hpsnull(array_kipas_pusat[7]).toFixed(0);
-    document.getElementById("rpm4").innerHTML = hpsnull(array_kipas_pusat[8]).toFixed(0);
-    document.getElementById("rpm5").innerHTML = hpsnull(array_kipas_pusat[9]).toFixed(0);
+    var kps1 = mapNilai(parseFloat(kipas_relay_1),0.0,1.0,0.0,0.5).toFixed(1);
+    var kps2 = mapNilai(parseFloat(kipas_relay_2),0.0,1.0,0.0,0.5).toFixed(1);
+    var kps3 = mapNilai(parseFloat(kipas_relay_3),0.0,1.0,0.0,0.5).toFixed(1);
+    var kps4 = mapNilai(parseFloat(kipas_relay_4),0.0,1.0,0.0,0.5).toFixed(1);
+    var kps5 = mapNilai(parseFloat(kipas_relay_5),0.0,1.0,0.0,0.5).toFixed(1);
+    document.getElementById("rpm1").innerHTML = kipas_relay_1;
+    document.getElementById("rpm2").innerHTML = kipas_relay_2;
+    document.getElementById("rpm3").innerHTML = kipas_relay_3;
+    document.getElementById("rpm4").innerHTML = kipas_relay_4;
+    document.getElementById("rpm5").innerHTML = kipas_relay_5;
     putaran_kipas(kps1,rpm_kps1);
     putaran_kipas(kps2,rpm_kps2);
     putaran_kipas(kps3,rpm_kps3);
     putaran_kipas(kps4,rpm_kps4);
     putaran_kipas(kps5,rpm_kps5);
     
-    //document.getElementById('label_kps1').innerHTML = kps1;
-    //console.log("onMessageArrived: ");
     var mdkps;
     var tmkps;
-    mode_kandang = array_kipas_pusat[0];
     if(mode_kandang==1){
         mdkps = 'Automatis';
         tmkps = 'Auto ';
@@ -185,18 +450,18 @@ function animasi_kipas(){
         mdkps = 'Bebas';
     }
 
-    if(array_kipas_pusat[10]==1){
+    if(status_timer==1){
         if(mode_kandang==1){
-            tmkps = tmkps + ', Hidup ' + array_kipas_pusat[11] + ' detik ,Mati ' + array_kipas_pusat[12] + ' menit';
+            tmkps = tmkps + ', Hidup ' + waktu_hidup + ' detik ,Mati ' + waktu_mati + ' menit';
         }
     }else{
         if(mode_kandang==1){
             tmkps = 'Mati';
         }else if(mode_kandang==2){
-            tmkps = 'Mati, [' + array_kipas_pusat[11] + '-' + array_kipas_pusat[12] + ']';
+            tmkps = 'Mati, [' + waktu_hidup + '-' + waktu_mati + ']';
         }
     }
-    var input = array_kipas_pusat[13];
+    var input = detail_kipas;
     parseAndDisplay(input);
 
     document.getElementById("mode_kipas").innerHTML = mdkps;
@@ -206,14 +471,11 @@ function animasi_kipas(){
 
 var suhu_rendah = 33.0;    
 function parseAndDisplay(input) {
-    var array_kipas_pusat = penampung_json_4.kpa;
-    var trgtsh = array_kipas_pusat[2]/10;
-    var shmin = array_kipas_pusat[3]/10;
-    var shmax = array_kipas_pusat[4]/10;
+    var trgtsh = target_suhu;
+    var shmin = suhu_minimal;
+    var shmax = suhu_maksimal;
     var sb_min = (trgtsh + shmin)/2;
     var sb_max = (trgtsh + shmax)/2;
-    var array_kipas_pusat = penampung_json_4.kpa;
-    mode_kandang = array_kipas_pusat[0];
     
     const detailKipas = document.getElementById("detail_kipas");
     detailKipas.innerHTML = ''; // Kosongkan elemen sebelum memuat data baru
@@ -302,12 +564,11 @@ function putaran_kipas(kipas,rpm){
     }
 }
 
+
 function animasi_bar(){
-    var array_listrik = penampung_json_1.lst;
-    document.getElementById("pf").innerHTML = array_listrik[5]/100;
+    document.getElementById("pf").innerHTML = pf/100;
     var lst_pf = document.getElementById("bar_pf");
-    lst_pf.style.width = mapNilai(array_listrik[5],0,100,0,30) + 'vw';
-    
+    lst_pf.style.width = mapNilai(pf,0,100,0,30) + 'vw';
 }
 
 function animasi_tombol(){
@@ -562,38 +823,34 @@ function animasi_chart() {
 
 
 function gsa(x){
-    var array_grafik_suhu = penampung_json_2.gsa;
     var hasil_gsa;
-    if(array_grafik_suhu[x] > 400){
+    if(grafik_suhu_atas[x] > 400){
         if(x<1){x=2;}
-        hasil_gsa = hpsnull(array_grafik_suhu[x-1]/10).toFixed(1);
+        hasil_gsa = hpsnull(grafik_suhu_atas[x-1]/10).toFixed(1);
     }else{
-        hasil_gsa = hpsnull(array_grafik_suhu[x]/10).toFixed(1);
+        hasil_gsa = hpsnull(grafik_suhu_atas[x]/10).toFixed(1);
     }
     return hasil_gsa;
 }
 
 function gka(x){
-    var array_grafik_kelembapan = penampung_json_2.gka;
-    var hasil_gka = hpsnull(array_grafik_kelembapan[x]/10).toFixed(1);
+    var hasil_gka = hpsnull(grafik_kelembapan_atas[x]/10).toFixed(1);
     return hasil_gka;
 }
 
 function gsb(x){
-    var array_grafik_suhu = penampung_json_3.gsb;
     var hasil_gsb;
-    if(array_grafik_suhu[x] > 400){
+    if(grafik_suhu_bawah[x] > 400){
         if(x<1){x=2;}
-        hasil_gsb = hpsnull(array_grafik_suhu[x-1]/10).toFixed(1);
+        hasil_gsb = hpsnull(grafik_suhu_bawah[x-1]/10).toFixed(1);
     }else{
-        hasil_gsb = hpsnull(array_grafik_suhu[x]/10).toFixed(1);
+        hasil_gsb = hpsnull(grafik_suhu_bawah[x]/10).toFixed(1);
     }
     return hasil_gsb;
 }
 
 function gwk(x) {
-    var array_grafik_waktu = penampung_json_2.gwk;
-    var hasil_gwk = hpsnull(array_grafik_waktu[0])+x+1;
+    var hasil_gwk = hpsnull(grafik_waktu[0])+x+1;
     if(hasil_gwk>24){
         hasil_gwk = hasil_gwk-24;
     }
@@ -606,20 +863,15 @@ function gwk(x) {
 }
 
 function gts(){
-    var array_kipas_pusat = penampung_json_4.kpa;
-    var trgtsh = array_kipas_pusat[2]/10;
-    return trgtsh;
+    return target_suhu/10;
 }
 
 
 var waktu_online2;
-var usia_ayam;
 var skr;
 var default_input = false;
     
 function updateTime() {
-    var array_data = penampung_json_1.dat;
-    var array_kipas_pusat = penampung_json_4.kpa;
     const now = new Date();
     const waktu_thingspeak = new Date(penampung_data_waktu);
     const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -635,10 +887,9 @@ function updateTime() {
 
     const currentDate = `${dayOfWeek}, ${dayOfMonth} ${month} ${year}`;
     const currentTime = `${hours}:${minutes}:${seconds}`;
-    const startDate = new Date(array_data[0]);
+    const startDate = new Date(tanggal_masuk_ayam);
     startDate.setHours(startDate.getHours());
     const differenceInMilliseconds = now - startDate;
-    var mode_usia_ayam =  array_data[1];
     const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
 
     const waktu_online = now - waktu_thingspeak;
@@ -647,11 +898,10 @@ function updateTime() {
     document.getElementById('current-date').textContent = currentDate;
     document.getElementById('current-time').textContent = currentTime;
 
-    usia_ayam =  array_kipas_pusat[1];//Math.ceil(differenceInDays);
-    if(mode_usia_ayam == 3){
+    if(mode_kandang == 3){
         document.getElementById('usia_ayam').textContent = 'Selesai Panen';
     }else{
-        document.getElementById('usia_ayam').textContent = array_kipas_pusat[1] + ' hari';//Math.ceil(differenceInDays) + ' hari';
+        document.getElementById('usia_ayam').textContent = usia_ayam + ' hari';//Math.ceil(differenceInDays) + ' hari';
     } 
     if(!default_input){
         setDefaultValue();
@@ -661,25 +911,18 @@ function updateTime() {
 }
 
 function analisa_realtime(){
-    var array_kipas_pusat = penampung_json_4.kpa;
-    var trgtsh = array_kipas_pusat[2];
-    var shmin = array_kipas_pusat[3];
-    var shmax = array_kipas_pusat[4];
-    hasil_analisa(trgtsh,shmin,shmax,160);
+    hasil_analisa(target_suhu,suhu_minimal,suhu_maksimal,160);
 }
 
 var ket;
-function hasil_analisa(target_suhu,suhu_minimal,suhu_maksimal,target_heat_index){
-    var array_suhu = penampung_json_1.shu;
-    var array_kelembapan = penampung_json_1.klb;
-    var array_heat_index = penampung_json_1.dhi;
-    var sb_min = (target_suhu + suhu_minimal)/2;
-    var sb_max = (target_suhu + suhu_maksimal)/2;
+function hasil_analisa(target_suhu_,suhu_minimal_,suhu_maksimal_,target_heat_index){
+    var sb_min = (target_suhu_ + suhu_minimal_)/2;
+    var sb_max = (target_suhu_ + suhu_maksimal_)/2;
     var hib_min = 150;
     var hib_max = target_heat_index + 10;
-    var suhu = array_suhu[0];
-    var kelembapan = array_kelembapan[0];
-    var heat_index = hpsnull(array_heat_index[0]/100);
+    var suhu = suhu_atas*10;
+    var kelembapan = kelembapan_atas*10;
+    var heat_index = data_HI_atas;
     var kets;
     var ketk;
     var keth;
@@ -690,16 +933,16 @@ function hasil_analisa(target_suhu,suhu_minimal,suhu_maksimal,target_heat_index)
             document.getElementById('judul_analisa').textContent = 'Baik dan Nyaman';
         }
         ket = 1;
-    }else if(suhu>sb_max && suhu<=suhu_maksimal){
+    }else if(suhu>sb_max && suhu<=suhu_maksimal_){
         document.getElementById('judul_analisa').textContent = 'Panas';
         ket = 2;
     }else if(suhu>suhu_maksimal){
         document.getElementById('judul_analisa').textContent = 'Terlalu Panas';
         ket = 3
-    }else if(suhu<sb_min && suhu>=suhu_minimal){
+    }else if(suhu<sb_min && suhu>=suhu_minimal_){
         document.getElementById('judul_analisa').textContent = 'Dingin';
         ket = 4;
-    }else if(suhu<suhu_minimal){
+    }else if(suhu<suhu_minimal_){
         document.getElementById('judul_analisa').textContent = 'Terlalu dingin';
         ket = 5;
     }
@@ -810,16 +1053,15 @@ function setDefaultValue() {
     // Mengatur nilai default menggunakan JavaScript
     const retrievedVar = getCookie("owner")
     if(retrievedVar == 1){
-        var array_kipas_pusat = penampung_json_4.mtd;
         hidden_calculator.style.display = "block";
         document.getElementById('input_kalkulator_1').value = usia_ayam;
-        document.getElementById('input_kalkulator_2').value = array_kipas_pusat[1];
-        document.getElementById('input_kalkulator_3').value = array_kipas_pusat[3];
-        document.getElementById('input_kalkulator_4').value = array_kipas_pusat[5];
-        document.getElementById('input_kalkulator_6').value = array_kipas_pusat[6];
-        document.getElementById('input_kalkulator_7').value = array_kipas_pusat[4];
-        document.getElementById('input_kalkulator_8').value = array_kipas_pusat[2];
-        document.getElementById('input_kalkulator_9').value = array_kipas_pusat[0];
+        document.getElementById('input_kalkulator_2').value = jumlah_ayam_awal;
+        document.getElementById('input_kalkulator_3').value = jumlah_ayam_mati;
+        document.getElementById('input_kalkulator_4').value = jumlah_pakan_sak;
+        document.getElementById('input_kalkulator_6').value = harga_kontrak_ayam;
+        document.getElementById('input_kalkulator_7').value = harga_bibit_ayam;
+        document.getElementById('input_kalkulator_8').value = harga_obat_ayam;
+        document.getElementById('input_kalkulator_9').value = harga_pakan_kg;
         createPieChart();  
     }else{
 
@@ -1194,8 +1436,7 @@ async function createPieChart() {
 }
 
 function keterangan_air() {
-    var array_liter_air = penampung_json_1.air;
-    let persen_air = hpsnull(array_liter_air[2] / 100).toFixed(0);
+    let persen_air = persen_air_atas;
     let baseLevel = parseInt(persen_air);
     let fluctuation = 0;
     let direction = 1;
