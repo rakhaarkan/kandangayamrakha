@@ -903,7 +903,7 @@ function updateTime() {
     }else{
         document.getElementById('usia_ayam').textContent = usia_ayam + ' hari';//Math.ceil(differenceInDays) + ' hari';
     } 
-    if(!default_input){
+    if((!default_input)&&(suhu_atas!=0)){
         setDefaultValue();
         default_input = true;
     }
