@@ -264,7 +264,7 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
             power = hpsnull(array_listrik[2]/100).toFixed(1);
             energy = hpsnull(array_listrik[3]/100).toFixed(1);
             frequency = hpsnull(array_listrik[4]/100).toFixed(1);
-            pf = array_listrik[5];
+            pf = array_listrik[5]/100;
             kecepatan_angin_atas = hpsnull(array_angin[0]/100).toFixed(2);
         }else if(kode_2 == 2){
             grafik_waktu = data_json.gwk;
@@ -471,9 +471,9 @@ function animasi_kipas(){
 
 var suhu_rendah = 33.0;    
 function parseAndDisplay(input) {
-    var trgtsh = target_suhu;
-    var shmin = suhu_minimal;
-    var shmax = suhu_maksimal;
+    var trgtsh = target_suhu*10;
+    var shmin = suhu_minimal*10;
+    var shmax = suhu_maksimal*10;
     var sb_min = (trgtsh + shmin)/2;
     var sb_max = (trgtsh + shmax)/2;
     
@@ -518,13 +518,13 @@ function parseAndDisplay(input) {
                         break;
                 
                     case 6:                    
-                        outputText = `Suhu < ${suhu_rendah}° = mode intermitten. kipas ${valueArray.join(', ')}`;
+                        outputText = `Suhu < ${suhu_rendah*10}° = mode intermitten. kipas ${valueArray.join(', ')}`;
                         break;
                     
                     case 7:
                         const suhu = valueArray[0]/10;
                         const kipas = valueArray.slice(1);
-                        outputText = `Suhu > ${suhu}° = kipas hidup ${kipas.length}, nomor ${kipas.join(', ')}`;
+                        outputText = `Suhu > ${suhu*10}° = kipas hidup ${kipas.length}, nomor ${kipas.join(', ')}`;
                         cekrdh(suhu_rendah, suhu);
                         break;
                     
@@ -566,9 +566,9 @@ function putaran_kipas(kipas,rpm){
 
 
 function animasi_bar(){
-    document.getElementById("pf").innerHTML = pf/100;
+    document.getElementById("pf").innerHTML = pf;
     var lst_pf = document.getElementById("bar_pf");
-    lst_pf.style.width = mapNilai(pf,0,100,0,30) + 'vw';
+    lst_pf.style.width = mapNilai(pf,0,1,0,30) + 'vw';
 }
 
 function animasi_tombol(){
