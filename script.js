@@ -152,18 +152,18 @@ var epr_jumlah_ayam_mati;
 var epr_jumlah_pakan_sak;
 
 function data_thingspeak(){
-    const url = 'https://api.thingspeak.com/channels/2172969/feeds.json?results=2';
+    const url = 'https://api.thingspeak.com/channels/2172969/feeds.json?results=1';
     
         // Fetch data from Thingspeak API
         fetch(url)
             .then(response => response.json())
             .then(data => {
                 // Ambil data dari field1
-                const fieldData_1 = data.feeds[1].field1;
-                const fieldData_2 = data.feeds[1].field2;
-                const fieldData_3 = data.feeds[1].field3;
-                const fieldData_4 = data.feeds[1].field4;
-                const lastUpdateTime = data.feeds[1].created_at;
+                const fieldData_1 = data.feeds[0].field1;
+                const fieldData_2 = data.feeds[0].field2;
+                const fieldData_3 = data.feeds[0].field3;
+                const fieldData_4 = data.feeds[0].field4;
+                const lastUpdateTime = data.feeds[0].created_at;
                 // Tampilkan data di dalam elemen dengan id 'data-container'
                 var json_chart = '{"gsa":[250,257,259,262,268,278,289,299,302,311,317,322,327,333,337,325,320,310,301,292,281,270,267,261,258],"gwk":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],"gka":[850,857,859,762,268,278,289,299,302,311,317,322,327,333,337,325,320,310,301,292,281,270,267,261,258]}'
                 var objek1 = JSON.parse(fieldData_1);
