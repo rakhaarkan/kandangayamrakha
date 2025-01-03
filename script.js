@@ -529,7 +529,7 @@ function parseAndDisplay(input) {
                         break;
                     
                     case 0:
-                        outputText = `Suhu < ${suhu_rendah}° = kipas default hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                        outputText = `Suhu < ${suhu_rendah*10}° = kipas default hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
                         break;
 
                     default:
