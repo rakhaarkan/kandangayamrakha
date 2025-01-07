@@ -389,10 +389,24 @@ function eksekutor(){
         </div>
     `;
     
+    const filteredValues = grafik_suhu_atas.filter(value => value !== 0);
+    const nilaiTertinggi = Math.max(...filteredValues);
+    const nilaiTerendah = Math.min(...filteredValues);
+    const selisih = (nilaiTertinggi - nilaiTerendah)/10;
+    var selisih_luar_dalam = "NaN";
+    if (suhu_atas != 0 && suhu_luar != 0) {
+        selisih_luar_dalam = (suhu_atas - suhu_luar).toFixed(1);
+    }
+    const Data_selisih = {
+        d1: { label: '- Luar dalam', value: `${selisih_luar_dalam+'°'}` },
+        d2: { label: '- Tertinggi terendah', value: `${selisih+'°'}` },
+    };
+
     document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
     document.getElementById('container_gauges_kandang_luar').innerHTML = gaugesHTML_luar;
     //document.getElementById('gaugesha').innerHTML = gaugesha;
     document.getElementById("kecepatan_angin_atas").innerHTML = kecepatan_angin_atas;
+    document.getElementById("data_selisih").innerHTML = createOutputTable(Data_selisih,1);
     document.getElementById("liter_air_atas").innerHTML = liter_tong_atas;
     document.getElementById("persen_air_atas").innerHTML = persen_air_atas;
     document.getElementById("volt").innerHTML = voltage;
