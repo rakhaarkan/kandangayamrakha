@@ -392,7 +392,7 @@ function eksekutor(){
     var waktu_air_atas = formatJamDanMenit(sisa_jam_1);
     var jam_air_habis_atas = tambahJamDesimal(sisa_jam_1);
     const Data_air = {
-        d1: { label: '- konsumsi air :', value: `${kecepatan_minum_atas+' Ltr/mnt'}` },
+        d1: { label: '- konsumsi air :', value: `${kecepatan_minum_atas*3+' Ltr/jam'}` },
         //d2: { label: '- perkiraan habis  :', value: `${waktu_air_atas}` },
         //d3: { label: '- pada jam   :', value: `${jam_air_habis_atas}` },
     };
