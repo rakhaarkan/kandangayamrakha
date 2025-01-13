@@ -389,7 +389,7 @@ function eksekutor(){
         d2: { label: '- Tertinggi terendah', value: `${selisih+'°'}` },
     };
     var kma = kecepatan_minum_atas*1.2;//;
-    var sisa_jam_1 = ((liter_tong_atas/kma)/3);
+    var sisa_jam_1 = ((liter_tong_atas/kma));
     var waktu_air_atas = formatJamDanMenit(sisa_jam_1);
     var jam_air_habis_atas = tambahJamDesimal(sisa_jam_1);
     const Data_air = {
