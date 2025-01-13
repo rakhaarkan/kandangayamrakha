@@ -8,7 +8,6 @@ function setCookie(name, value, days) {
     document.cookie = name + "=" + (value || "") + expires + "; path=/";
 }
 
-// Fungsi untuk mendapatkan variabel dari cookie
 function getCookie(name) {
     const nameEQ = name + "=";
     const cookies = document.cookie.split(';');
@@ -20,14 +19,9 @@ function getCookie(name) {
     return null;
 }
 
-// Fungsi untuk menghapus cookie
 function deleteCookie(name) {
     document.cookie = name + "=; Max-Age=-99999999;";
 }
-
-// Contoh penggunaan
-//const retrievedVar = getCookie("owner"); // Mengambil nilai dari cookie
-//console.log(retrievedVar); // Output: "Hello, World!"
 
 function hpsnull(hps_null){
     if (hps_null !== null) {
@@ -80,6 +74,8 @@ var liter_tong_atas = 0.00;
 var liter_tong_bawah = 0.00;
 var persen_air_atas = 0.00;
 var persen_air_bawah = 0.00;
+var kecepatan_minum_atas = 0.00;
+var kecepatan_minum_bawah = 0.00;
 var nomor_perangkat;
 var indikator_ultrasonik = 0;
 var intensitas_cahaya;
@@ -153,18 +149,14 @@ var epr_jumlah_pakan_sak;
 
 function data_thingspeak(){
     const url = 'https://api.thingspeak.com/channels/2172969/feeds.json?results=1';
-    
-        // Fetch data from Thingspeak API
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                // Ambil data dari field1
                 const fieldData_1 = data.feeds[0].field1;
                 const fieldData_2 = data.feeds[0].field2;
                 const fieldData_3 = data.feeds[0].field3;
                 const fieldData_4 = data.feeds[0].field4;
                 const lastUpdateTime = data.feeds[0].created_at;
-                // Tampilkan data di dalam elemen dengan id 'data-container'
                 var json_chart = '{"gsa":[250,257,259,262,268,278,289,299,302,311,317,322,327,333,337,325,320,310,301,292,281,270,267,261,258],"gwk":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],"gka":[850,857,859,762,268,278,289,299,302,311,317,322,327,333,337,325,320,310,301,292,281,270,267,261,258]}'
                 var objek1 = JSON.parse(fieldData_1);
                 var objek2 = JSON.parse(fieldData_2);
@@ -179,7 +171,6 @@ function data_thingspeak(){
                 penguraiJson(1,fieldData_2,2);
                 penguraiJson(1,fieldData_3,3);
                 penguraiJson(1,fieldData_4,4);
-                //document.getElementById('tks1').innerHTML = fieldData_2;
                 document.getElementById('messages').innerHTML = 'field1 : ' + fieldData_1 + ', field2 : ' + fieldData_2 + ', field3 : ' + fieldData_3 + ', field4 : ' + fieldData_4;
                 var loading_1 = document.getElementById("loading_1");
                 loading_1.style.display = "none";
@@ -210,17 +201,12 @@ function data_server_lokal(){
 }
 async function getDataLocalServer(url_local_server) {
     try {
-      // Mengirimkan permintaan HTTP GET ke server
-      const response = await fetch(url_local_server);
+     const response = await fetch(url_local_server);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
-      // Mendapatkan respons dalam bentuk teks
-      const groupSensor = await response.text();
-  
-      // Memproses data JSON menggunakan fungsi penguraiJson
-      penguraiJson(2,groupSensor);
+    const groupSensor = await response.text();
+    penguraiJson(2,groupSensor);
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
@@ -249,6 +235,8 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
             liter_tong_bawah = hpsnull(array_liter_air[1]/10).toFixed(0);
             persen_air_atas = hpsnull(array_liter_air[2]/100).toFixed(0);
             persen_air_bawah = hpsnull(array_liter_air[3]/100).toFixed(0);
+            kecepatan_minum_atas = hpsnull(array_liter_air[4]/100).toFixed(2);
+            kecepatan_minum_bawah = hpsnull(array_liter_air[5]/100).toFixed(2);
             kipas_1 = array_kipas[0];
             kipas_2 = array_kipas[1];
             kipas_3 = array_kipas[2];
@@ -358,7 +346,6 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
             teks_cuaca = String(terimaJson.cry[3]);
         }
         } catch (error) {
-        // Handle error jika JSON tidak valid
         console.error("JSON parsing error:", error.message);
         }
     }
@@ -401,12 +388,23 @@ function eksekutor(){
         d1: { label: '- Luar dalam', value: `${selisih_luar_dalam+'°'}` },
         d2: { label: '- Tertinggi terendah', value: `${selisih+'°'}` },
     };
+    var sisa_jam_1 = ((liter_tong_atas/kecepatan_minum_atas)/3)*0.75;
+    var waktu_air_atas = formatJamDanMenit(sisa_jam_1);
+    var jam_air_habis_atas = tambahJamDesimal(sisa_jam_1);
+    const Data_air = {
+        d1: { label: '- konsumsi air :', value: `${kecepatan_minum_atas+' Ltr/mnt'}` },
+        //d2: { label: '- perkiraan habis  :', value: `${waktu_air_atas}` },
+        //d3: { label: '- pada jam   :', value: `${jam_air_habis_atas}` },
+    };
+    var Data_air_2 = 'perkiraan habis dalam '+waktu_air_atas+', pada jam '+jam_air_habis_atas;
 
     document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
     document.getElementById('container_gauges_kandang_luar').innerHTML = gaugesHTML_luar;
     //document.getElementById('gaugesha').innerHTML = gaugesha;
     document.getElementById("kecepatan_angin_atas").innerHTML = kecepatan_angin_atas;
     document.getElementById("data_selisih").innerHTML = createOutputTable(Data_selisih,1);
+    document.getElementById("data_air_1").innerHTML = createOutputTable(Data_air,1);
+    document.getElementById("data_air_2").innerHTML = Data_air_2;
     document.getElementById("liter_air_atas").innerHTML = liter_tong_atas;
     document.getElementById("persen_air_atas").innerHTML = persen_air_atas;
     document.getElementById("volt").innerHTML = voltage;
@@ -425,10 +423,27 @@ function eksekutor(){
 }
 
 function mapNilai(nilai, dariMin, dariMax, keMin, keMax) {
-    // Mencocokkan nilai dari satu rentang ke rentang lain
     return (nilai - dariMin) * (keMax - keMin) / (dariMax - dariMin) + keMin;
 }
 
+function tambahJamDesimal(jumlahJam) {
+    const sekarang = new Date(); // Waktu saat ini
+    const jam = Math.floor(jumlahJam); // Bagian jam (bilangan bulat)
+    const menit = Math.round((jumlahJam - jam) * 60); // Konversi bagian desimal ke menit
+    sekarang.setHours(sekarang.getHours() + jam); // Tambahkan jam
+    sekarang.setMinutes(sekarang.getMinutes() + menit); // Tambahkan menit
+
+    // Format menjadi "jam:menit"
+    const hasilJam = String(sekarang.getHours()).padStart(2, '0');
+    const hasilMenit = String(sekarang.getMinutes()).padStart(2, '0');
+    return `${hasilJam}:${hasilMenit}`;
+}
+
+function formatJamDanMenit(jumlahJam) {
+    const jam = Math.floor(jumlahJam); // Ambil bagian jam (bilangan bulat)
+    const menit = Math.round((jumlahJam - jam) * 60); // Konversi sisa desimal menjadi menit
+    return `${jam} jam ${menit} mnt`; // Format output
+}
 
 var rpm_kps1 = document.getElementById('square1');
 var rpm_kps2 = document.getElementById('square2');
@@ -492,7 +507,7 @@ function parseAndDisplay(input) {
     var sb_max = (trgtsh + shmax)/2;
     
     const detailKipas = document.getElementById("detail_kipas");
-    detailKipas.innerHTML = ''; // Kosongkan elemen sebelum memuat data baru
+    detailKipas.innerHTML = '';
     if(mode_kandang == 1) {
         var div = document.createElement("div");
         div.innerHTML = "Pengaturan automatis kipas hari ini :";
@@ -627,25 +642,18 @@ function createGaugeCard(title, value_gauge, ukuran_1, minLabel, maxLabel, color
 
 
 function createOutputTable(data,padding) {
-    // Memulai dengan elemen pembuka tabel
     let tableHTML = `<table style="width: 100%; border-collapse: collapse;">`;
-    
-    // Iterasi melalui setiap item di dalam objek data
     Object.keys(data).forEach(key => {
         tableHTML += `
             <tr>
-                <td style="padding: ${padding}px;"><strong>${data[key].label} :</strong></td>
+                <td style="padding: ${padding}px;"><strong>${data[key].label}</strong></td>
                 <td style="padding: ${padding}px;">${data[key].value}</td>
             </tr>
         `;
     });
-
-    // Menutup elemen tabel
-    tableHTML += `</table><br>`;
+tableHTML += `</table><br>`;
     return tableHTML;
 }
-
-// Data untuk output kalkulator ayam
 
 const toggleButton = document.getElementById("toggleButton");
 const toggleButton2 = document.getElementById("toggleButton2");
@@ -728,12 +736,9 @@ function formatTime(time) {
 }
 
 var x1 = 0;
-let grafik; // Definisikan variabel grafik di luar fungsi
-
+let grafik;
 function animasi_chart() {
     const canvas1 = document.getElementById('grafik');
-
-    // Cek jika grafik belum dibuat, buat grafik baru
     if (!grafik) {
         grafik = new Chart(canvas1, {
             type: 'line',
@@ -997,7 +1002,6 @@ function hasil_analisa(target_suhu_,suhu_minimal_,suhu_maksimal_,target_heat_ind
         }
         
     }
-    //ket.innerHTML = kets; 
     document.getElementById('isi_analisa').innerHTML = kets + ketk + keth; 
     document.getElementById('dsp').innerHTML = 'Target Suhu : ' + hpsnull(target_suhu/10).toFixed(1) + '°';
     let imgElement = document.getElementById('gambar_analisa');
@@ -1064,7 +1068,6 @@ function kalkulator(){
 }
 
 function setDefaultValue() {
-    // Mengatur nilai default menggunakan JavaScript
     const retrievedVar = getCookie("owner")
     if(retrievedVar == 1){
         hidden_calculator.style.display = "block";
@@ -1087,7 +1090,6 @@ function formatRupiah(angka) {
     return 'Rp.' + angka.toLocaleString('id-ID');
 }
 
-// Memanggil updateTime setiap detik
 setInterval(wkt_on, 1000);
 
 function wkt_on(){
@@ -1105,7 +1107,6 @@ function wkt_on(){
     }
 }
 
-// Referensi ke elemen modal dan tombol
 const modal = document.getElementById("modal");
 const dt_bakul = document.getElementById("resultContainer");
 const dt_calc_chart = document.getElementById("data_kalkulator_chart");
@@ -1113,7 +1114,6 @@ const addButton = document.getElementById("addButton");
 const closeButton = document.querySelector(".close");
 const submitButton = document.getElementById("submitButton");
 
-// Fungsi untuk membuka modal
 if(getCookie("owner") == 1){
     hidden_detail_kipas.style.display = "none";
     button_detail_kipas.textContent = "Lihat Detail Kipas";
@@ -1132,32 +1132,23 @@ if(getCookie("owner") == 1){
     dt_calc_chart.style.display = "none";
 }
 
-
-// Fungsi untuk menutup modal saat tombol "X" ditekan
 closeButton.onclick = function() {
     modal.style.display = "none";
 }
 
-// Fungsi untuk menutup modal saat klik di luar area modal
 window.onclick = function(event) {
     if (event.target == modal) {
         modal.style.display = "none";
     }
 }
 
-
-
 function validateInput() {
     if (!tanggal || !nama_do || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
         alert("Semua kolom harus diisi!");
-        return false; // Menghentikan pengiriman data jika ada input yang kosong
+        return false;
     }
-
-    // Jika semua input valid, lanjutkan
     return true;
 }
-
-// Fungsi untuk mengumpulkan dan menyimpan data
 submitButton.onclick = function() {
     var tanggal = document.getElementById("tanggal").value;
     var nama_do = document.getElementById("nama_do").value;
@@ -1167,14 +1158,14 @@ submitButton.onclick = function() {
     var jumlah_kg_ambil = document.getElementById("jumlah_kg_ambil").value;
     if (!tanggal || !nama_do || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
         alert("Semua kolom harus diisi!");
-        //return false; // Menghentikan pengiriman data jika ada input yang kosong
+        //return false;
     }else{
         const testData = {
             action: 'insert',
             tanggal: tanggal,
             nama_bakul: capitalizeWords(nama_bakul),
             plat_nomor: formatPlatNomor(plat_nomor),
-            jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),  // Pastikan data yang dikirim adalah angka
+            jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),
             jumlah_kg_ambil: parseFloat(jumlah_kg_ambil), 
             nama_do: capitalizeWords(nama_do)     
         };
@@ -1196,7 +1187,6 @@ async function fetchData() {
         total_ayam_dipanen = 0;
         total_kg_diambil = 0;
         try {
-          // Mengambil data dari serverless function
           const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData'); 
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -1242,7 +1232,6 @@ async function fetchData() {
                 </tr>
             </table>
             `;
-            // Mengakumulasi total jumlah ekor dan total kg
             total_ayam_dipanen += parseInt(item.jumlah_ekor_ambil);
             total_kg_diambil += parseFloat(item.jumlah_kg_ambil);
             
@@ -1252,7 +1241,6 @@ async function fetchData() {
             editButton.textContent = "Edit";
             resultItem.appendChild(editButton);
 
-            // Tombol Hapus untuk menghapus resultItem
             const deleteButton = document.createElement("button");
             deleteButton.classList.add("delete-button");
             deleteButton.textContent = "Hapus";
@@ -1264,7 +1252,7 @@ async function fetchData() {
                     resultContainer.removeChild(resultItem);
                     const dataDelete = {
                         action: 'delete',
-                        id: item.id // ID data yang ingin dihapus
+                        id: item.id 
                     };
                     postData(dataDelete);
                     alert("Data berhasil dihapus");    
@@ -1291,7 +1279,7 @@ async function fetchData() {
                     var jumlah_kg_ambil = document.getElementById("jumlah_kg_ambil").value;
                     if (!tanggal || !nama_do || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
                         alert("Semua kolom harus diisi!");
-                        //return false; // Menghentikan pengiriman data jika ada input yang kosong
+                        //return false;
                     }else{
                         const testData = {
                             action: 'edit',
@@ -1327,7 +1315,7 @@ async function fetchData() {
     window.addEventListener('DOMContentLoaded', fetchData());
       async function postData(data) {
         const container = document.getElementById('data-output');
-        container.innerHTML = ''; // Reset output
+        container.innerHTML = '';
       
         try {
             console.log('Mengirim data:', data);
@@ -1355,7 +1343,6 @@ async function fetchData() {
           container.innerHTML = `<p>Error sending data: ${error.message}</p>`;
         }
     }
-// Variabel global untuk menyimpan instance chart
 let myPieChart;
 var first_total_bobot = 0;
     
@@ -1363,7 +1350,6 @@ async function createPieChart() {
      const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData');
     const result = await response.json();
   
-    // Cek apakah data yang diterima tidak kosong
     if (!result || result.length === 0) {
         console.error("Data kosong");
         //return;
@@ -1381,17 +1367,10 @@ async function createPieChart() {
         }
         first_total_bobot=1;
     }
-    // Mengisi elemen dengan id "output_group_container" dengan HTML yang dihasilkan
     document.getElementById('data_calc_total').innerHTML = createOutputTable(Data_kalkulasi_panen,8);
-
-   // Data yang akan digunakan
     const labels = ['Ayam Hidup', 'Ayam dipanen', 'Ayam Mati'];
     const dataValues = [sisa_ayam_hidup, total_ayam_dipanen, calc_ayam_mati];
-
-    // Hitung total nilai sebelum mendefinisikan data untuk chart
     const total = dataValues.reduce((acc, val) => acc + val, 0);
-
-    // Data untuk chart
     const data = {
         labels: labels,
         datasets: [{
@@ -1405,7 +1384,6 @@ async function createPieChart() {
         }]
     };
 
-    // Konfigurasi chart
     const config = {
         type: 'doughnut',
         data: data,
@@ -1420,11 +1398,10 @@ async function createPieChart() {
                 },
                 datalabels: {
                     formatter: (value, context) => {
-                        // Hitung persentase menggunakan total yang sudah dihitung sebelumnya
                         let percentage = ((value / calc_ayam_awal) * 100).toFixed(1);
                         return `${value} (${percentage}%)`; // Menampilkan nilai dan persentase
                     },
-                    color: 'black', // Warna font
+                    color: 'black',
                     font: {
                         //weight: 'bold',
                         size: 14
@@ -1434,18 +1411,14 @@ async function createPieChart() {
                 }
             }
         },
-        plugins: [ChartDataLabels] // Menambahkan plugin chartjs-plugin-datalabels
+        plugins: [ChartDataLabels]
     };
 
     const ctx = document.getElementById('myPieChart').getContext('2d');
-
-    // Cek apakah chart sudah ada, jika ada maka update data, jika tidak buat chart baru
     if (myPieChart) {
-        // Update data dan refresh chart
         myPieChart.data = data;
         myPieChart.update();
     } else {
-        // Buat chart baru
         myPieChart = new Chart(ctx, config);
     }
 }
@@ -1471,23 +1444,19 @@ function keterangan_air() {
 
 function capitalizeWords(text) {
     return text
-        .toLowerCase() // Mengubah seluruh teks menjadi huruf kecil terlebih dahulu
-        .split(' ')    // Memisahkan teks berdasarkan spasi
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Kapitalisasi huruf pertama setiap kata
-        .join(' ');    // Menggabungkan kembali teks menjadi satu string
+        .toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
 }
 
 function formatPlatNomor(plat) {
-    // Pisahkan bagian berdasarkan spasi
     const parts = plat.split(' ');
-
     if (parts.length === 3) {
-        const kodeWilayah = parts[0].toUpperCase(); // Bagian kode wilayah (AB)
-        const angka = parts[1];                   // Bagian angka (1234)
-        const hurufAkhir = parts[2].toUpperCase(); // Bagian huruf akhir (XYZ)
+        const kodeWilayah = parts[0].toUpperCase();
+        const angka = parts[1];
+        const hurufAkhir = parts[2].toUpperCase();
         return `${kodeWilayah} ${angka} ${hurufAkhir}`;
     }
-
-    // Jika format tidak sesuai, kembalikan teks asli
     return plat.toUpperCase();
 }
