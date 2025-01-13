@@ -388,11 +388,12 @@ function eksekutor(){
         d1: { label: '- Luar dalam', value: `${selisih_luar_dalam+'°'}` },
         d2: { label: '- Tertinggi terendah', value: `${selisih+'°'}` },
     };
-    var sisa_jam_1 = ((liter_tong_atas/kecepatan_minum_atas)/3)*0.75;
+    var kma = kecepatan_minum_atas*1.2;//;
+    var sisa_jam_1 = ((liter_tong_atas/kma)/3);
     var waktu_air_atas = formatJamDanMenit(sisa_jam_1);
     var jam_air_habis_atas = tambahJamDesimal(sisa_jam_1);
     const Data_air = {
-        d1: { label: '- konsumsi air :', value: `${kecepatan_minum_atas+' Ltr/jam'}` },
+        d1: { label: '- konsumsi air :', value: `${kma.toFixed(2)+' Ltr/jam'}` },
         //d2: { label: '- perkiraan habis  :', value: `${waktu_air_atas}` },
         //d3: { label: '- pada jam   :', value: `${jam_air_habis_atas}` },
     };
