@@ -443,7 +443,7 @@ function tambahJamDesimal(jumlahJam) {
 function formatJamDanMenit(jumlahJam) {
     const jam = Math.floor(jumlahJam); // Ambil bagian jam (bilangan bulat)
     const menit = Math.round((jumlahJam - jam) * 60); // Konversi sisa desimal menjadi menit
-    return `${jam} jam ${menit} mnt`; // Format output
+    return `${jam} jam ${menit} menit`; // Format output
 }
 
 var rpm_kps1 = document.getElementById('square1');
