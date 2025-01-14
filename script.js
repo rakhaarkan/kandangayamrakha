@@ -400,7 +400,7 @@ function eksekutor(){
         //d2: { label: '- perkiraan habis  :', value: `${waktu_air_atas}` },
         //d3: { label: '- pada jam   :', value: `${jam_air_habis_atas}` },
     };
-    var Data_air_2 = 'perkiraan habis dalam '+waktu_air_atas+', pada jam '+jam_air_habis_atas;
+    var Data_air_2 = 'perkiraan air habis dalam '+waktu_air_atas+', pada jam '+jam_air_habis_atas;
 
     document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
     document.getElementById('container_gauges_kandang_luar').innerHTML = gaugesHTML_luar;
