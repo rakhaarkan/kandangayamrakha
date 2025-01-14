@@ -405,6 +405,7 @@ function eksekutor(){
     document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
     document.getElementById('container_gauges_kandang_luar').innerHTML = gaugesHTML_luar;
     //document.getElementById('gaugesha').innerHTML = gaugesha;
+    document.getElementById("populasi").innerHTML = jumlah_ayam_awal;
     document.getElementById("kecepatan_angin_atas").innerHTML = kecepatan_angin_atas;
     document.getElementById("data_selisih").innerHTML = createOutputTable(Data_selisih,1);
     document.getElementById("data_air_1").innerHTML = createOutputTable(Data_air,1);
