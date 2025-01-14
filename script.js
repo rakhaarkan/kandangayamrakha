@@ -392,8 +392,11 @@ function eksekutor(){
     var sisa_jam_1 = ((liter_tong_atas/kma));
     var waktu_air_atas = formatJamDanMenit(sisa_jam_1);
     var jam_air_habis_atas = tambahJamDesimal(sisa_jam_1);
+    var konsumsi_pakan = (kma*0.225).toFixed(2)+' sak/hari';
+    var konsumsi_pakan_2 = (kma*0.5).toFixed(2)+' kg/jam';
     const Data_air = {
-        d1: { label: '- konsumsi air :', value: `${kma.toFixed(2)+' Ltr/jam'}` },
+        d1: { label: '- kons. pakan:', value: `${konsumsi_pakan}` },
+        d2: { label: '- konsumsi air :', value: `${kma.toFixed(2)+' Ltr/jam'}` },
         //d2: { label: '- perkiraan habis  :', value: `${waktu_air_atas}` },
         //d3: { label: '- pada jam   :', value: `${jam_air_habis_atas}` },
     };
