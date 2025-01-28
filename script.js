@@ -23,6 +23,23 @@ function deleteCookie(name) {
     document.cookie = name + "=; Max-Age=-99999999;";
 }
 
+function toggleSidebar() {
+    const sidebar = document.getElementById("mySidebar");
+    const overlay = document.getElementById("overlay");
+    const menuBtn = document.getElementById("menuBtn");
+    const isOpen = sidebar.style.width === "250px";
+
+    if (isOpen) {
+      sidebar.style.width = "0";
+      overlay.classList.remove("active");
+      menuBtn.classList.remove("active");
+    } else {
+      sidebar.style.width = "250px";
+      overlay.classList.add("active");
+      menuBtn.classList.add("active");
+    }
+  }
+  
 function hpsnull(hps_null){
     if (hps_null !== null) {
         return hps_null;
