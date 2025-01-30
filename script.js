@@ -39,7 +39,7 @@ function toggleSidebar() {
       menuBtn.classList.add("active");
     }
   }
-  
+
 function hpsnull(hps_null){
     if (hps_null !== null) {
         return hps_null;
@@ -1122,7 +1122,7 @@ function wkt_on(){
     var onl = document.getElementById('ind_online');
     document.getElementById('data-container').innerHTML = waktu_online;            
     
-    if(waktu_online<30){
+    if(waktu_online<60){
         onl.style.backgroundColor = "rgb(59, 225, 89)";
     }else{
         onl.style.backgroundColor = "red";
