@@ -54,7 +54,7 @@ var penampung_json_3;
 var penampung_json_4;
 var penampung_data_waktu;
 const randomFraction = Math.random();
-const randomValue = 5000;//Math.floor(randomFraction * (5000 - 2000 + 1)) + 2000;
+const randomValue = 4560;//Math.floor(randomFraction * (5000 - 2000 + 1)) + 2000;
 
 var suhu_atas = 0;
 var suhu_tengah = 0;
