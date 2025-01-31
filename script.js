@@ -191,6 +191,7 @@ function data_thingspeak(){
                 document.getElementById('messages').innerHTML = 'field1 : ' + fieldData_1 + ', field2 : ' + fieldData_2 + ', field3 : ' + fieldData_3 + ', field4 : ' + fieldData_4;
                 var loading_1 = document.getElementById("loading_1");
                 loading_1.style.display = "none";
+                updateTime();
                 eksekutor();
             })
             //.catch(error => console.error('Error fetching data:', error));
@@ -434,7 +435,6 @@ function eksekutor(){
     document.getElementById("power").innerHTML = power;
     document.getElementById("energy").innerHTML = energy;
     document.getElementById("freq").innerHTML = frequency;
-    updateTime();
     animasi_kipas();
     animasi_bar();
     animasi_tombol();
