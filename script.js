@@ -40,7 +40,7 @@ function toggleSidebar() {
     }
   }
 
-function navigate(event, url) {
+  function navigate(event, url) {
     event.preventDefault(); // Mencegah link membuka halaman baru
 
     // Ambil hanya bagian path tanpa domain
