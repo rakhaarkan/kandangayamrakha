@@ -41,19 +41,16 @@ function toggleSidebar() {
   }
 
   function navigateToPage(url) {
-    event.preventDefault(); // Mencegah aksi default dari link
-    
-    // Cek apakah pengguna sudah berada di website yang sama
-    if (window.location.origin + window.location.pathname === url) {
+    event.preventDefault(); // Mencegah navigasi default
+
+    const iframe = document.getElementById("contentFrame");
+    if (iframe.src !== url) {
+        iframe.src = url; // Ganti konten dengan halaman tujuan
+        history.pushState(null, "", url); // Simpan ke history tanpa reload
+        console.log("Navigasi ke:", url);
+    } else {
         console.log("Sudah berada di halaman ini, tidak perlu navigasi ulang.");
-        return;
     }
-
-    // Ubah URL tanpa reload
-    history.pushState(null, "", url);
-    console.log("Navigasi ke:", url);
-
-    // Bisa tambahkan logika lain seperti mengganti iframe atau konten secara dinamis
 }
 
 // Event listener untuk menangani perubahan state saat tombol back/forward ditekan
