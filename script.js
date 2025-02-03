@@ -40,23 +40,19 @@ function toggleSidebar() {
     }
   }
 
-  function navigateToPage(url) {
-    event.preventDefault(); // Mencegah navigasi default
+  function navigate(event, url) {
+    event.preventDefault(); // Mencegah navigasi default jika kondisi terpenuhi
 
-    const iframe = document.getElementById("contentFrame");
-    if (iframe.src !== url) {
-        iframe.src = url; // Ganti konten dengan halaman tujuan
-        history.pushState(null, "", url); // Simpan ke history tanpa reload
-        console.log("Navigasi ke:", url);
-    } else {
+    // Cek apakah pengguna sudah berada di halaman yang sama
+    if (window.location.href === url) {
         console.log("Sudah berada di halaman ini, tidak perlu navigasi ulang.");
+        toggleSidebar();
+        return;
     }
-}
 
-// Event listener untuk menangani perubahan state saat tombol back/forward ditekan
-window.addEventListener('popstate', function() {
-    console.log("Navigasi kembali atau maju di history:", window.location.href);
-});
+    // Jika halaman berbeda, lakukan navigasi
+    window.location.href = url;
+}
 
 function hpsnull(hps_null){
     if (hps_null !== null) {
