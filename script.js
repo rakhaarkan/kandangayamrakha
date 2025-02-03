@@ -40,22 +40,20 @@ function toggleSidebar() {
     }
   }
 
-function navigateToPage(url) {
-    // Cek apakah halaman sudah ada di history
-    if (window.location.href !== url) {
-        // Ubah URL di address bar tanpa reload
-        history.pushState(null, "", url);
-        
-        // Ganti konten halaman secara dinamis, misalnya dengan menggunakan iframe atau AJAX
-        // Untuk menjaga pengalaman pengguna yang mulus tanpa reload
-        // Misalnya kita bisa memasukkan iframe untuk menampilkan halaman baru
-        let iframe = document.createElement('iframe');
-        iframe.src = url;
-        iframe.style.width = '100%';
-        iframe.style.height = '100vh';
-        document.body.innerHTML = ''; // Hapus konten sebelumnya
-        document.body.appendChild(iframe); // Tampilkan iframe yang berisi halaman baru
+  function navigateToPage(url) {
+    event.preventDefault(); // Mencegah aksi default dari link
+    
+    // Cek apakah pengguna sudah berada di website yang sama
+    if (window.location.origin + window.location.pathname === url) {
+        console.log("Sudah berada di halaman ini, tidak perlu navigasi ulang.");
+        return;
     }
+
+    // Ubah URL tanpa reload
+    history.pushState(null, "", url);
+    console.log("Navigasi ke:", url);
+
+    // Bisa tambahkan logika lain seperti mengganti iframe atau konten secara dinamis
 }
 
 // Event listener untuk menangani perubahan state saat tombol back/forward ditekan
