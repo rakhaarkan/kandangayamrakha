@@ -443,7 +443,7 @@ function eksekutor(){
     const persentase = (jumlah_1 / total_digit);
     var Data_air_2 = 'perkiraan air habis dalam '+waktu_air_atas+', pada jam '+jam_air_habis_atas;
     var luas_kandang = 400*persentase;
-    var kepadatan_kg_m2 = (((jumlah_ayam_awal*bobot_rata_rata)/luas_kandang)/1000).toFixed(2);
+    var kepadatan_kg_m2 = ((((jumlah_ayam_awal-jumlah_ayam_mati)*bobot_rata_rata)/luas_kandang)/1000).toFixed(2);
     var jumlah_ekor_m2 = (jumlah_ayam_awal/luas_kandang).toFixed(1);
     var Data_kepadatan = 'Kepadatan Ayam : ' + kepadatan_kg_m2 +' Kg/m2, ( ' + jumlah_ekor_m2 + ' Ekor/m2)';
     document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
@@ -1360,12 +1360,11 @@ async function fetchData() {
                     modal.style.display = "none";
                 }
                 createPieChart(); 
+                
             };
-
-
             container.appendChild(resultItem);
         });
-        
+        koneksi_mqtt();
         } catch (error) {
           container.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
         }
@@ -1408,7 +1407,7 @@ let myPieChart;
 var first_total_bobot = 0;
     
 async function createPieChart() {
-     const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData');
+    const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData');
     const result = await response.json();
   
     if (!result || result.length === 0) {
@@ -1520,4 +1519,21 @@ function formatPlatNomor(plat) {
         return `${kodeWilayah} ${angka} ${hurufAkhir}`;
     }
     return plat.toUpperCase();
+}
+
+setInterval(koneksi_mqtt,1000)
+function koneksi_mqtt(){
+    // Koneksi ke broker HiveMQ
+    const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt");
+
+    client.on("connect", function () {
+        console.log("Terhubung ke HiveMQ dari browser!");
+
+        // Kirim pesan ke topik "rakha/esp32/dht11"
+        client.publish("kndgrkh", JSON.stringify({ aym: sisa_ayam_hidup}), { qos: 0, retain: true });
+    });
+
+    client.on("message", function (topic, message) {
+        console.log(`Pesan diterima dari ${topic}: ${message.toString()}`);
+    });
 }
