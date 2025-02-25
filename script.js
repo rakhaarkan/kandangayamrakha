@@ -180,6 +180,8 @@ var epr_jumlah_ayam_mati;
 var epr_jumlah_pakan_sak;
 var blok_kandang = 0;
 
+var first_mqtt = false;
+
 function data_thingspeak(){
     const url = 'https://api.thingspeak.com/channels/2172969/feeds.json?results=1';
         fetch(url)
@@ -209,6 +211,10 @@ function data_thingspeak(){
                 loading_1.style.display = "none";
                 updateTime();
                 eksekutor();
+                if(!first_mqtt){
+                    koneksi_mqtt();
+                    first_mqtt = true;
+                }
             })
             //.catch(error => console.error('Error fetching data:', error));
             
@@ -1364,7 +1370,7 @@ async function fetchData() {
             };
             container.appendChild(resultItem);
         });
-        koneksi_mqtt();
+        //koneksi_mqtt();
         } catch (error) {
           container.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
         }
@@ -1521,7 +1527,7 @@ function formatPlatNomor(plat) {
     return plat.toUpperCase();
 }
 
-setInterval(koneksi_mqtt,1000)
+//setInterval(koneksi_mqtt,1000)
 function koneksi_mqtt(){
     // Koneksi ke broker HiveMQ
     const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt");
