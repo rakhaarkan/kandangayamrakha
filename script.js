@@ -143,6 +143,7 @@ var power = 0;
 var energy = 0;
 var frequency = 0;
 var pf = 0;
+var rata_rata_kwh = 0;
 var jam = 0;
 var lampu_luar = 0;
 var kode_cuaca = 0;
@@ -177,6 +178,7 @@ var harga_obat_ayam = 0;
 var harga_pakan_kg = 0;
 var epr_jumlah_ayam_mati;
 var epr_jumlah_pakan_sak;
+var blok_kandang = 0;
 
 function data_thingspeak(){
     const url = 'https://api.thingspeak.com/channels/2172969/feeds.json?results=1';
@@ -285,7 +287,8 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
             energy = hpsnull(array_listrik[3]/100).toFixed(1);
             frequency = hpsnull(array_listrik[4]/100).toFixed(1);
             pf = array_listrik[5]/100;
-            kecepatan_angin_atas = hpsnull(array_angin[0]/100).toFixed(2);
+            rata_rata_kwh = (array_listrik[6]/10000*24).toFixed(1);
+            kecepatan_angin_atas = hpsnull(array_angin[0]/10000).toFixed(2);
         }else if(kode_2 == 2){
             grafik_waktu = data_json.gwk;
             grafik_suhu_atas = data_json.gsa;
@@ -320,6 +323,7 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
             jumlah_pakan_sak = data_json.mtd[5];
             harga_kontrak_ayam = data_json.mtd[6];
             bobot_rata_rata = data_json.mtd[7];
+            blok_kandang = data_json.mtd[8];
         }
     }else if(kode == 2){
         try {
@@ -350,6 +354,7 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
             if (terimaJson.lst[3] !== 0) energy = terimaJson.lst[3];
             frequency = terimaJson.lst[4];
             pf = terimaJson.lst[5];
+            rata_rata_kwh = terimaJson.lst[6];
         } else if (nomorJson === 5) {
             mode_kandang = terimaJson.kpa[0];
             tanggal_masuk_ayam_hari = terimaJson.kpa[1];
@@ -411,7 +416,7 @@ function eksekutor(){
     const filteredValues = grafik_suhu_atas.filter(value => value !== 0);
     const nilaiTertinggi = Math.max(...filteredValues);
     const nilaiTerendah = Math.min(...filteredValues);
-    const selisih = (nilaiTertinggi - nilaiTerendah)/10;
+    const selisih = ((nilaiTertinggi - nilaiTerendah)/10000).toFixed(1);
     var selisih_luar_dalam = "NaN";
     if (suhu_atas != 0 && suhu_luar != 0) {
         selisih_luar_dalam = (suhu_atas - suhu_luar).toFixed(1);
@@ -432,12 +437,21 @@ function eksekutor(){
         //d2: { label: '- perkiraan habis  :', value: `${waktu_air_atas}` },
         //d3: { label: '- pada jam   :', value: `${jam_air_habis_atas}` },
     };
+    //blok_kandang = "11111111111111";
+    const jumlah_1 = blok_kandang.split('').filter(char => char === '1').length;
+    const total_digit = blok_kandang.length;
+    const persentase = (jumlah_1 / total_digit);
     var Data_air_2 = 'perkiraan air habis dalam '+waktu_air_atas+', pada jam '+jam_air_habis_atas;
-
+    var luas_kandang = 400*persentase;
+    var kepadatan_kg_m2 = (((jumlah_ayam_awal*bobot_rata_rata)/luas_kandang)/1000).toFixed(2);
+    var jumlah_ekor_m2 = (jumlah_ayam_awal/luas_kandang).toFixed(1);
+    var Data_kepadatan = 'Kepadatan Ayam : ' + kepadatan_kg_m2 +' Kg/m2, ( ' + jumlah_ekor_m2 + ' Ekor/m2)';
     document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
     document.getElementById('container_gauges_kandang_luar').innerHTML = gaugesHTML_luar;
     //document.getElementById('gaugesha').innerHTML = gaugesha;
     document.getElementById("populasi").innerHTML = jumlah_ayam_awal;
+    document.getElementById("kepadatan_kg_m2").innerHTML = Data_kepadatan;
+    //document.getElementById("jumlah_ekor_m2").innerHTML = jumlah_ekor_m2;
     document.getElementById("kecepatan_angin_atas").innerHTML = kecepatan_angin_atas;
     document.getElementById("data_selisih").innerHTML = createOutputTable(Data_selisih,1);
     document.getElementById("data_air_1").innerHTML = createOutputTable(Data_air,1);
@@ -449,6 +463,7 @@ function eksekutor(){
     document.getElementById("power").innerHTML = power;
     document.getElementById("energy").innerHTML = energy;
     document.getElementById("freq").innerHTML = frequency;
+    document.getElementById("rtrtkwh").innerHTML = 'Rata Rata KWH perhari : ' + rata_rata_kwh + ' kWh';
     animasi_kipas();
     animasi_bar();
     animasi_tombol();
@@ -719,6 +734,16 @@ toggleButton2.addEventListener('click', function() {
         alert("Perangkat anda telah di atur menjadi mode pemilik kandang");
         myVar = "1";
         setCookie("owner", myVar, 7); 
+        setDefaultValue();
+        addButton.style.display = "block";
+        dt_bakul.style.display = "block";
+        dt_calc_chart.style.display = "block";
+        fetchData();
+        createPieChart();
+    } else if (input_cookie == "ppl") {
+        alert("Perangkat anda telah di atur menjadi mode ppl kandang untuk 1 hari");
+        myVar = "1";
+        setCookie("owner", myVar, 1); 
         setDefaultValue();
         addButton.style.display = "block";
         dt_bakul.style.display = "block";
