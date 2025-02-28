@@ -137,6 +137,7 @@ var grafik_waktu;
 var grafik_suhu_atas;
 var grafik_suhu_luar;
 var grafik_kelembapan_atas;
+var grafik_kwh_listrik;
 var voltage = 0;
 var current = 0;
 var power = 0;
@@ -144,6 +145,7 @@ var energy = 0;
 var frequency = 0;
 var pf = 0;
 var rata_rata_kwh = 0;
+var kwh_jam = 0;
 var jam = 0;
 var lampu_luar = 0;
 var kode_cuaca = 0;
@@ -294,6 +296,7 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
             frequency = hpsnull(array_listrik[4]/100).toFixed(1);
             pf = array_listrik[5]/100;
             rata_rata_kwh = (array_listrik[6]/10000*24).toFixed(1);
+            kwh_jam = (array_listrik[7]/10000).toFixed(1);
             kecepatan_angin_atas = hpsnull(array_angin[0]/10000).toFixed(2);
         }else if(kode_2 == 2){
             grafik_waktu = data_json.gwk;
@@ -301,6 +304,7 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
             grafik_kelembapan_atas = data_json.gka;  
         }else if(kode_2 == 3){
             grafik_suhu_bawah = data_json.gsb;
+            grafik_kwh_listrik = data_json.gls;
         }else if(kode_2 == 4){
             mode_kandang = data_json.kpa[0];
             usia_ayam = data_json.kpa[1];
@@ -449,8 +453,9 @@ function eksekutor(){
     const persentase = (jumlah_1 / total_digit);
     var Data_air_2 = 'perkiraan air habis dalam '+waktu_air_atas+', pada jam '+jam_air_habis_atas;
     var luas_kandang = 400*persentase;
-    var kepadatan_kg_m2 = ((((jumlah_ayam_awal-jumlah_ayam_mati)*bobot_rata_rata)/luas_kandang)/1000).toFixed(2);
-    var jumlah_ekor_m2 = (jumlah_ayam_awal/luas_kandang).toFixed(1);
+    var ayam_saat_ini = jumlah_ayam_awal-jumlah_ayam_mati;
+    var kepadatan_kg_m2 = (((ayam_saat_ini*bobot_rata_rata)/luas_kandang)/1000).toFixed(2);
+    var jumlah_ekor_m2 = (ayam_saat_ini/luas_kandang).toFixed(1);
     var Data_kepadatan = 'Kepadatan Ayam : ' + kepadatan_kg_m2 +' Kg/m2, ( ' + jumlah_ekor_m2 + ' Ekor/m2)';
     document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
     document.getElementById('container_gauges_kandang_luar').innerHTML = gaugesHTML_luar;
@@ -549,6 +554,7 @@ function animasi_kipas(){
     }
     var input = detail_kipas;
     parseAndDisplay(input);
+
 
     document.getElementById("mode_kipas").innerHTML = mdkps;
     document.getElementById("timer_kipas").innerHTML = tmkps;
@@ -855,7 +861,18 @@ function animasi_chart() {
                     tension: 0.4,
                     pointStyle: false,
                     yAxisID: 'y2'
-                }]
+                }/*, {
+                    label: 'kWh Listrik',
+                    data: [gls(0), gls(1), gls(2), gls(3), gls(4), gls(5), gls(6), gls(7), gls(8), gls(9), gls(10), gls(11), gls(12), gls(13), gls(14), gls(15), gls(16), gls(17), gls(18), gls(19), gls(20), gls(21), gls(22), gls(23)],
+                    backgroundColor: 'rgba(255,170,29,0.2)',
+                    borderColor: 'rgba(255,170,29,1)',
+                    borderWidth: 1,
+                    fill: true,
+                    cubicInterpolationMode: 'monotone',
+                    tension: 0.4,
+                    pointStyle: false,
+                    yAxisID: 'y3'
+                }*/]
             },
             options: {
                 scales: {
@@ -886,6 +903,15 @@ function animasi_chart() {
                         ticks: { color: 'rgba(191, 39, 126,1)' },
                         grid: { display: false }
                     },
+                    /*y3: {
+                        min: 0,
+                        max: 6,
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        ticks: { color: 'rgba(255,255,0,1)' },
+                        grid: { display: false }
+                    },*/
                     x: { grid: { display: false } }
                 },
             }
@@ -933,6 +959,11 @@ function gsb(x){
         hasil_gsb = hpsnull(grafik_suhu_bawah[x]/10).toFixed(1);
     }
     return hasil_gsb;
+}
+
+function gls(x){
+    var hasil_gls = hpsnull(grafik_kwh_listrik[x]/1000).toFixed(1);
+    return hasil_gls;    
 }
 
 function gwk(x) {
