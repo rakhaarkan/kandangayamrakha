@@ -435,7 +435,7 @@ function eksekutor(){
         d1: { label: '- Luar dalam', value: `${selisih_luar_dalam+'°'}` },
         d2: { label: '- Tertinggi terendah', value: `${selisih+'°'}` },
     };
-    var kma = kecepatan_minum_atas*1.2;//;
+    var kma = kecepatan_minum_atas*1;//;
     var sisa_jam_1 = ((liter_tong_atas/kma));
     var waktu_air_atas = formatJamDanMenit(sisa_jam_1);
     var jam_air_habis_atas = tambahJamDesimal(sisa_jam_1);
@@ -616,12 +616,12 @@ function parseAndDisplay(input) {
                     case 7:
                         const suhu = valueArray[0]/10;
                         const kipas = valueArray.slice(1);
-                        outputText = `Suhu > ${suhu*10}° = kipas hidup ${kipas.length}, nomor ${kipas.join(', ')}`;
+                        outputText = `Suhu > ${suhu}° = kipas hidup ${kipas.length}, nomor ${kipas.join(', ')}`;
                         cekrdh(suhu_rendah, suhu);
                         break;
                     
                     case 0:
-                        outputText = `Suhu < ${suhu_rendah*10}° = kipas default hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                        outputText = `Suhu < ${suhu_rendah}° = kipas default hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
                         break;
 
                     default:
