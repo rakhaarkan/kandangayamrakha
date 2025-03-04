@@ -146,6 +146,7 @@ var frequency = 0;
 var pf = 0;
 var rata_rata_kwh = 0;
 var kwh_jam = 0;
+var kwh_harian = 0;
 var jam = 0;
 var lampu_luar = 0;
 var kode_cuaca = 0;
@@ -297,6 +298,7 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
             pf = array_listrik[5]/100;
             rata_rata_kwh = (array_listrik[6]/10000*48).toFixed(1);
             kwh_jam = (array_listrik[7]/10000).toFixed(1);
+            kwh_harian = (array_listrik[8]/10).toFixed(1);
             kecepatan_angin_atas = hpsnull(array_angin[0]/10000).toFixed(2);
         }else if(kode_2 == 2){
             grafik_waktu = data_json.gwk;
@@ -474,7 +476,7 @@ function eksekutor(){
     document.getElementById("power").innerHTML = power;
     document.getElementById("energy").innerHTML = energy;
     document.getElementById("freq").innerHTML = frequency;
-    document.getElementById("rtrtkwh").innerHTML = 'Rata Rata Listrik perhari : ' + rata_rata_kwh + ' kWh';
+    document.getElementById("rtrtkwh").innerHTML = 'Rata Rata Listrik perhari : ' + kwh_harian + ' kWh';
     animasi_kipas();
     animasi_bar();
     animasi_tombol();
@@ -585,43 +587,30 @@ function parseAndDisplay(input) {
 
                 switch (parseInt(mode, 10)) {
                     case 1:
-                        outputText = `Suhu > ${shmin}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
-                        cekrdh(suhu_rendah,shmin);
-                        break;
-                    
-                    case 2:
-                        outputText = `Suhu > ${sb_min}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
-                        cekrdh(suhu_rendah,sb_min);
-                        break;
-                    
-                    case 3:
-                        outputText = `Suhu > ${trgtsh}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
-                        cekrdh(suhu_rendah,trgtsh);
-                        break;
-                    
-                    case 4:
-                        outputText = `Suhu > ${sb_max}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
-                        cekrdh(suhu_rendah,sb_max);
-                        break;
-            
-                    case 5:                    
-                        outputText = `Suhu > ${shmax}° = kipas hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
-                        cekrdh(suhu_rendah,shmax);
-                        break;
-                
-                    case 6:                    
-                        outputText = `Suhu < ${suhu_rendah*10}° = mode intermitten. kipas ${valueArray.join(', ')}`;
-                        break;
-                    
-                    case 7:
                         const suhu = valueArray[0]/10;
                         const kipas = valueArray.slice(1);
                         outputText = `Suhu > ${suhu}° = kipas hidup ${kipas.length}, nomor ${kipas.join(', ')}`;
                         cekrdh(suhu_rendah, suhu);
                         break;
                     
+                    case 2:
+                        outputText = `Suhu > ${valueArray[0]/10}° = Mode Intermitten ${valueArray[1]} kipas`;
+                        cekrdh(suhu_rendah,sb_min);
+                        break;
+                    
+                    case 7:
+                        //const suhu = valueArray[0]/10;
+                        //const kipas = valueArray.slice(1);
+                        //outputText = `Suhu > ${suhu}° = kipas hidup ${kipas.length}, nomor ${kipas.join(', ')}`;
+                        //cekrdh(suhu_rendah, suhu);
+                        break;
+                    
                     case 0:
-                        outputText = `Suhu < ${suhu_rendah}° = kipas default hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                        if(valueArray.length == 0){
+                            outputText = `Suhu < ${suhu_rendah}° = kipas default mati`;
+                        }else{
+                            outputText = `Suhu < ${suhu_rendah}° = kipas default hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                        }
                         break;
 
                     default:
