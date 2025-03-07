@@ -182,6 +182,7 @@ var harga_pakan_kg = 0;
 var epr_jumlah_ayam_mati;
 var epr_jumlah_pakan_sak;
 var blok_kandang = 0;
+var jumlah_ayam_dipanen = 0;
 
 var first_mqtt = false;
 
@@ -336,6 +337,7 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
             harga_kontrak_ayam = data_json.mtd[6];
             bobot_rata_rata = data_json.mtd[7];
             blok_kandang = data_json.mtd[8];
+            jumlah_ayam_dipanen = data_json.mtd[9];
         }
     }else if(kode == 2){
         try {
@@ -450,12 +452,14 @@ function eksekutor(){
         //d3: { label: '- pada jam   :', value: `${jam_air_habis_atas}` },
     };
     //blok_kandang = "11111111111111";
+    jumlah_ayam_dipanen = 290;
+
     const jumlah_1 = blok_kandang.split('').filter(char => char === '1').length;
     const total_digit = blok_kandang.length;
     const persentase = (jumlah_1 / total_digit);
     var Data_air_2 = 'perkiraan air habis dalam '+waktu_air_atas+', pada jam '+jam_air_habis_atas;
     var luas_kandang = 400*persentase;
-    var ayam_saat_ini = jumlah_ayam_awal-jumlah_ayam_mati;
+    var ayam_saat_ini = jumlah_ayam_awal-jumlah_ayam_mati-jumlah_ayam_dipanen;
     var kepadatan_kg_m2 = (((ayam_saat_ini*bobot_rata_rata)/luas_kandang)/1000).toFixed(2);
     var jumlah_ekor_m2 = (ayam_saat_ini/luas_kandang).toFixed(1);
     var Data_kepadatan = 'Kepadatan Ayam : ' + kepadatan_kg_m2 +' Kg/m2, ( ' + jumlah_ekor_m2 + ' Ekor/m2)';
@@ -586,6 +590,14 @@ function parseAndDisplay(input) {
                 let outputText = '';
 
                 switch (parseInt(mode, 10)) {
+                    case 0:
+                        if(valueArray.length == 0){
+                            outputText = `Suhu < ${suhu_rendah}° = kipas default mati`;
+                        }else{
+                            outputText = `Suhu < ${suhu_rendah}° = kipas default hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
+                        }
+                        break;
+                    
                     case 1:
                         const suhu = valueArray[0]/10;
                         const kipas = valueArray.slice(1);
@@ -598,21 +610,6 @@ function parseAndDisplay(input) {
                         cekrdh(suhu_rendah,sb_min);
                         break;
                     
-                    case 7:
-                        //const suhu = valueArray[0]/10;
-                        //const kipas = valueArray.slice(1);
-                        //outputText = `Suhu > ${suhu}° = kipas hidup ${kipas.length}, nomor ${kipas.join(', ')}`;
-                        //cekrdh(suhu_rendah, suhu);
-                        break;
-                    
-                    case 0:
-                        if(valueArray.length == 0){
-                            outputText = `Suhu < ${suhu_rendah}° = kipas default mati`;
-                        }else{
-                            outputText = `Suhu < ${suhu_rendah}° = kipas default hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
-                        }
-                        break;
-
                     default:
                         outputText = `Mode ${mode} tidak dikenal`;
                 }
