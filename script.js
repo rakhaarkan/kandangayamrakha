@@ -185,6 +185,7 @@ var blok_kandang = 0;
 var jumlah_ayam_dipanen = 0;
 
 var first_mqtt = false;
+var flag_mulai = false;
 
 function data_thingspeak(){
     const url = 'https://api.thingspeak.com/channels/2172969/feeds.json?results=1';
@@ -214,6 +215,7 @@ function data_thingspeak(){
                 var loading_1 = document.getElementById("loading_1");
                 loading_1.style.display = "none";
                 updateTime();
+                flag_mulai = true;
                 eksekutor();
                 if(!first_mqtt){
                     koneksi_mqtt();
@@ -255,7 +257,7 @@ async function getDataLocalServer(url_local_server) {
       console.error("Error fetching data:", error.message);
     }
   }
-
+var first_dipanen = false;
 function penguraiJson(kode,dataHttp,kode_2=0) {
     if(kode == 1){
         data_json = JSON.parse(dataHttp);
@@ -337,7 +339,9 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
             harga_kontrak_ayam = data_json.mtd[6];
             bobot_rata_rata = data_json.mtd[7];
             blok_kandang = data_json.mtd[8];
-            jumlah_ayam_dipanen = data_json.mtd[9];
+            if(!first_dipanen){
+                jumlah_ayam_dipanen = data_json.mtd[9];
+            }
         }
     }else if(kode == 2){
         try {
@@ -409,85 +413,89 @@ setInterval(keterangan_air, 8000);
 var sekali = 0;
 
 function eksekutor(){
-    if(sekali==0){
-        keterangan_air();
-        sekali = 1;
-    }
-    const gaugesHTML_atas = `
-        <div class="wrapper">
-        ${createGaugeCard('Suhu Atas', suhu_atas, 40, '20', '40', 'red')}
-        ${createGaugeCard('Kelembapan Atas', kelembapan_atas, 40, '0', '100', 'rgb(0, 218, 251)')}
-        ${createGaugeCard('Heat Index Atas', data_HI_atas,40, '100', '200', 'url(#GradientColor)')}
-        </div>
-    `;
-    const gaugesHTML_luar = `
-        <div class="wrapper">
-        ${createGaugeCard('Suhu Luar', suhu_luar, 40, '20', '40', 'red')}
-        ${createGaugeCard('Kelembapan Luar', kelembapan_luar, 40, '0', '100', 'rgb(0, 218, 251)')}
-        </div>
-    `;
-    
-    const filteredValues = grafik_suhu_atas.filter(value => value !== 0);
-    const nilaiTertinggi = Math.max(...filteredValues);
-    const nilaiTerendah = Math.min(...filteredValues);
-    const selisih = ((nilaiTertinggi - nilaiTerendah)/10000).toFixed(1);
-    var selisih_luar_dalam = "NaN";
-    if (suhu_atas != 0 && suhu_luar != 0) {
-        selisih_luar_dalam = (suhu_atas - suhu_luar).toFixed(1);
-    }
-    const Data_selisih = {
-        d1: { label: '- Luar dalam', value: `${selisih_luar_dalam+'°'}` },
-        d2: { label: '- Tertinggi terendah', value: `${selisih+'°'}` },
-    };
-    var kma = kecepatan_minum_atas*1;//;
-    var sisa_jam_1 = ((liter_tong_atas/kma));
-    var waktu_air_atas = formatJamDanMenit(sisa_jam_1);
-    var jam_air_habis_atas = tambahJamDesimal(sisa_jam_1);
-    var konsumsi_pakan = (kma*0.24).toFixed(2)+' sak/hari';
-    var konsumsi_pakan_2 = (kma*0.5).toFixed(2)+' kg/jam';
-    const Data_air = {
-        d1: { label: '- kons. pakan:', value: `${konsumsi_pakan}` },
-        d2: { label: '- konsumsi air :', value: `${kma.toFixed(2)+' Ltr/jam'}` },
-        //d2: { label: '- perkiraan habis  :', value: `${waktu_air_atas}` },
-        //d3: { label: '- pada jam   :', value: `${jam_air_habis_atas}` },
-    };
-    //blok_kandang = "11111111111111";
-    jumlah_ayam_dipanen = 290;
+    if(flag_mulai){
+        if(sekali==0){
+            keterangan_air();
+            sekali = 1;
+        }
+        const gaugesHTML_atas = `
+            <div class="wrapper">
+            ${createGaugeCard('Suhu Atas', suhu_atas, 40, '20', '40', 'red')}
+            ${createGaugeCard('Kelembapan Atas', kelembapan_atas, 40, '0', '100', 'rgb(0, 218, 251)')}
+            ${createGaugeCard('Heat Index Atas', data_HI_atas,40, '100', '200', 'url(#GradientColor)')}
+            </div>
+        `;
+        const gaugesHTML_luar = `
+            <div class="wrapper">
+            ${createGaugeCard('Suhu Luar', suhu_luar, 40, '20', '40', 'red')}
+            ${createGaugeCard('Kelembapan Luar', kelembapan_luar, 40, '0', '100', 'rgb(0, 218, 251)')}
+            </div>
+        `;
+        var filteredValues = 0;
+        var nilaiTertinggi = 0;
+        var nilaiTerendah = 0;
+        filteredValues = grafik_suhu_atas.filter(value => value !== 0);
+        nilaiTertinggi = Math.max(...filteredValues);
+        nilaiTerendah = Math.min(...filteredValues);
+        const selisih = ((nilaiTertinggi - nilaiTerendah)/10000).toFixed(1);
+        var selisih_luar_dalam = "NaN";
+        if (suhu_atas != 0 && suhu_luar != 0) {
+            selisih_luar_dalam = (suhu_atas - suhu_luar).toFixed(1);
+        }
+        const Data_selisih = {
+            d1: { label: '- Luar dalam', value: `${selisih_luar_dalam+'°'}` },
+            d2: { label: '- Tertinggi terendah', value: `${selisih+'°'}` },
+        };
+        var kma = kecepatan_minum_atas*1;//;
+        var sisa_jam_1 = ((liter_tong_atas/kma));
+        var waktu_air_atas = formatJamDanMenit(sisa_jam_1);
+        var jam_air_habis_atas = tambahJamDesimal(sisa_jam_1);
+        var konsumsi_pakan = (kma*0.24).toFixed(2)+' sak/hari';
+        var konsumsi_pakan_2 = (kma*0.5).toFixed(2)+' kg/jam';
+        const Data_air = {
+            d1: { label: '- kons. pakan:', value: `${konsumsi_pakan}` },
+            d2: { label: '- konsumsi air :', value: `${kma.toFixed(2)+' Ltr/jam'}` },
+            //d2: { label: '- perkiraan habis  :', value: `${waktu_air_atas}` },
+            //d3: { label: '- pada jam   :', value: `${jam_air_habis_atas}` },
+        };
+        //blok_kandang = "11111111111111";
+        //jumlah_ayam_dipanen = 290;
 
-    const jumlah_1 = blok_kandang.split('').filter(char => char === '1').length;
-    const total_digit = blok_kandang.length;
-    const persentase = (jumlah_1 / total_digit);
-    var Data_air_2 = 'perkiraan air habis dalam '+waktu_air_atas+', pada jam '+jam_air_habis_atas;
-    var luas_kandang = 400*persentase;
-    var ayam_saat_ini = jumlah_ayam_awal-jumlah_ayam_mati-jumlah_ayam_dipanen;
-    var kepadatan_kg_m2 = (((ayam_saat_ini*bobot_rata_rata)/luas_kandang)/1000).toFixed(2);
-    var jumlah_ekor_m2 = (ayam_saat_ini/luas_kandang).toFixed(1);
-    var Data_kepadatan = 'Kepadatan Ayam : ' + kepadatan_kg_m2 +' Kg/m2, ( ' + jumlah_ekor_m2 + ' Ekor/m2)';
-    document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
-    document.getElementById('container_gauges_kandang_luar').innerHTML = gaugesHTML_luar;
-    //document.getElementById('gaugesha').innerHTML = gaugesha;
-    document.getElementById("populasi").innerHTML = jumlah_ayam_awal;
-    document.getElementById("kepadatan_kg_m2").innerHTML = Data_kepadatan;
-    //document.getElementById("jumlah_ekor_m2").innerHTML = jumlah_ekor_m2;
-    document.getElementById("kecepatan_angin_atas").innerHTML = kecepatan_angin_atas;
-    document.getElementById("data_selisih").innerHTML = createOutputTable(Data_selisih,1);
-    document.getElementById("data_air_1").innerHTML = createOutputTable(Data_air,1);
-    document.getElementById("data_air_2").innerHTML = Data_air_2;
-    document.getElementById("liter_air_atas").innerHTML = liter_tong_atas;
-    document.getElementById("persen_air_atas").innerHTML = persen_air_atas;
-    document.getElementById("volt").innerHTML = voltage;
-    document.getElementById("amp").innerHTML = current;
-    document.getElementById("power").innerHTML = power;
-    document.getElementById("energy").innerHTML = energy;
-    document.getElementById("freq").innerHTML = frequency;
-    document.getElementById("rtrtkwh").innerHTML = 'Rata Rata Listrik perhari : ' + kwh_harian + ' kWh';
-    animasi_kipas();
-    animasi_bar();
-    animasi_tombol();
-    analisa_realtime();
-    kalkulator();
-    animasi_chart();
-    //fetchData();
+        const jumlah_1 = blok_kandang.split('').filter(char => char === '1').length;
+        const total_digit = blok_kandang.length;
+        const persentase = (jumlah_1 / total_digit);
+        var Data_air_2 = 'perkiraan air habis dalam '+waktu_air_atas+', pada jam '+jam_air_habis_atas;
+        var luas_kandang = 400*persentase;
+        var ayam_saat_ini = jumlah_ayam_awal-jumlah_ayam_mati-jumlah_ayam_dipanen;
+        var kepadatan_kg_m2 = (((ayam_saat_ini*bobot_rata_rata)/luas_kandang)/1000).toFixed(2);
+        var jumlah_ekor_m2 = (ayam_saat_ini/luas_kandang).toFixed(1);
+        var Data_kepadatan = 'Kepadatan Ayam : ' + kepadatan_kg_m2 +' Kg/m2, ( ' + jumlah_ekor_m2 + ' Ekor/m2)';
+        document.getElementById('container_gauges_kandang_atas').innerHTML = gaugesHTML_atas;
+        document.getElementById('container_gauges_kandang_luar').innerHTML = gaugesHTML_luar;
+        //document.getElementById('gaugesha').innerHTML = gaugesha;
+        document.getElementById("populasi").innerHTML = jumlah_ayam_awal;
+        document.getElementById("kepadatan_kg_m2").innerHTML = Data_kepadatan;
+        //document.getElementById("jumlah_ekor_m2").innerHTML = jumlah_ekor_m2;
+        document.getElementById("kecepatan_angin_atas").innerHTML = kecepatan_angin_atas;
+        document.getElementById("data_selisih").innerHTML = createOutputTable(Data_selisih,1);
+        document.getElementById("data_air_1").innerHTML = createOutputTable(Data_air,1);
+        document.getElementById("data_air_2").innerHTML = Data_air_2;
+        document.getElementById("liter_air_atas").innerHTML = liter_tong_atas;
+        document.getElementById("persen_air_atas").innerHTML = persen_air_atas;
+        document.getElementById("volt").innerHTML = voltage;
+        document.getElementById("amp").innerHTML = current;
+        document.getElementById("power").innerHTML = power;
+        document.getElementById("energy").innerHTML = energy;
+        document.getElementById("freq").innerHTML = frequency;
+        document.getElementById("rtrtkwh").innerHTML = 'Rata Rata Listrik perhari : ' + kwh_harian + ' kWh';
+        animasi_kipas();
+        animasi_bar();
+        animasi_tombol();
+        analisa_realtime();
+        kalkulator();
+        animasi_chart();
+        //fetchData();
+    }
 }
 
 function mapNilai(nilai, dariMin, dariMax, keMin, keMax) {
@@ -1262,7 +1270,7 @@ submitButton.onclick = function() {
 // script.js/
 
 var total_ayam_dipanen;
-var total_kg_diambil;
+var total_kg_diambil = 0;
 
 async function fetchData() {
     
@@ -1318,6 +1326,8 @@ async function fetchData() {
             `;
             total_ayam_dipanen += parseInt(item.jumlah_ekor_ambil);
             total_kg_diambil += parseFloat(item.jumlah_kg_ambil);
+            jumlah_ayam_dipanen = total_ayam_dipanen;
+            first_dipanen = true;
             
             const id_bakul = item.id;
             const editButton = document.createElement("button");
