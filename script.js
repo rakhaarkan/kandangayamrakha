@@ -487,7 +487,7 @@ function eksekutor(){
         document.getElementById("power").innerHTML = power;
         document.getElementById("energy").innerHTML = energy;
         document.getElementById("freq").innerHTML = frequency;
-        document.getElementById("rtrtkwh").innerHTML = 'Rata Rata Listrik perhari : ' + kwh_harian + ' kWh';
+        document.getElementById("rtrtkwh").innerHTML = 'Rata Rata Listrik perhari : ' + kwh_jam*24 + ' kWh';
         animasi_kipas();
         animasi_bar();
         animasi_tombol();
