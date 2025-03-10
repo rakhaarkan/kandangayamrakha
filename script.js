@@ -1142,8 +1142,8 @@ function kalkulator(){
     var perkiraan_keuntungan_per_ekor = (perkiraan_pendapatan/calc_ayam_awal).toFixed(0);
     var keterangan = '';
     sisa_ayam_hidup = ayam_tersisa-total_ayam_dipanen;
-    if(((calc_usia_ayam<7)&&(fcr < 1))||(ip > 550)||(perkiraan_pendapatan > calc_ayam_awal*8000)||(deplesi > 100)){
-        keterangan = 'Hasil perhitungan tidak realistis karena anda memasukkan input nilai yang asal.';
+    if(((calc_usia_ayam>7)&&(fcr < 1))||(ip > 550)||(perkiraan_pendapatan > calc_ayam_awal*8000)||(deplesi > 100)){
+        keterangan = 'Hasil perhitungan tidak realistis, input nilai yang anda memasukkan tidak masuk akal.';
     }
     document.getElementById('output_kalkulator_keterangan').innerHTML = keterangan;
     const kalkulatorData = {
