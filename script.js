@@ -1564,7 +1564,7 @@ function koneksi_mqtt(){
             console.log("Terhubung ke HiveMQ dari browser!");
 
             // Kirim pesan ke topik "rakha/esp32/dht11" 
-            client.publish("kndgrkh", JSON.stringify({ aym: sisa_ayam_hidup}), { qos: 0, retain: true });
+            client.publish("kndgrkh", JSON.stringify({ aym: total_ayam_dipanen}), { qos: 0, retain: true });
         });
 
         client.on("message", function (topic, message) {
