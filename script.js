@@ -600,10 +600,12 @@ function parseAndDisplay(input) {
                 switch (parseInt(mode, 10)) {
                     case 0:
                         if(valueArray.length == 0){
+                            //if()
                             outputText = `Suhu < ${suhu_rendah}° = kipas default mati`;
                         }else{
                             outputText = `Suhu < ${suhu_rendah}° = kipas default hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
                         }
+                        cekrdh(suhu_rendah, suhu);
                         break;
                     
                     case 1:
@@ -748,7 +750,7 @@ toggleButton2.addEventListener('click', function() {
         createPieChart();
     } else if (input_cookie == "ppl") {
         alert("Perangkat anda telah di atur menjadi mode ppl kandang untuk 1 hari");
-        myVar = "1";
+        myVar = "2";
         setCookie("owner", myVar, 1); 
         setDefaultValue();
         addButton.style.display = "block";
@@ -1173,8 +1175,17 @@ function setDefaultValue() {
         document.getElementById('input_kalkulator_8').value = harga_obat_ayam;
         document.getElementById('input_kalkulator_9').value = harga_pakan_kg;
         createPieChart();  
-    }else{
-
+    }else if(retrievedVar == 2){
+        hidden_calculator.style.display = "block";
+        document.getElementById('input_kalkulator_1').value = usia_ayam;
+        document.getElementById('input_kalkulator_2').value = jumlah_ayam_awal;
+        document.getElementById('input_kalkulator_3').value = jumlah_ayam_mati;
+        document.getElementById('input_kalkulator_4').value = jumlah_pakan_sak;
+        document.getElementById('input_kalkulator_6').value = harga_kontrak_ayam;
+        document.getElementById('input_kalkulator_7').value = harga_bibit_ayam;
+        document.getElementById('input_kalkulator_8').value = harga_obat_ayam;
+        document.getElementById('input_kalkulator_9').value = harga_pakan_kg;
+        createPieChart();
     }
 }
 
@@ -1209,6 +1220,16 @@ const submitButton = document.getElementById("submitButton");
 if(getCookie("owner") == 1){
     hidden_detail_kipas.style.display = "none";
     button_detail_kipas.textContent = "Lihat Detail Kipas";
+    addButton.style.display = "block";
+    dt_bakul.style.display = "block";
+    dt_calc_chart.style.display = "block"; 
+    addButton.onclick = function() {
+    modal.style.display = "block";
+    dt_bakul.style.display = "block";
+    dt_calc_chart.style.display = "block"; 
+    }
+}else if(getCookie("owner") == 2){
+    hidden_detail_kipas.style.display = "block";
     addButton.style.display = "block";
     dt_bakul.style.display = "block";
     dt_calc_chart.style.display = "block"; 
@@ -1274,7 +1295,7 @@ var total_kg_diambil = 0;
 
 async function fetchData() {
     
-    if(getCookie("owner") == 1){
+    if((getCookie("owner") == 1)||(getCookie("owner") == 2)){
         const container = document.getElementById('resultContainer');
         total_ayam_dipanen = 0;
         total_kg_diambil = 0;
@@ -1453,7 +1474,7 @@ async function createPieChart() {
         d3: { label: 'Kerataan bobot panen', value: `${(total_kg_diambil/total_ayam_dipanen).toFixed(2)+' Kg'}` },
         
     };
-    if(first_total_bobot==0){
+    if((first_total_bobot==0)&&(getCookie("owner") == 1)){
         var hsl_rtrt = (total_kg_diambil/total_ayam_dipanen).toFixed(2);
         if(hsl_rtrt>0){
             document.getElementById('input_kalkulator_5').value = (total_kg_diambil/total_ayam_dipanen).toFixed(2);
