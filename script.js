@@ -605,7 +605,7 @@ function parseAndDisplay(input) {
                         }else{
                             outputText = `Suhu < ${suhu_rendah}° = kipas default hidup ${valueArray.length}, nomor ${valueArray.join(', ')}`;
                         }
-                        cekrdh(suhu_rendah, suhu);
+                        //cekrdh(suhu_rendah, suhu);
                         break;
                     
                     case 1:
