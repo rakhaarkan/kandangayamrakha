@@ -599,7 +599,7 @@ function parseAndDisplay(input) {
 
                 switch (parseInt(mode, 10)) {
                     case 0:
-                        if(valueArray.length == 0){
+                        if(valueArray.length == 1){
                             //if()
                             outputText = `Suhu < ${suhu_rendah}° = kipas default mati`;
                         }else{
@@ -617,7 +617,7 @@ function parseAndDisplay(input) {
                     
                     case 2:
                         outputText = `Suhu > ${valueArray[0]/10}° = Mode Intermitten ${valueArray[1]} kipas`;
-                        cekrdh(suhu_rendah,sb_min);
+                        cekrdh(suhu_rendah,valueArray[0]/10);
                         break;
                     
                     default:
