@@ -458,7 +458,7 @@ function eksekutor(){
             //d2: { label: '- perkiraan habis  :', value: `${waktu_air_atas}` },
             //d3: { label: '- pada jam   :', value: `${jam_air_habis_atas}` },
         };
-        //blok_kandang = "11111111111111";
+        blok_kandang = "111111100000";
         //jumlah_ayam_dipanen = 290;
 
         const jumlah_1 = blok_kandang.split('').filter(char => char === '1').length;
