@@ -1623,7 +1623,7 @@ const token = "Wl380IhMybLGDKPaG88Cg5Lvva7ylU7j"; // Ganti dengan tokenmu
             waktu += 1;
             if (waktu >= 15) {
               clearInterval(interval);
-              document.getElementById("output").innerText = "Tidak ada balasan,coba lagi nanti";
+              document.getElementById("output").innerText = "Tidak ada balasan, mungkin sedang offline, coba lagi nanti";
             }
           }, 1000);
         })
