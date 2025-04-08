@@ -1632,3 +1632,26 @@ const token = "Wl380IhMybLGDKPaG88Cg5Lvva7ylU7j"; // Ganti dengan tokenmu
           alert("Gagal mengirim pesan.");
         });
     }
+
+const statusEl = document.getElementById("statusBlynk");
+
+    async function cekStatusBlynk() {
+        try {
+            const response = await fetch(`https://sgp1.blynk.cloud/external/api/isHardwareConnected?token=${token}`);
+            const isOnline = await response.text();
+
+            if (isOnline === "true") {
+                statusEl.textContent = " Online";
+                statusEl.style.color = "green";
+            } else {
+                statusEl.textContent = " Offline";
+                statusEl.style.color = "red";
+            }
+        } catch (error) {
+            statusEl.textContent = "Error mengecek status";
+            statusEl.style.color = "orange";
+        }
+    }
+
+    // Jalankan setiap 5 detik
+    setInterval(cekStatusBlynk, 10000);

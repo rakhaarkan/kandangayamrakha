@@ -372,10 +372,12 @@
                     <div id="data_kalkulator_chart" style="display: none;">
                         <div id="data_calc_total" style="font-size: large;"></div>
                         <canvas id="myPieChart" width="400" height="400"></canvas><br><br>
-                        <h4>Kirim Perintah ke Blynk</h4>
+                        <span>Kirim Perintah ke Blynk -</span>
+                        <span id="statusBlynk">Mengecek status...</span>
                         <input type="text" id="pesanInput" placeholder="Ketik pesan...">
                         <button onclick="kirimPesan()">Kirim</button><br>
                         <p id="status"><span id="output">-</span></p><br>
+                        
                     </div>
                     <br>
                     <input type="text" id="input_test_kosong" placeholder="">
