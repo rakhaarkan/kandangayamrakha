@@ -458,7 +458,7 @@ function eksekutor(){
             //d2: { label: '- perkiraan habis  :', value: `${waktu_air_atas}` },
             //d3: { label: '- pada jam   :', value: `${jam_air_habis_atas}` },
         };
-        blok_kandang = "111111100000";
+        blok_kandang = "111111111000";
         //jumlah_ayam_dipanen = 290;
 
         const jumlah_1 = blok_kandang.split('').filter(char => char === '1').length;
@@ -1593,3 +1593,42 @@ function koneksi_mqtt(){
         });
     }
 }
+
+const token = "Wl380IhMybLGDKPaG88Cg5Lvva7ylU7j"; // Ganti dengan tokenmu
+    const writeUrl = `https://sgp1.blynk.cloud/external/api/update`;
+    const readUrl = `https://sgp1.blynk.cloud/external/api/get`;
+
+    function kirimPesan() {
+      const pesan = document.getElementById("pesanInput").value;
+      document.getElementById("pesanInput").value = "";
+      if (!pesan) return;
+
+      // Kirim pesan ke V7
+      fetch(`${writeUrl}?token=${token}&v7=${encodeURIComponent(pesan)}`)
+        .then(() => {
+          document.getElementById("output").innerText = "Menunggu balasan...";
+
+          // Mulai polling setiap 1 detik, timeout setelah 10 detik
+          let waktu = 0;
+          const interval = setInterval(() => {
+            fetch(`${readUrl}?token=${token}&v7`)
+              .then(res => res.text())
+              .then(data => {
+                if (data !== pesan) { // Kalau balasan beda dari pesan asli
+                  clearInterval(interval);
+                  document.getElementById("output").innerText = data;
+                }
+              });
+
+            waktu += 1;
+            if (waktu >= 15) {
+              clearInterval(interval);
+              document.getElementById("output").innerText = "Tidak ada balasan,coba lagi nanti";
+            }
+          }, 1000);
+        })
+        .catch(err => {
+          console.error("Gagal kirim:", err);
+          alert("Gagal mengirim pesan.");
+        });
+    }

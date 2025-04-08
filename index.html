@@ -371,12 +371,15 @@
                     <div style="color: red;"><span id="output_kalkulator_keterangan"></span></div>
                     <div id="data_kalkulator_chart" style="display: none;">
                         <div id="data_calc_total" style="font-size: large;"></div>
-                        <canvas id="myPieChart" width="400" height="400"></canvas>
+                        <canvas id="myPieChart" width="400" height="400"></canvas><br><br>
+                        <h4>Kirim Perintah ke Blynk</h4>
+                        <input type="text" id="pesanInput" placeholder="Ketik pesan...">
+                        <button onclick="kirimPesan()">Kirim</button><br>
+                        <p id="status"><span id="output">-</span></p><br>
                     </div>
                     <br>
                     <input type="text" id="input_test_kosong" placeholder="">
-                    <button id="toggleButton2" style="margin: 1vw;">set</button>
-                    
+                    <button id="toggleButton2" style="margin: 1vw;">set</button>                    
                 </div>
             </div>
         </div>
