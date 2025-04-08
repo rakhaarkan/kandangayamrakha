@@ -1599,7 +1599,7 @@ const token = "Wl380IhMybLGDKPaG88Cg5Lvva7ylU7j"; // Ganti dengan tokenmu
     const readUrl = `https://sgp1.blynk.cloud/external/api/get`;
 
     function kirimPesan() {
-      const pesan = document.getElementById("pesanInput").value;
+      const pesan = document.getElementById("pesanInput").value.toLowerCase();
       document.getElementById("pesanInput").value = "";
       if (!pesan) return;
 
