@@ -446,7 +446,7 @@ function eksekutor(){
             d1: { label: '- Luar dalam', value: `${selisih_luar_dalam+'°'}` },
             d2: { label: '- Tertinggi terendah', value: `${selisih+'°'}` },
         };
-        var kma = kecepatan_minum_atas*1;//;
+        var kma = kecepatan_minum_atas*2;//;
         var sisa_jam_1 = ((liter_tong_atas/kma));
         var waktu_air_atas = formatJamDanMenit(sisa_jam_1);
         var jam_air_habis_atas = tambahJamDesimal(sisa_jam_1);
