@@ -183,6 +183,9 @@ var epr_jumlah_ayam_mati;
 var epr_jumlah_pakan_sak;
 var blok_kandang = 0;
 var jumlah_ayam_dipanen = 0;
+var bobot_timbang = 0;
+var bobot_rata_rata_timbang = 0;
+var jumlah_sample_timbang = 0;
 
 var first_mqtt = false;
 var flag_mulai = false;
@@ -339,6 +342,9 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
             harga_kontrak_ayam = data_json.mtd[6];
             bobot_rata_rata = data_json.mtd[7];
             blok_kandang = data_json.mtd[8];
+            bobot_timbang = data_json.bbt[0];
+            bobot_rata_rata_timbang = data_json.bbt[1];
+            jumlah_sample_timbang = data_json.bbt[2];
             if(!first_dipanen){
                 jumlah_ayam_dipanen = data_json.mtd[9];
             }
@@ -1169,7 +1175,7 @@ function setDefaultValue() {
         document.getElementById('input_kalkulator_2').value = jumlah_ayam_awal;
         document.getElementById('input_kalkulator_3').value = jumlah_ayam_mati;
         document.getElementById('input_kalkulator_4').value = jumlah_pakan_sak;
-        document.getElementById('input_kalkulator_5').value = bobot_rata_rata/1000;
+        document.getElementById('input_kalkulator_5').value = bobot_rata_rata_timbang/1000;//bobot_rata_rata/1000;
         document.getElementById('input_kalkulator_6').value = harga_kontrak_ayam;
         document.getElementById('input_kalkulator_7').value = harga_bibit_ayam;
         document.getElementById('input_kalkulator_8').value = harga_obat_ayam;
