@@ -799,3 +799,17 @@ svg{
   .overlay.active {
     display: block;
   }
+
+  .th_ {
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #f2f2f2;
+    font-size: 1rem;
+  }
+  
+  .td_ {
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    font-size: 1rem;
+  }

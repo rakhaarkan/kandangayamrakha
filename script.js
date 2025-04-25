@@ -186,6 +186,7 @@ var jumlah_ayam_dipanen = 0;
 var bobot_timbang = 0;
 var bobot_rata_rata_timbang = 0;
 var jumlah_sample_timbang = 0;
+var sebaran_bobot = [];
 
 var first_mqtt = false;
 var flag_mulai = false;
@@ -313,6 +314,10 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
         }else if(kode_2 == 3){
             grafik_suhu_bawah = data_json.gsb;
             grafik_kwh_listrik = data_json.gls;
+            lampu_luar = data_json.cry[0];
+            indikator_cuaca = data_json.cry[1];
+            kode_cuaca = data_json.cry[2];
+            teks_cuaca = data_json.cry[3];
         }else if(kode_2 == 4){
             mode_kandang = data_json.kpa[0];
             usia_ayam = data_json.kpa[1];
@@ -329,10 +334,6 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
             waktu_mati = data_json.kpa[12];
             detail_kipas = data_json.kpa[13];
             debug_155 = data_json.kpa[14];
-            lampu_luar = data_json.cry[0];
-            indikator_cuaca = data_json.cry[1];
-            kode_cuaca = data_json.cry[2];
-            teks_cuaca = data_json.cry[3];
             harga_pakan_kg = data_json.mtd[0];
             jumlah_ayam_awal = data_json.mtd[1];
             harga_obat_ayam = data_json.mtd[2];
@@ -345,6 +346,28 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
             bobot_timbang = data_json.bbt[0];
             bobot_rata_rata_timbang = data_json.bbt[1];
             jumlah_sample_timbang = data_json.bbt[2];
+            /*sebaran_bobot[0] = 10;
+            sebaran_bobot[1] = 2;
+            sebaran_bobot[2] = 6;
+            sebaran_bobot[3] = 2;
+            sebaran_bobot[4] = 21;
+            sebaran_bobot[5] = 6;
+            sebaran_bobot[6] = 3;
+            sebaran_bobot[7] = 0;
+            sebaran_bobot[8] = 1;
+            sebaran_bobot[9] = 0;
+            sebaran_bobot[10] = 0;*/
+            sebaran_bobot[0] = data_json.bbt[3];
+            sebaran_bobot[1] = data_json.bbt[4];
+            sebaran_bobot[2] = data_json.bbt[5];
+            sebaran_bobot[3] = data_json.bbt[6];
+            sebaran_bobot[4] = data_json.bbt[7];
+            sebaran_bobot[5] = data_json.bbt[8];
+            sebaran_bobot[6] = data_json.bbt[9];
+            sebaran_bobot[7] = data_json.bbt[10];
+            sebaran_bobot[8] = data_json.bbt[11];
+            sebaran_bobot[9] = data_json.bbt[12];
+            sebaran_bobot[10] = data_json.bbt[13];
             if(!first_dipanen){
                 jumlah_ayam_dipanen = data_json.mtd[9];
             }
@@ -499,6 +522,7 @@ function eksekutor(){
         animasi_tombol();
         analisa_realtime();
         kalkulator();
+        tampilkanSebaranBobot();
         animasi_chart();
         //fetchData();
     }
@@ -1661,3 +1685,46 @@ const statusEl = document.getElementById("statusBlynk");
 
     // Jalankan setiap 5 detik
     setInterval(cekStatusBlynk, 10000);
+
+    function tampilkanSebaranBobot() {
+        // Data yang diambil dari data_json.bbt
+        
+      
+        // Menampilkan tabel dengan rentang bobot
+        const tableBody = document.getElementById('tableBody');
+        tableBody.innerHTML = ''; // Kosongkan tabel terlebih dahulu
+      
+        let totalSample = 0;
+        for (let i = 1; i <= 10; i++) {
+            totalSample += sebaran_bobot[i];
+        }   
+
+        for (let i = 0; i < 10; i++) {
+        // Rentang bobot pertama dimulai dari 1300, jadi kita tambahkan sebaran_bobot[0] * 100
+            let rentangAwal = (sebaran_bobot[0] * 100) + (i * 100);
+            let rentangAkhir = rentangAwal + 99;
+            
+            let rentangBobot = rentangAwal + " - " + rentangAkhir;
+            let jumlahSampel = sebaran_bobot[i + 1]; // Ambil nilai dari array sebaran_bobot
+            let persentase = 0;
+            let estimasi_ekor = 0;
+            
+            // Hitung persentase hanya jika jumlah sampel ada
+            if (totalSample > 0) {
+                persentase = ((jumlahSampel / (totalSample-1)) * 100).toFixed(2);
+                estimasi_ekor = ((persentase*4680)/100).toFixed(0);
+            }// Menambahkan baris baru ke tabel
+            if(jumlahSampel!=0){
+                let row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="td_">${rentangBobot}</td>
+                    <td class="td_">${jumlahSampel}</td>
+                    <td class="td_">${persentase}%</td>
+                    <td class="td_">${estimasi_ekor}</td>
+                `;
+                tableBody.appendChild(row);
+            }
+          
+        }
+      }
+      
