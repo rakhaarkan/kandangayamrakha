@@ -1712,7 +1712,12 @@ const statusEl = document.getElementById("statusBlynk");
             // Hitung persentase hanya jika jumlah sampel ada
             if (totalSample > 0) {
                 persentase = ((jumlahSampel / (totalSample-1)) * 100).toFixed(2);
-                estimasi_ekor = ((persentase*4680)/100).toFixed(0);
+                if(getCookie("owner") == 1){
+                    estimasi_ekor = ((persentase*sisa_ayam_hidup)/100).toFixed(0);
+                }else{
+                    estimasi_ekor = ((persentase*jumlah_ayam_awal)/100).toFixed(0);
+                }
+                    
             }// Menambahkan baris baru ke tabel
             if(jumlahSampel!=0){
                 let row = document.createElement('tr');
