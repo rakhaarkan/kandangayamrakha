@@ -1211,6 +1211,7 @@ function setDefaultValue() {
         document.getElementById('input_kalkulator_2').value = jumlah_ayam_awal;
         document.getElementById('input_kalkulator_3').value = jumlah_ayam_mati;
         document.getElementById('input_kalkulator_4').value = jumlah_pakan_sak;
+        document.getElementById('input_kalkulator_5').value = bobot_rata_rata_timbang/1000;//bobot_rata_rata/1000;
         document.getElementById('input_kalkulator_6').value = harga_kontrak_ayam;
         document.getElementById('input_kalkulator_7').value = harga_bibit_ayam;
         document.getElementById('input_kalkulator_8').value = harga_obat_ayam;

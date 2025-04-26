@@ -813,3 +813,29 @@ svg{
     background-color: #f9f9f9;
     font-size: 1rem;
   }
+
+  .maps-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #fff;
+    border: 2px solid #4285F4;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: sans-serif;
+    font-weight: bold;
+    color: #4285F4;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .maps-button:hover {
+    background-color: #4285F4;
+    color: white;
+  }
+
+  .maps-button img {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+  }
