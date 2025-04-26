@@ -1711,7 +1711,7 @@ const statusEl = document.getElementById("statusBlynk");
             
             // Hitung persentase hanya jika jumlah sampel ada
             if (totalSample > 0) {
-                persentase = ((jumlahSampel / (totalSample-1)) * 100).toFixed(2);
+                persentase = ((jumlahSampel / (totalSample)) * 100).toFixed(2);
                 if(getCookie("owner") == 1){
                     estimasi_ekor = ((persentase*sisa_ayam_hidup)/100).toFixed(0);
                 }else{
