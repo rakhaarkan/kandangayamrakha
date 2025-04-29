@@ -1211,7 +1211,7 @@ function setDefaultValue() {
         document.getElementById('input_kalkulator_2').value = jumlah_ayam_awal;
         document.getElementById('input_kalkulator_3').value = jumlah_ayam_mati;
         document.getElementById('input_kalkulator_4').value = jumlah_pakan_sak;
-        document.getElementById('input_kalkulator_5').value = bobot_rata_rata_timbang/1000;//bobot_rata_rata/1000;
+        //document.getElementById('input_kalkulator_5').value = bobot_rata_rata_timbang/1000;//bobot_rata_rata/1000;
         document.getElementById('input_kalkulator_6').value = harga_kontrak_ayam;
         document.getElementById('input_kalkulator_7').value = harga_bibit_ayam;
         document.getElementById('input_kalkulator_8').value = harga_obat_ayam;
@@ -1732,5 +1732,13 @@ const statusEl = document.getElementById("statusBlynk");
             }
           
         }
+        const Data_kalkulasi_panen = {
+            d1: { label: 'Bobot Rata Rata : ', value: `${bobot_rata_rata_timbang/1000+' Kg/ekor'}` },
+            //d2: { label: 'Sample masuk hari ini', value: `${total_kg_diambil.toFixed(1)+' Kg'}` },
+            //d3: { label: 'Sample masuk kemarin', value: `${(total_kg_diambil/total_ayam_dipanen).toFixed(2)+' Kg'}` },
+            
+        };
+        
+        document.getElementById('data_kalkulasi_bobot').innerHTML = createOutputTable(Data_kalkulasi_panen,8);
       }
       
