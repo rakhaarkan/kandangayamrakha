@@ -1185,13 +1185,31 @@ function kalkulator(){
         perkiraanPendapatan: { label: 'Perkiraan Hasil', value: `${formatRupiah(perkiraan_pendapatan)}` },
         keuntunganPerEkor: { label: 'Keuntungan per Ekor', value: `${formatRupiah(perkiraan_keuntungan_per_ekor)}` }
     };
+
+    //total_kg_diambil/total_ayam_dipanen
+    var total_bobot_2 = (calc_bobot_rata * sisa_ayam_hidup)+total_kg_diambil;
+    var fcr_2 = (jumlah_pakan/total_bobot_2).toFixed(2); 
+    var ip_2 = ((persen_ayam_hidup*calc_bobot_rata)/(fcr_2*calc_usia_ayam)*100).toFixed(0);
+    var perkiraan_pendapatan_2 = (total_bobot_2 * calc_harga_kontrak_ayam)-(calc_harga_bibit * calc_ayam_awal) - (calc_harga_obat_dll) - (calc_harga_pakan_per_kilo * jumlah_pakan);
+    var perkiraan_keuntungan_per_ekor_2 = (perkiraan_pendapatan_2/calc_ayam_awal).toFixed(0);
+    
+
+    const kalkulatorData2 = {
+        fcr: { label: 'FCR', value: `${fcr_2}` },
+        ip: { label: 'IP', value: `${ip_2}` },
+        deplesi: { label: 'Deplesi', value: `${deplesi+'%'}` },
+        perkiraanPendapatan: { label: 'Perkiraan Hasil', value: `${formatRupiah(perkiraan_pendapatan_2)}` },
+        keuntunganPerEkor: { label: 'Keuntungan per Ekor', value: `${formatRupiah(perkiraan_keuntungan_per_ekor_2)}` }
+    };
     
     // Mengisi elemen dengan id "output_group_container" dengan HTML yang dihasilkan
     document.getElementById('output_group_container').innerHTML = createOutputTable(kalkulatorData,2);
+    document.getElementById('output_group_container_2').innerHTML = "<div style='padding-bottom: 2vw;'><h3>Hasil Penyesuaian Ayam Terpanen :</h3></div>" + createOutputTable(kalkulatorData2,2);
 
 }
 
 function setDefaultValue() {
+    first_total_bobot=0;
     const retrievedVar = getCookie("owner")
     if(retrievedVar == 1){
         hidden_calculator.style.display = "block";
@@ -1505,7 +1523,7 @@ async function createPieChart() {
         d3: { label: 'Kerataan bobot panen', value: `${(total_kg_diambil/total_ayam_dipanen).toFixed(2)+' Kg'}` },
         
     };
-    if((first_total_bobot==0)&&(getCookie("owner") == 1)){
+    if((first_total_bobot==0)&&(total_ayam_dipanen/jumlah_ayam_awal>0.3)&&(getCookie("owner") == 1 || getCookie("owner") == 2)){
         var hsl_rtrt = (total_kg_diambil/total_ayam_dipanen).toFixed(2);
         if(hsl_rtrt>0){
             document.getElementById('input_kalkulator_5').value = (total_kg_diambil/total_ayam_dipanen).toFixed(2);
