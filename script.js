@@ -615,7 +615,7 @@ function parseAndDisplay(input) {
     
     const detailKipas = document.getElementById("detail_kipas");
     detailKipas.innerHTML = '';
-    if(mode_kandang == 1) {
+    if(mode_kandang == 1) {/*
         var div = document.createElement("div");
         div.innerHTML = "Pengaturan automatis kipas hari ini :";
         detailKipas.appendChild(div);
@@ -658,7 +658,7 @@ function parseAndDisplay(input) {
                 div.innerHTML = outputText;
                 detailKipas.appendChild(div);
             });
-        }
+        }*/
     }else if(mode_kandang == 2) {
         var div = document.createElement("div");
         div.innerHTML = "Kipas mode manual dengan smartphone";
@@ -1204,7 +1204,11 @@ function kalkulator(){
     
     // Mengisi elemen dengan id "output_group_container" dengan HTML yang dihasilkan
     document.getElementById('output_group_container').innerHTML = createOutputTable(kalkulatorData,2);
-    document.getElementById('output_group_container_2').innerHTML = "<div style='padding-bottom: 2vw;'><h3>Hasil Penyesuaian Ayam Terpanen :</h3></div>" + createOutputTable(kalkulatorData2,2);
+    if((total_ayam_dipanen>0)){
+        document.getElementById('output_group_container_2').innerHTML = "<div style='padding-bottom: 2vw;'><h3>Hasil Penyesuaian Ayam Terpanen :</h3></div>" + createOutputTable(kalkulatorData2,2);
+    }else{
+        document.getElementById('output_group_container_2').innerHTML = "";
+    }
 
 }
 
