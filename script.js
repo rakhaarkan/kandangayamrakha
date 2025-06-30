@@ -615,7 +615,7 @@ function parseAndDisplay(input) {
     
     const detailKipas = document.getElementById("detail_kipas");
     detailKipas.innerHTML = '';
-    if(mode_kandang == 1) {/*
+    if(mode_kandang == 1) {
         var div = document.createElement("div");
         div.innerHTML = "Pengaturan automatis kipas hari ini :";
         detailKipas.appendChild(div);
@@ -658,7 +658,7 @@ function parseAndDisplay(input) {
                 div.innerHTML = outputText;
                 detailKipas.appendChild(div);
             });
-        }*/
+        }
     }else if(mode_kandang == 2) {
         var div = document.createElement("div");
         div.innerHTML = "Kipas mode manual dengan smartphone";
@@ -1524,7 +1524,7 @@ async function createPieChart() {
     const Data_kalkulasi_panen = {
         d1: { label: 'Ayam tersisa saat ini ', value: `${sisa_ayam_hidup+' Ekor'}` },
         d2: { label: 'Total bobot dipanen   ', value: `${total_kg_diambil.toFixed(1)+' Kg'}` },
-        d3: { label: 'Kerataan bobot panen', value: `${(total_kg_diambil/total_ayam_dipanen).toFixed(2)+' Kg'}` },
+        d3: { label: 'Kerataan bobot panen', value: `${(total_kg_diambil/total_ayam_dipanen).toFixed(3)+' Kg'}` },
         
     };
     if((first_total_bobot==0)&&(total_ayam_dipanen/jumlah_ayam_awal>0.3)&&(getCookie("owner") == 1 || getCookie("owner") == 2)){
