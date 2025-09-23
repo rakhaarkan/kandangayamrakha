@@ -438,10 +438,11 @@ function penguraiJson(kode,dataHttp,kode_2=0) {
 setInterval(data_thingspeak,randomValue);
 setInterval(eksekutor,100);
 setInterval(keterangan_air, 8000);
-    
+setInterval(loadA1, 10000);
 var sekali = 0;
 
 function eksekutor(){
+    
     if(flag_mulai){
         if(sekali==0){
             keterangan_air();
@@ -582,6 +583,8 @@ function animasi_kipas(){
     }else if(mode_kandang==2){
         mdkps = 'Manual';
     }else if(mode_kandang==3){
+        mdkps = 'Timer';
+    }else if(mode_kandang==4){
         mdkps = 'Bebas';
     }
 
@@ -1041,7 +1044,7 @@ function updateTime() {
     document.getElementById('current-date').textContent = currentDate;
     document.getElementById('current-time').textContent = currentTime;
 
-    if(mode_kandang == 3){
+    if(mode_kandang == 4){
         document.getElementById('usia_ayam').textContent = 'Selesai Panen';
     }else{
         document.getElementById('usia_ayam').textContent = usia_ayam + ' hari';//Math.ceil(differenceInDays) + ' hari';
@@ -1764,3 +1767,21 @@ const statusEl = document.getElementById("statusBlynk");
         document.getElementById('data_kalkulasi_bobot').innerHTML = createOutputTable(Data_kalkulasi_panen,8);
       }
       
+      async function loadA1() {
+      const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTCz6ODwxCEuNE74MBFEmgDx21kfxXGuOza6KJuJyGMosLkNeWHf8PQxTWb98Vs4_AvaDoBpOOCabCp/pub?gid=0&single=true&output=csv";
+      
+      try {
+        let res = await fetch(url);
+        let text = await res.text();
+
+        // Split baris CSV
+        let rows = text.split("\n");
+        // Ambil kolom pertama dari baris pertama (A1)
+        let cols = rows[0].split(",");
+        let cellA1 = cols[0];
+
+        document.getElementById("output").innerText = cellA1;
+      } catch (err) {
+        document.getElementById("output").innerText = "Error: " + err;
+      }
+    }
