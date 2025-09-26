@@ -589,7 +589,7 @@ function animasi_kipas(){
     }
 
     if(status_timer==1){
-        if(mode_kandang==1){
+        if((mode_kandang==1)||(mode_kandang==4)){
             tmkps = tmkps + ', Hidup ' + waktu_hidup + ' detik ,Mati ' + waktu_mati + ' menit';
         }
     }else{
