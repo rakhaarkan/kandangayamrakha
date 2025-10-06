@@ -1170,7 +1170,8 @@ function kalkulator(){
     var persen_ayam_hidup = (ayam_tersisa/calc_ayam_awal)*100;
     var jumlah_pakan = calc_jumlah_pakan * 50;
     var total_bobot = calc_bobot_rata * ayam_tersisa;
-    var fcr = (jumlah_pakan/total_bobot).toFixed(2); 
+    var fcr = (jumlah_pakan/total_bobot).toFixed(2);
+    var konversi_daging = (50/(jumlah_pakan/total_bobot)).toFixed(2);
     var ip = ((persen_ayam_hidup*calc_bobot_rata)/(fcr*calc_usia_ayam)*100).toFixed(0);
     var deplesi = (100 - persen_ayam_hidup).toFixed(1);
     var perkiraan_pendapatan = (calc_bobot_rata * ayam_tersisa * calc_harga_kontrak_ayam)-(calc_harga_bibit * calc_ayam_awal) - (calc_harga_obat_dll) - (calc_harga_pakan_per_kilo * jumlah_pakan);
@@ -1185,6 +1186,7 @@ function kalkulator(){
         fcr: { label: 'FCR', value: `${fcr}` },
         ip: { label: 'IP', value: `${ip}` },
         deplesi: { label: 'Deplesi', value: `${deplesi+'%'}` },
+        konversidaging: { label: 'Konversi Daging', value: `${konversi_daging+' Kg/Sak'}` },
         perkiraanPendapatan: { label: 'Perkiraan Hasil', value: `${formatRupiah(perkiraan_pendapatan)}` },
         keuntunganPerEkor: { label: 'Keuntungan per Ekor', value: `${formatRupiah(perkiraan_keuntungan_per_ekor)}` }
     };
@@ -1201,6 +1203,7 @@ function kalkulator(){
         fcr: { label: 'FCR', value: `${fcr_2}` },
         ip: { label: 'IP', value: `${ip_2}` },
         deplesi: { label: 'Deplesi', value: `${deplesi+'%'}` },
+        konversidaging: { label: 'Konversi Daging', value: `${konversi_daging+' Kg/Sak'}` },
         perkiraanPendapatan: { label: 'Perkiraan Hasil', value: `${formatRupiah(perkiraan_pendapatan_2)}` },
         keuntunganPerEkor: { label: 'Keuntungan per Ekor', value: `${formatRupiah(perkiraan_keuntungan_per_ekor_2)}` }
     };
