@@ -66,6 +66,7 @@ var penampung_json_1;
 var penampung_json_2;
 var penampung_json_3;
 var penampung_json_4;
+var penampung_json_bobot;
 var penampung_data_waktu;
 const randomFraction = Math.random();
 const randomValue = 4560;//Math.floor(randomFraction * (5000 - 2000 + 1)) + 2000;
@@ -229,6 +230,31 @@ function data_thingspeak(){
             //.catch(error => console.error('Error fetching data:', error));
             
 }
+
+function data_thingspeak_2() {
+  const url = 'https://api.thingspeak.com/channels/3101892/feeds.json?api_key=YAIGJ80PQ8R8R1VF&results=1';
+  fetch(url)
+    .then(response => {
+      if (!response.ok) throw new Error("HTTP error " + response.status);
+      return response.json();
+    })
+    .then(data => {
+      const f = data.feeds[0];
+      penampung_json_bobot = (f.field1 ?? "") + (f.field2 ?? "") + (f.field3 ?? "") +
+                        (f.field4 ?? "") + (f.field5 ?? "") + (f.field6 ?? "") +
+                        (f.field7 ?? "") + (f.field8 ?? "");
+      try {
+        //const json_obj = JSON.parse(json_text);
+        data_timbangan(penampung_json_bobot);
+        //document.getElementById('data-output').textContent = penampung_json_bobot;
+      } catch (e) {
+        console.error("Gagal parse JSON:", e);
+        //document.getElementById('output').textContent = json_text;
+      }
+    })
+    .catch(error => console.error("Fetch error:", error));
+}
+
 
 const server_pusat_data = "http://192.168.0.150/";
 const server_sensor_dalam = "http://192.168.0.151/";
@@ -439,6 +465,7 @@ setInterval(data_thingspeak,randomValue);
 setInterval(eksekutor,100);
 setInterval(keterangan_air, 8000);
 setInterval(loadA1, 10000);
+setInterval(data_thingspeak_2,60000);
 var sekali = 0;
 
 function eksekutor(){
@@ -446,6 +473,7 @@ function eksekutor(){
     if(flag_mulai){
         if(sekali==0){
             keterangan_air();
+            data_thingspeak_2();
             sekali = 1;
         }
         const gaugesHTML_atas = `
@@ -1715,60 +1743,125 @@ const statusEl = document.getElementById("statusBlynk");
     // Jalankan setiap 5 detik
     setInterval(cekStatusBlynk, 10000);
 
-    function tampilkanSebaranBobot() {
-        // Data yang diambil dari data_json.bbt
-        
-      
-        // Menampilkan tabel dengan rentang bobot
-        const tableBody = document.getElementById('tableBody');
-        tableBody.innerHTML = ''; // Kosongkan tabel terlebih dahulu
-      
-        let totalSample = 0;
-        for (let i = 1; i <= 10; i++) {
-            totalSample += sebaran_bobot[i];
-        }   
+let chartInstance = null; // Simpan referensi chart agar bisa diupdate
 
-        for (let i = 0; i < 10; i++) {
-        // Rentang bobot pertama dimulai dari 1300, jadi kita tambahkan sebaran_bobot[0] * 100
-            let rentangAwal = (sebaran_bobot[0] * 100) + (i * 100);
-            let rentangAkhir = rentangAwal + 99;
-            
-            let rentangBobot = rentangAwal + " - " + rentangAkhir;
-            let jumlahSampel = sebaran_bobot[i + 1]; // Ambil nilai dari array sebaran_bobot
-            let persentase = 0;
-            let estimasi_ekor = 0;
-            
-            // Hitung persentase hanya jika jumlah sampel ada
-            if (totalSample > 0) {
-                persentase = ((jumlahSampel / (totalSample+1)) * 100).toFixed(2);
-                if(getCookie("owner") == 1){
-                    estimasi_ekor = (((jumlahSampel / (totalSample)* 100)*sisa_ayam_hidup)/100).toFixed(0);
-                }else{
-                    estimasi_ekor = (((jumlahSampel / (totalSample)* 100)*jumlah_ayam_awal)/100).toFixed(0);
-                }
-                    
-            }// Menambahkan baris baru ke tabel
-            if(jumlahSampel!=0){
-                let row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="td_">${rentangBobot}</td>
-                    <td class="td_">${jumlahSampel}</td>
-                    <td class="td_">${persentase}%</td>
-                    <td class="td_">${estimasi_ekor}</td>
-                `;
-                tableBody.appendChild(row);
-            }
-          
+function tampilkanSebaranBobot() {
+    var parsed = JSON.parse(penampung_json_bobot);
+    const rawData = parsed.raw || [];
+
+    if (rawData.length === 0) return;
+
+    // Ambil pilihan interval dari dropdown
+    const intervalOption = document.getElementById('intervalSelect').value;
+    let interval = 100;
+
+    // Tentukan interval berdasarkan opsi
+    if (intervalOption === '10') {
+        interval = 10;
+    } else if (intervalOption === '100') {
+        interval = 100;
+    } else if (intervalOption === 'sturges') {
+        const k = Math.ceil(1 + 3.322 * Math.log10(rawData.length));
+        const range = Math.max(...rawData) - Math.min(...rawData);
+        interval = Math.ceil(range / k);
+    }
+
+    // Cari batas bawah dan atas
+    const minBobot = Math.floor(Math.min(...rawData) / interval) * interval;
+    const maxBobot = Math.ceil(Math.max(...rawData) / interval) * interval;
+
+    // Hitung jumlah kelas
+    const totalRentang = Math.floor((maxBobot - minBobot) / interval) + 1;
+    let sebaran_bobot = new Array(totalRentang + 1).fill(0);
+    sebaran_bobot[0] = minBobot / interval;
+
+    // Hitung frekuensi
+    rawData.forEach((nilai) => {
+        let index = Math.floor((nilai - minBobot) / interval);
+        sebaran_bobot[index + 1]++;
+    });
+
+    // Hitung total sampel
+    const totalSample = sebaran_bobot.slice(1).reduce((a, b) => a + b, 0);
+
+    // Kosongkan tabel
+    const tableBody = document.getElementById('tableBody');
+    tableBody.innerHTML = '';
+
+    // Siapkan data untuk grafik
+    let labels = [];
+    let values = [];
+
+    // Isi tabel dan data chart
+    for (let i = 0; i < totalRentang; i++) {
+        let rentangAwal = (sebaran_bobot[0] * interval) + (i * interval);
+        let rentangAkhir = rentangAwal + interval - 1;
+        let rentangLabel = `${rentangAwal}-${rentangAkhir}`;
+        let jumlahSampel = sebaran_bobot[i + 1];
+        let persentase = ((jumlahSampel / totalSample) * 100).toFixed(2);
+
+        if (jumlahSampel != 0) {
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${rentangLabel}</td>
+                <td>${jumlahSampel}</td>
+                <td>${persentase}%</td>
+                <td>${(((jumlahSampel / totalSample) * jumlah_ayam_awal) || 0).toFixed(0)}</td>
+            `;
+            tableBody.appendChild(row);
         }
-        const Data_kalkulasi_panen = {
-            d1: { label: 'Bobot Rata Rata : ', value: `${bobot_rata_rata_timbang/1000+' Kg/ekor'}` },
-            //d2: { label: 'Sample masuk hari ini', value: `${total_kg_diambil.toFixed(1)+' Kg'}` },
-            //d3: { label: 'Sample masuk kemarin', value: `${(total_kg_diambil/total_ayam_dipanen).toFixed(2)+' Kg'}` },
-            
-        };
-        
-        document.getElementById('data_kalkulasi_bobot').innerHTML = createOutputTable(Data_kalkulasi_panen,8);
-      }
+
+        labels.push(rentangLabel);
+        values.push(jumlahSampel);
+    }
+
+    // Update info tambahan
+    const Data_kalkulasi_panen = {
+        d1: { label: 'Bobot Rata-Rata : ', value: `${(bobot_rata_rata_timbang / 1000).toFixed(2)} Kg/ekor` },
+        d2: { label: 'Interval Kelas : ', value: `${interval} gram` },
+        d3: { label: 'Total Sampel : ', value: `${totalSample}` }
+    };
+    document.getElementById('data_kalkulasi_bobot').innerHTML = createOutputTable(Data_kalkulasi_panen, 8);
+
+    // 🔹 Buat atau update grafik Line Chart
+    const ctx = document.getElementById('lineChart').getContext('2d');
+
+    // Hapus chart sebelumnya jika sudah ada
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+
+    // Buat chart baru
+    chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Distribusi Frekuensi Bobot Ayam',
+                data: values,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: true,
+                tension: 0.3,
+                borderWidth: 2,
+                pointRadius: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true, position: 'top' },
+                title: { display: true, text: 'Grafik Distribusi Bobot Ayam', font: { size: 18 } }
+            },
+            scales: {
+                x: { title: { display: true, text: 'Rentang Bobot (gram)' } },
+                y: { title: { display: true, text: 'Jumlah Sampel' }, beginAtZero: true }
+            }
+        }
+    });
+}
+
+
       
       async function loadA1() {
       const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTCz6ODwxCEuNE74MBFEmgDx21kfxXGuOza6KJuJyGMosLkNeWHf8PQxTWb98Vs4_AvaDoBpOOCabCp/pub?gid=0&single=true&output=csv";
@@ -1788,3 +1881,29 @@ const statusEl = document.getElementById("statusBlynk");
         document.getElementById("output").innerText = "Error: " + err;
       }
     }
+
+function data_timbangan(json_timbangan){
+
+    try {
+  const obj = JSON.parse(json_timbangan);
+  const data = obj.raw;
+
+  const perBaris = 10; // jumlah angka per baris
+  let hasilCSV = "";
+
+  for (let i = 0; i < data.length; i++) {
+    hasilCSV += data[i];
+    if ((i + 1) % perBaris === 0) {
+      hasilCSV += "\n"; // ganti baris setiap 10 angka
+    } else if (i < data.length - 1) {
+      hasilCSV += ","; // pisahkan antar angka
+    }
+  }
+
+  document.getElementById("output_t").textContent = hasilCSV;
+
+} catch (err) {
+  console.error("JSON error:", err);
+  document.getElementById("output_t").textContent = "JSON parse error";
+}
+}

@@ -839,3 +839,25 @@ svg{
     height: 24px;
     margin-right: 8px;
   }
+
+  .container_bbt {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    padding: 20px 30px;
+    width: 80%;
+    max-width: 800px;
+    text-align: center;
+  }
+
+  #output_t {
+    white-space: pre-wrap;
+    text-align: left;
+    border-radius: 8px;
+    padding: px;
+    margin: 20px;
+    line-height: 1.4em;
+    font-size: 15px;
+    overflow-x: auto;
+    border: 1px solid #d9e2f3;
+  }

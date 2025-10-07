@@ -387,8 +387,17 @@
             </div>
         </div>
         <br><br>
+        <h2 style="margin-left: 5.5%;">Mesin Sample Auto</h2>
+        <div id="output_t" style="white-space: pre; font-family: monospace;"></div>
+        
         <h2 style="margin-left: 5.5%;">Sebaran Bobot</h2>
-    
+        <div style="text-align:left; margin:20px;">
+        <label for="intervalSelect">Pilih Interval:</label>
+        <select id="intervalSelect" onchange="tampilkanSebaranBobot()" style="padding:5px; margin-left:10px;">
+            <option value="100" selected>100 gram</option>
+            <option value="sturges">Auto</option>
+        </select>
+        </div>
         <table style="width: 80%;margin: 20px auto;border-collapse: collapse;text-align: center;" id="sebaranTable">
             <thead>
               <tr>
@@ -402,6 +411,9 @@
               <!-- Data akan diisi oleh JavaScript -->
             </tbody>
         </table>
+        <div style="width:80%; height: 400; margin:30px auto;">
+            <canvas id="lineChart"></canvas>
+        </div>
         <div class="mrg3" id = data_kalkulasi_bobot></div>
         <div style="margin: 5.5%;">data diambil dari mesin timbang automatis dan diupdate setiap menit</div>
 
@@ -427,7 +439,6 @@
     
     <pre id="data-output"></pre>
     <pre id="data-output2"></pre>
-    <div id="output">Loading...</div>
     <form action="https://script.google.com/macros/s/AKfycbzPDBquhpdpVtvpkCO1prbM2pC8ts4K96e9cPF0xPJSYhObHbQV0ah9GV-ZiA7vZLJG/exec" method="post">
   <input type="text" name="data" value="halo_dari_form">
   <button type="submit">Kirim</button>
