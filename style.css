@@ -181,6 +181,7 @@
 }
 
 :root{
+    --propeller-svg: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 320.001 320.001'><path d='M270.284,86.478c-28.856,0-57.708,21.743-75.186,37.922c-5.953-5.87-13.372-10.249-21.658-12.558c6.697-14.545,19.465-25.857,32.511-34.555c27.571-18.381,24.65-49.542,0-64.333C160-14.617,86.477,3.764,86.477,49.716c0,28.856,21.743,57.708,37.922,75.186c-5.87,5.953-10.249,13.372-12.557,21.657c-14.546-6.697-25.859-19.465-34.556-32.511c-18.38-27.57-49.541-24.65-64.332,0C-14.617,160,3.764,233.523,49.716,233.523c28.856,0,57.709-21.743,75.186-37.922c5.953,5.87,13.372,10.249,21.657,12.557c-6.697,14.546-19.465,25.858-32.51,34.556c-27.571,18.381-24.651,49.542,0,64.333c45.952,27.571,119.475,9.19,119.475-36.762c0-28.856-21.743-57.709-37.922-75.186c5.87-5.953,10.249-13.372,12.557-21.657c14.546,6.697,25.859,19.465,34.556,32.511c18.38,27.57,49.542,24.65,64.333,0C334.617,160,316.236,86.478,270.284,86.478z M160,180c-11.045,0-20-8.954-20-20s8.955-20,20-20s20,8.954,20,20S171.045,180,160,180z'/></svg>");
     --bg-primary:white;
     --bg-secondary:#222;
     --txt-putih:white;
@@ -194,7 +195,7 @@
     left: 50%;
     width: 30vw;
     height: 30vw;
-    background-image: url(https://www.svgrepo.com/show/126808/propeller.svg);
+    background-image: var(--propeller-svg);
     background-size: cover;
     transform: translate(-50%, -50%);
     animation: rotateSquare 1s linear infinite;
@@ -459,7 +460,7 @@ svg{
     top: 50%;
     left: 50%;
     position: relative;
-    background-image: url(https://www.svgrepo.com/show/126808/propeller.svg);
+    background-image: var(--propeller-svg);
     background-size: cover;
     transform: translate(-50%, -50%);
     animation: rotateSquare 3s linear infinite; /* Animasi rotasi */
@@ -470,7 +471,7 @@ svg{
     height: 12vw;
     top: 50%;
     position: absolute;
-    background-image: url(https://www.svgrepo.com/show/126808/propeller.svg);
+    background-image: var(--propeller-svg);
     background-size: cover;
     transform: translate(-50%, -50%);
     animation: rotateSquare 1s linear infinite; /* Animasi rotasi */
@@ -861,3 +862,5 @@ svg{
     overflow-x: auto;
     border: 1px solid #d9e2f3;
   }
+
+  

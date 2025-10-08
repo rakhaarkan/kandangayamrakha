@@ -1747,7 +1747,7 @@ let chartInstance = null; // Simpan referensi chart agar bisa diupdate
 
 function tampilkanSebaranBobot() {
     var parsed = JSON.parse(penampung_json_bobot);
-    const rawData = parsed.raw || [];
+    const rawData = parsed.raw;
 
     if (rawData.length === 0) return;
 
@@ -1832,33 +1832,38 @@ function tampilkanSebaranBobot() {
     }
 
     // Buat chart baru
-    chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Distribusi Frekuensi Bobot Ayam',
-                data: values,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                fill: true,
-                tension: 0.3,
-                borderWidth: 2,
-                pointRadius: 3
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: true, position: 'top' },
-                title: { display: true, text: 'Grafik Distribusi Bobot Ayam', font: { size: 18 } }
+    chartInstance = new Chart(canvas1, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Distribusi Frekuensi Bobot Ayam',
+                    data: values,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 1,
+                    fill: true,
+                    cubicInterpolationMode: 'monotone',
+                    tension: 0.4,
+                    pointStyle: false,
+                    yAxisID: 'y'
+                }]
             },
-            scales: {
-                x: { title: { display: true, text: 'Rentang Bobot (gram)' } },
-                y: { title: { display: true, text: 'Jumlah Sampel' }, beginAtZero: true }
+            options: {
+                scales: {
+                    y: {
+                        min: 20,
+                        max: 40,
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        ticks: { color: 'rgba(253, 42, 0, 1)' },
+                        grid: { display: false }
+                    },
+                    x: { grid: { display: false } }
+                },
             }
-        }
-    });
+        });
 }
 
 
