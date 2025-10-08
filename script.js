@@ -551,8 +551,8 @@ function eksekutor(){
         animasi_tombol();
         analisa_realtime();
         kalkulator();
-        tampilkanSebaranBobot();
         animasi_chart();
+        tampilkanSebaranBobot();
         //fetchData();
     }
 }
@@ -1818,8 +1818,8 @@ function tampilkanSebaranBobot() {
     // Update info tambahan
     const Data_kalkulasi_panen = {
         d1: { label: 'Bobot Rata-Rata : ', value: `${(bobot_rata_rata_timbang / 1000).toFixed(2)} Kg/ekor` },
-        //d2: { label: 'Interval Kelas : ', value: `${interval} gram` },
-        //d3: { label: 'Total Sampel : ', value: `${totalSample}` }
+        d2: { label: 'Interval Kelas : ', value: `${interval} gram` },
+        d3: { label: 'Total Sampel : ', value: `${totalSample}` }
     };
     document.getElementById('data_kalkulasi_bobot').innerHTML = createOutputTable(Data_kalkulasi_panen, 8);
 
@@ -1828,16 +1828,16 @@ function tampilkanSebaranBobot() {
 
     // Hapus chart sebelumnya jika sudah ada
     if (chartInstance) {
-        chartInstance.destroy();
+        //chartInstance.destroy();
     }
 
     // Buat chart baru
-    chartInstance = new Chart(canvas1, {
+    chartInstance = new Chart(canvas2, {
             type: 'line',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Distribusi Frekuensi Bobot Ayam',
+                    label: 'Bobot Ayam',
                     data: values,
                     borderColor: 'rgba(75, 192, 192, 1)',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
