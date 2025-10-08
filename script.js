@@ -1818,8 +1818,8 @@ function tampilkanSebaranBobot() {
     // Update info tambahan
     const Data_kalkulasi_panen = {
         d1: { label: 'Bobot Rata-Rata : ', value: `${(bobot_rata_rata_timbang / 1000).toFixed(2)} Kg/ekor` },
-        d2: { label: 'Interval Kelas : ', value: `${interval} gram` },
-        d3: { label: 'Total Sampel : ', value: `${totalSample}` }
+        //d2: { label: 'Interval Kelas : ', value: `${interval} gram` },
+        //d3: { label: 'Total Sampel : ', value: `${totalSample}` }
     };
     document.getElementById('data_kalkulasi_bobot').innerHTML = createOutputTable(Data_kalkulasi_panen, 8);
 
