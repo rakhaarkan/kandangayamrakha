@@ -1815,10 +1815,10 @@ for (let i = 0; i < totalRentang; i++) {
     if (jumlahSampel != 0) {
         let row = document.createElement('tr');
         row.innerHTML = `
-            <td>${rentangLabel}</td>
-            <td>${jumlahSampel}</td>
-            <td>${persentase}%</td>
-            <td>${(((jumlahSampel / totalSample) * jumlah_ayam_awal) || 0).toFixed(0)}</td>
+            <td class="td_">${rentangLabel}</td>
+            <td class="td_">${jumlahSampel}</td>
+            <td class="td_">${persentase}%</td>
+            <td class="td_">${(((jumlahSampel / totalSample) * jumlah_ayam_awal) || 0).toFixed(0)}</td>
         `;
         tableBody.appendChild(row);
     }
@@ -1830,14 +1830,13 @@ for (let i = 0; i < totalRentang; i++) {
 // === Update info tambahan ===
 const Data_kalkulasi_panen = {
     d1: { label: 'Bobot Rata-Rata : ', value: `${(mean / 1000).toFixed(2)} Kg/ekor`},
-    d2: { label: 'Interval  : ', value: `±${stdDev.toFixed(0)} gram (${lowerBound.toFixed(0)} g - ${upperBound.toFixed(0)} g), ${stdPercent}%` },
-    d3: { label: 'Interval  : ', value: `${interval} gram` },
-    d4: { label: 'Total Sampel : ', value: `${totalSample}` }
+    d2: { label: 'Standar Deviasi  : ', value: `±${stdDev.toFixed(0)} gram (${lowerBound.toFixed(0)} g - ${upperBound.toFixed(0)} g), ${stdPercent}%` },
+    d3: { label: 'Sampel Masuk Hari Ini: ', value: `${0} ekor` },
+    d4: { label: 'Sampel Masuk Kemarin : ', value: `${0} ekor` },
+    d5: { label: 'Interval  : ', value: `${interval} gram` },
+    d6: { label: 'Total Sampel : ', value: `${totalSample}` }
 };
     document.getElementById('data_kalkulasi_bobot').innerHTML = createOutputTable(Data_kalkulasi_panen, 8);
-
-    // 🔹 Buat atau update grafik Line Chart
-    let chartInstance = null;
 
     const ctx = document.getElementById('lineChart').getContext('2d');
 
@@ -1924,7 +1923,7 @@ function data_timbangan(json_timbangan){
     if ((i + 1) % perBaris === 0) {
       hasilCSV += "\n"; // ganti baris setiap 10 angka
     } else if (i < data.length - 1) {
-      hasilCSV += ","; // pisahkan antar angka
+      hasilCSV += ", "; // pisahkan antar angka
     }
   }
 
