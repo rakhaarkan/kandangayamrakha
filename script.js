@@ -1747,123 +1747,146 @@ let chartInstance = null; // Simpan referensi chart agar bisa diupdate
 
 function tampilkanSebaranBobot() {
     var parsed = JSON.parse(penampung_json_bobot);
-    const rawData = parsed.raw;
+const rawData = parsed.raw;
 
-    if (rawData.length === 0) return;
+if (rawData.length === 0) return;
 
-    // Ambil pilihan interval dari dropdown
-    const intervalOption = document.getElementById('intervalSelect').value;
-    let interval = 100;
+// Ambil pilihan interval dari dropdown
+const intervalOption = document.getElementById('intervalSelect').value;
+let interval = 100;
 
-    // Tentukan interval berdasarkan opsi
-    if (intervalOption === '10') {
-        interval = 10;
-    } else if (intervalOption === '100') {
-        interval = 100;
-    } else if (intervalOption === 'sturges') {
-        const k = Math.ceil(1 + 3.322 * Math.log10(rawData.length));
-        const range = Math.max(...rawData) - Math.min(...rawData);
-        interval = Math.ceil(range / k);
+// Tentukan interval berdasarkan opsi
+if (intervalOption === '10') {
+    interval = 10;
+} else if (intervalOption === '100') {
+    interval = 100;
+} else if (intervalOption === 'sturges') {
+    const k = Math.ceil(1 + 3.322 * Math.log10(rawData.length));
+    const range = Math.max(...rawData) - Math.min(...rawData);
+    interval = Math.ceil(range / k);
+}
+
+// Cari batas bawah dan atas
+const minBobot = Math.floor(Math.min(...rawData) / interval) * interval;
+const maxBobot = Math.ceil(Math.max(...rawData) / interval) * interval;
+
+// Hitung jumlah kelas
+const totalRentang = Math.floor((maxBobot - minBobot) / interval) + 1;
+let sebaran_bobot = new Array(totalRentang + 1).fill(0);
+sebaran_bobot[0] = minBobot / interval;
+
+// Hitung frekuensi
+rawData.forEach((nilai) => {
+    let index = Math.floor((nilai - minBobot) / interval);
+    sebaran_bobot[index + 1]++;
+});
+
+// Hitung total sampel
+const totalSample = sebaran_bobot.slice(1).reduce((a, b) => a + b, 0);
+
+// === Hitung rata-rata dan standar deviasi ===
+const mean = rawData.reduce((a, b) => a + b, 0) / rawData.length;
+const variance = rawData.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (rawData.length - 1);
+const stdDev = Math.sqrt(variance);
+
+// Hitung batas bawah dan atas deviasi
+const lowerBound = mean - stdDev;
+const upperBound = mean + stdDev;
+
+// Standar deviasi dalam persen terhadap rata-rata
+const stdPercent = ((stdDev / mean) * 100).toFixed(2);
+
+// Kosongkan tabel
+const tableBody = document.getElementById('tableBody');
+tableBody.innerHTML = '';
+
+// Siapkan data untuk grafik
+let labels = [];
+let values = [];
+
+// Isi tabel dan data chart
+for (let i = 0; i < totalRentang; i++) {
+    let rentangAwal = (sebaran_bobot[0] * interval) + (i * interval);
+    let rentangAkhir = rentangAwal + interval - 1;
+    let rentangLabel = `${rentangAwal}-${rentangAkhir}`;
+    let jumlahSampel = sebaran_bobot[i + 1];
+    let persentase = ((jumlahSampel / totalSample) * 100).toFixed(2);
+
+    if (jumlahSampel != 0) {
+        let row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${rentangLabel}</td>
+            <td>${jumlahSampel}</td>
+            <td>${persentase}%</td>
+            <td>${(((jumlahSampel / totalSample) * jumlah_ayam_awal) || 0).toFixed(0)}</td>
+        `;
+        tableBody.appendChild(row);
     }
 
-    // Cari batas bawah dan atas
-    const minBobot = Math.floor(Math.min(...rawData) / interval) * interval;
-    const maxBobot = Math.ceil(Math.max(...rawData) / interval) * interval;
+    labels.push(rentangLabel);
+    values.push(jumlahSampel);
+}
 
-    // Hitung jumlah kelas
-    const totalRentang = Math.floor((maxBobot - minBobot) / interval) + 1;
-    let sebaran_bobot = new Array(totalRentang + 1).fill(0);
-    sebaran_bobot[0] = minBobot / interval;
-
-    // Hitung frekuensi
-    rawData.forEach((nilai) => {
-        let index = Math.floor((nilai - minBobot) / interval);
-        sebaran_bobot[index + 1]++;
-    });
-
-    // Hitung total sampel
-    const totalSample = sebaran_bobot.slice(1).reduce((a, b) => a + b, 0);
-
-    // Kosongkan tabel
-    const tableBody = document.getElementById('tableBody');
-    tableBody.innerHTML = '';
-
-    // Siapkan data untuk grafik
-    let labels = [];
-    let values = [];
-
-    // Isi tabel dan data chart
-    for (let i = 0; i < totalRentang; i++) {
-        let rentangAwal = (sebaran_bobot[0] * interval) + (i * interval);
-        let rentangAkhir = rentangAwal + interval - 1;
-        let rentangLabel = `${rentangAwal}-${rentangAkhir}`;
-        let jumlahSampel = sebaran_bobot[i + 1];
-        let persentase = ((jumlahSampel / totalSample) * 100).toFixed(2);
-
-        if (jumlahSampel != 0) {
-            let row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${rentangLabel}</td>
-                <td>${jumlahSampel}</td>
-                <td>${persentase}%</td>
-                <td>${(((jumlahSampel / totalSample) * jumlah_ayam_awal) || 0).toFixed(0)}</td>
-            `;
-            tableBody.appendChild(row);
-        }
-
-        labels.push(rentangLabel);
-        values.push(jumlahSampel);
-    }
-
-    // Update info tambahan
-    const Data_kalkulasi_panen = {
-        d1: { label: 'Bobot Rata-Rata : ', value: `${(bobot_rata_rata_timbang / 1000).toFixed(2)} Kg/ekor` },
-        d2: { label: 'Interval Kelas : ', value: `${interval} gram` },
-        d3: { label: 'Total Sampel : ', value: `${totalSample}` }
-    };
+// === Update info tambahan ===
+const Data_kalkulasi_panen = {
+    d1: { label: 'Bobot Rata-Rata : ', value: `${(mean / 1000).toFixed(2)} Kg/ekor`},
+    d2: { label: 'Interval  : ', value: `±${stdDev.toFixed(0)} gram (${lowerBound.toFixed(0)} g - ${upperBound.toFixed(0)} g), ${stdPercent}%` },
+    d3: { label: 'Interval  : ', value: `${interval} gram` },
+    d4: { label: 'Total Sampel : ', value: `${totalSample}` }
+};
     document.getElementById('data_kalkulasi_bobot').innerHTML = createOutputTable(Data_kalkulasi_panen, 8);
 
     // 🔹 Buat atau update grafik Line Chart
+    let chartInstance = null;
+
     const ctx = document.getElementById('lineChart').getContext('2d');
+
+    const maxValue = Math.max(...values);
+    const minValue = Math.min(...values);
+    const range = maxValue - minValue;
+    const offset = range * 0.1; // beri ruang 10% dari rentang data
+
+    const suggestedMin = minValue - offset;
+    const suggestedMax = maxValue + offset;
 
     // Hapus chart sebelumnya jika sudah ada
     if (chartInstance) {
-        //chartInstance.destroy();
+        chartInstance.destroy();
     }
 
     // Buat chart baru
-    chartInstance = new Chart(canvas2, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Bobot Ayam',
-                    data: values,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderWidth: 1,
-                    fill: true,
-                    cubicInterpolationMode: 'monotone',
-                    tension: 0.4,
-                    pointStyle: false,
-                    yAxisID: 'y'
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        min: 20,
-                        max: 40,
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        ticks: { color: 'rgba(253, 42, 0, 1)' },
-                        grid: { display: false }
-                    },
-                    x: { grid: { display: false } }
+    chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Bobot Ayam',
+                data: values,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderWidth: 2,
+                fill: true,
+                cubicInterpolationMode: 'monotone',
+                tension: 0.4,
+                pointStyle: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    suggestedMin: suggestedMin,
+                    suggestedMax: suggestedMax,
+                    ticks: { color: 'rgba(75, 192, 192, 1)' },
+                    grid: { display: false }
                 },
+                x: { grid: { display: false } }
             }
-        });
+        }
+    });
+
 }
 
 
