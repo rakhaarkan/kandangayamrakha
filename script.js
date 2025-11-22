@@ -197,26 +197,14 @@ function data_thingspeak(){
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                const fieldData_1 = data.feeds[0].field1;
-                const fieldData_2 = data.feeds[0].field2;
-                const fieldData_3 = data.feeds[0].field3;
-                const fieldData_4 = data.feeds[0].field4;
                 const lastUpdateTime = data.feeds[0].created_at;
-                var json_chart = '{"gsa":[250,257,259,262,268,278,289,299,302,311,317,322,327,333,337,325,320,310,301,292,281,270,267,261,258],"gwk":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],"gka":[850,857,859,762,268,278,289,299,302,311,317,322,327,333,337,325,320,310,301,292,281,270,267,261,258]}'
-                var objek1 = JSON.parse(fieldData_1);
-                var objek2 = JSON.parse(fieldData_2);
-                var objek3 = JSON.parse(fieldData_3);
-                var objek4 = JSON.parse(fieldData_4);
-                penampung_json_1 = objek1;
-                penampung_json_2 = objek2;
-                penampung_json_3 = objek3;
-                penampung_json_4 = objek4;
                 penampung_data_waktu = lastUpdateTime;
-                penguraiJson(1,fieldData_1,1);
-                penguraiJson(1,fieldData_2,2);
-                penguraiJson(1,fieldData_3,3);
-                penguraiJson(1,fieldData_4,4);
-                document.getElementById('messages').innerHTML = 'field1 : ' + fieldData_1 + ', field2 : ' + fieldData_2 + ', field3 : ' + fieldData_3 + ', field4 : ' + fieldData_4;
+                const f = data.feeds[0];
+                var penampung_json_thingspeak = (f.field1 ?? "") + (f.field2 ?? "") + (f.field3 ?? "") +
+                        (f.field4 ?? "") + (f.field5 ?? "") + (f.field6 ?? "") +
+                        (f.field7 ?? "") + (f.field8 ?? "");
+                penguraiJson(penampung_json_thingspeak);
+                document.getElementById('messages').innerHTML = 'field1 : ' + f.field1 + ', field2 : ' + f.field2 + ', field3 : ' + f.field3 + ', field4 : ' + f.field4;
                 var loading_1 = document.getElementById("loading_1");
                 loading_1.style.display = "none";
                 updateTime();
@@ -255,210 +243,100 @@ function data_thingspeak_2() {
     .catch(error => console.error("Fetch error:", error));
 }
 
-
-const server_pusat_data = "http://192.168.0.150/";
-const server_sensor_dalam = "http://192.168.0.151/";
-const server_sensor_tangki_air = "http://192.168.0.152/";
-const server_sensor_kipas = "http://192.168.0.153/";
-const server_sensor_listrik = "http://192.168.0.154/";
-const server_pusat_kipas_atas = "http://192.168.0.155/";
-const server_kebun_kandang = "http://192.168.0.156/";
-const server_saklar_cuaca_relay = "http://192.168.0.157/";
-
-function data_server_lokal(){
-    //getDataLocalServer(server_pusat_data);
-    getDataLocalServer(server_sensor_dalam);
-    getDataLocalServer(server_sensor_tangki_air);
-    //getDataLocalServer(server_sensor_kipas);
-    getDataLocalServer(server_sensor_listrik);
-    getDataLocalServer(server_pusat_kipas_atas);
-    //getDataLocalServer(server_kebun_kandang);
-    //getDataLocalServer(server_saklar_cuaca_relay);
-}
-async function getDataLocalServer(url_local_server) {
-    try {
-     const response = await fetch(url_local_server);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-    const groupSensor = await response.text();
-    penguraiJson(2,groupSensor);
-    } catch (error) {
-      console.error("Error fetching data:", error.message);
-    }
-  }
 var first_dipanen = false;
-function penguraiJson(kode,dataHttp,kode_2=0) {
-    if(kode == 1){
-        data_json = JSON.parse(dataHttp);
-        if(kode_2 == 1){
-            var array_suhu = data_json.shu;
-            var array_kelembapan = data_json.klb;
-            var array_heat_index = data_json.dhi;
-            var array_liter_air = data_json.air;
-            var array_kipas = data_json.kps;
-            var array_listrik = data_json.lst;
-            var array_angin = data_json.agn;
-            suhu_atas = hpsnull(array_suhu[0]/10).toFixed(1);
-            suhu_bawah = hpsnull(array_suhu[1]/10).toFixed(1);
-            suhu_luar = hpsnull(array_suhu[2]/10).toFixed(1);
-            kelembapan_atas = hpsnull(array_kelembapan[0]/10).toFixed(1);
-            kelembapan_bawah = hpsnull(array_kelembapan[1]/10).toFixed(1);
-            kelembapan_luar = hpsnull(array_kelembapan[2]/10).toFixed(1);
-            data_HI_atas = hpsnull(array_heat_index[0]/100).toFixed(2);
-            data_HI_bawah = hpsnull(array_heat_index[1]/100).toFixed(2);
-            liter_tong_atas = hpsnull(array_liter_air[0]/10).toFixed(0);
-            liter_tong_bawah = hpsnull(array_liter_air[1]/10).toFixed(0);
-            persen_air_atas = hpsnull(array_liter_air[2]/100).toFixed(0);
-            persen_air_bawah = hpsnull(array_liter_air[3]/100).toFixed(0);
-            kecepatan_minum_atas = hpsnull(array_liter_air[4]/100).toFixed(2);
-            kecepatan_minum_bawah = hpsnull(array_liter_air[5]/100).toFixed(2);
-            kipas_1 = array_kipas[0];
-            kipas_2 = array_kipas[1];
-            kipas_3 = array_kipas[2];
-            kipas_4 = array_kipas[3];
-            kipas_5 = array_kipas[4];
-            kipas_6 = array_kipas[5];
-            kipas_7 = array_kipas[6];
-            kipas_8 = array_kipas[7];
-            kipas_9 = array_kipas[8];
-            kipas_10 = array_kipas[9];
-            voltage = hpsnull(array_listrik[0]/100).toFixed(1);
-            current = (hpsnull(array_listrik[1]/100)*hpsnull(array_listrik[5]/100)).toFixed(2);
-            power = hpsnull(array_listrik[2]/100).toFixed(1);
-            energy = hpsnull(array_listrik[3]/100).toFixed(1);
-            frequency = hpsnull(array_listrik[4]/100).toFixed(1);
-            pf = array_listrik[5]/100;
-            rata_rata_kwh = (array_listrik[6]/10000*48).toFixed(1);
-            kwh_jam = (array_listrik[7]/10000).toFixed(1);
-            kwh_harian = (array_listrik[8]/10).toFixed(1);
-            kecepatan_angin_atas = hpsnull(array_angin[0]/10000).toFixed(2);
-        }else if(kode_2 == 2){
-            grafik_waktu = data_json.gwk;
-            grafik_suhu_atas = data_json.gsa;
-            grafik_kelembapan_atas = data_json.gka;  
-        }else if(kode_2 == 3){
-            grafik_suhu_bawah = data_json.gsb;
-            grafik_kwh_listrik = data_json.gls;
-            lampu_luar = data_json.cry[0];
-            indikator_cuaca = data_json.cry[1];
-            kode_cuaca = data_json.cry[2];
-            teks_cuaca = data_json.cry[3];
-        }else if(kode_2 == 4){
-            mode_kandang = data_json.kpa[0];
-            usia_ayam = data_json.kpa[1];
-            target_suhu = data_json.kpa[2];
-            suhu_minimal = data_json.kpa[3];
-            suhu_maksimal = data_json.kpa[4];
-            kipas_relay_1 = data_json.kpa[5];
-            kipas_relay_2 = data_json.kpa[6];
-            kipas_relay_3 = data_json.kpa[7];
-            kipas_relay_4 = data_json.kpa[8];
-            kipas_relay_5 = data_json.kpa[9];
-            status_timer = data_json.kpa[10];
-            waktu_hidup = data_json.kpa[11];
-            waktu_mati = data_json.kpa[12];
-            detail_kipas = data_json.kpa[13];
-            debug_155 = data_json.kpa[14];
-            harga_pakan_kg = data_json.mtd[0];
-            jumlah_ayam_awal = data_json.mtd[1];
-            harga_obat_ayam = data_json.mtd[2];
-            jumlah_ayam_mati = data_json.mtd[3];
-            harga_bibit_ayam = data_json.mtd[4];
-            jumlah_pakan_sak = data_json.mtd[5];
-            harga_kontrak_ayam = data_json.mtd[6];
-            bobot_rata_rata = data_json.mtd[7];
-            blok_kandang = data_json.mtd[8];
-            bobot_timbang = data_json.bbt[0];
-            bobot_rata_rata_timbang = data_json.bbt[1];
-            jumlah_sample_timbang = data_json.bbt[2];
-            /*sebaran_bobot[0] = 10;
-            sebaran_bobot[1] = 2;
-            sebaran_bobot[2] = 6;
-            sebaran_bobot[3] = 2;
-            sebaran_bobot[4] = 21;
-            sebaran_bobot[5] = 6;
-            sebaran_bobot[6] = 3;
-            sebaran_bobot[7] = 0;
-            sebaran_bobot[8] = 1;
-            sebaran_bobot[9] = 0;
-            sebaran_bobot[10] = 0;*/
-            sebaran_bobot[0] = data_json.bbt[3];
-            sebaran_bobot[1] = data_json.bbt[4];
-            sebaran_bobot[2] = data_json.bbt[5];
-            sebaran_bobot[3] = data_json.bbt[6];
-            sebaran_bobot[4] = data_json.bbt[7];
-            sebaran_bobot[5] = data_json.bbt[8];
-            sebaran_bobot[6] = data_json.bbt[9];
-            sebaran_bobot[7] = data_json.bbt[10];
-            sebaran_bobot[8] = data_json.bbt[11];
-            sebaran_bobot[9] = data_json.bbt[12];
-            sebaran_bobot[10] = data_json.bbt[13];
-            if(!first_dipanen){
-                jumlah_ayam_dipanen = data_json.mtd[9];
-            }
-        }
-    }else if(kode == 2){
-        try {
-        const terimaJson = JSON.parse(dataHttp);
-        const nomorJson = terimaJson.dta[0];
-        if (nomorJson === 1) {
-            suhu_atas = terimaJson.shu[0];
-            suhu_bawah = terimaJson.shu[1];
-            kelembapan_atas = terimaJson.klb[0];
-            kelembapan_bawah = terimaJson.klb[1];
-            data_HI_atas = terimaJson.dhi[0];
-            data_HI_bawah = terimaJson.dhi[1];
-        } else if (nomorJson === 2) {
-            liter_tong_atas = terimaJson.air[0];
-            persen_air_atas = terimaJson.air[1];
-            liter_tong_bawah = terimaJson.air[2];
-            persen_air_bawah = terimaJson.air[3];
-        } else if (nomorJson === 3) {
-            kipas_1 = terimaJson.kps[0];
-            kipas_2 = terimaJson.kps[1];
-            kipas_3 = terimaJson.kps[2];
-            kipas_4 = terimaJson.kps[3];
-            kipas_5 = terimaJson.kps[4];
-        } else if (nomorJson === 4) {
-            if (terimaJson.lst[0] !== 0) voltage = terimaJson.lst[0];
-            current = terimaJson.lst[1];
-            power = terimaJson.lst[2];
-            if (terimaJson.lst[3] !== 0) energy = terimaJson.lst[3];
-            frequency = terimaJson.lst[4];
-            pf = terimaJson.lst[5];
-            rata_rata_kwh = terimaJson.lst[6];
-        } else if (nomorJson === 5) {
-            mode_kandang = terimaJson.kpa[0];
-            tanggal_masuk_ayam_hari = terimaJson.kpa[1];
-            tanggal_masuk_ayam_bulan = terimaJson.kpa[2];
-            tanggal_masuk_ayam_tahun = terimaJson.kpa[3];
-            usia_ayam = terimaJson.kpa[4];
-            target_suhu = terimaJson.kpa[5];
-            suhu_minimal = terimaJson.kpa[6];
-            suhu_maksimal = terimaJson.kpa[7];
-            kipas_relay_1 = terimaJson.kpa[8];
-            kipas_relay_2 = terimaJson.kpa[9];
-            kipas_relay_3 = terimaJson.kpa[10];
-            kipas_relay_4 = terimaJson.kpa[11];
-            kipas_relay_5 = terimaJson.kpa[12];
-            status_timer = terimaJson.kpa[13];
-            waktu_hidup = terimaJson.kpa[14];
-            waktu_mati = terimaJson.kpa[15];
-            detail_kipas = terimaJson.kpa[16];
-            debug_155 = terimaJson.kpa[18];
-        } else if (nomorJson === 6) {
-            // nothing
-        } else if (nomorJson === 7) {
-            lampu_luar = terimaJson.cry[0];
-            indikator_cuaca = terimaJson.cry[1];
-            kode_cuaca = terimaJson.cry[2];
-            teks_cuaca = String(terimaJson.cry[3]);
-        }
-        } catch (error) {
-        console.error("JSON parsing error:", error.message);
-        }
-    }
+function penguraiJson(dataHttp) {
+    data_json = JSON.parse(dataHttp);
+    var array_suhu = data_json.shu;
+    var array_kelembapan = data_json.klb;
+    var array_heat_index = data_json.dhi;
+    var array_liter_air = data_json.air;
+    var array_kipas = data_json.kps;
+    var array_listrik = data_json.lst;
+    var array_angin = data_json.agn;
+    suhu_atas = hpsnull(array_suhu[0]/10).toFixed(1);
+    suhu_bawah = hpsnull(array_suhu[1]/10).toFixed(1);
+    suhu_luar = hpsnull(array_suhu[2]/10).toFixed(1);
+    kelembapan_atas = hpsnull(array_kelembapan[0]/10).toFixed(1);
+    kelembapan_bawah = hpsnull(array_kelembapan[1]/10).toFixed(1);
+    kelembapan_luar = hpsnull(array_kelembapan[2]/10).toFixed(1);
+    data_HI_atas = hpsnull(array_heat_index[0]/100).toFixed(2);
+    data_HI_bawah = hpsnull(array_heat_index[1]/100).toFixed(2);
+    liter_tong_atas = hpsnull(array_liter_air[0]/10).toFixed(0);
+    liter_tong_bawah = hpsnull(array_liter_air[1]/10).toFixed(0);
+    persen_air_atas = hpsnull(array_liter_air[2]/100).toFixed(0);
+    persen_air_bawah = hpsnull(array_liter_air[3]/100).toFixed(0);
+    kecepatan_minum_atas = hpsnull(array_liter_air[4]/100).toFixed(2);
+    kecepatan_minum_bawah = hpsnull(array_liter_air[5]/100).toFixed(2);
+    kipas_1 = array_kipas[0];
+    kipas_2 = array_kipas[1];
+    kipas_3 = array_kipas[2];
+    kipas_4 = array_kipas[3];
+    kipas_5 = array_kipas[4];
+    kipas_6 = array_kipas[5];
+    kipas_7 = array_kipas[6];
+    kipas_8 = array_kipas[7];
+    kipas_9 = array_kipas[8];
+    kipas_10 = array_kipas[9];
+    voltage = hpsnull(array_listrik[0]/100).toFixed(1);
+    current = (hpsnull(array_listrik[1]/100)*hpsnull(array_listrik[5]/100)).toFixed(2);
+    power = hpsnull(array_listrik[2]/100).toFixed(1);
+    energy = hpsnull(array_listrik[3]/100).toFixed(1);
+    frequency = hpsnull(array_listrik[4]/100).toFixed(1);
+    pf = array_listrik[5]/100;
+    rata_rata_kwh = (array_listrik[6]/10000*48).toFixed(1);
+    kwh_jam = (array_listrik[7]/10000).toFixed(1);
+    kwh_harian = (array_listrik[8]/10).toFixed(1);
+    kecepatan_angin_atas = hpsnull(array_angin[0]/10000).toFixed(2);
+    grafik_waktu = data_json.gwk;
+    grafik_suhu_atas = data_json.gsa;
+    grafik_kelembapan_atas = data_json.gka;  
+    grafik_suhu_bawah = data_json.gsb;
+    grafik_kwh_listrik = data_json.gls;
+    lampu_luar = data_json.cry[0];
+    indikator_cuaca = data_json.cry[1];
+    kode_cuaca = data_json.cry[2];
+    teks_cuaca = data_json.cry[3];
+    mode_kandang = data_json.kpa[0];
+    usia_ayam = data_json.kpa[1];
+    target_suhu = data_json.kpa[2];
+    suhu_minimal = data_json.kpa[3];
+    suhu_maksimal = data_json.kpa[4];
+    kipas_relay_1 = data_json.kpa[5];
+    kipas_relay_2 = data_json.kpa[6];
+    kipas_relay_3 = data_json.kpa[7];
+    kipas_relay_4 = data_json.kpa[8];
+    kipas_relay_5 = data_json.kpa[9];
+    status_timer = data_json.kpa[10];
+    waktu_hidup = data_json.kpa[11];
+    waktu_mati = data_json.kpa[12];
+    detail_kipas = data_json.kpa[13];
+    debug_155 = data_json.kpa[14];
+    harga_pakan_kg = data_json.mtd[0];
+    jumlah_ayam_awal = data_json.mtd[1];
+    harga_obat_ayam = data_json.mtd[2];
+    jumlah_ayam_mati = data_json.mtd[3];
+    harga_bibit_ayam = data_json.mtd[4];
+    jumlah_pakan_sak = data_json.mtd[5];
+    harga_kontrak_ayam = data_json.mtd[6];
+    bobot_rata_rata = data_json.mtd[7];
+    blok_kandang = data_json.mtd[8];
+    bobot_timbang = data_json.bbt[0];
+    bobot_rata_rata_timbang = data_json.bbt[1];
+    jumlah_sample_timbang = data_json.bbt[2];
+    sebaran_bobot[0] = data_json.bbt[3];
+    sebaran_bobot[1] = data_json.bbt[4];
+    sebaran_bobot[2] = data_json.bbt[5];
+    sebaran_bobot[3] = data_json.bbt[6];
+    sebaran_bobot[4] = data_json.bbt[7];
+    sebaran_bobot[5] = data_json.bbt[8];
+    sebaran_bobot[6] = data_json.bbt[9];
+    sebaran_bobot[7] = data_json.bbt[10];
+    sebaran_bobot[8] = data_json.bbt[11];
+    sebaran_bobot[9] = data_json.bbt[12];
+    sebaran_bobot[10] = data_json.bbt[13];
+    if(!first_dipanen){
+        jumlah_ayam_dipanen = data_json.mtd[9];
+    }   
 }
   
 setInterval(data_thingspeak,randomValue);
