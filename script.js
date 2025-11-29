@@ -204,7 +204,7 @@ function data_thingspeak(){
                         (f.field4 ?? "") + (f.field5 ?? "") + (f.field6 ?? "") +
                         (f.field7 ?? "") + (f.field8 ?? "");
                 penguraiJson(penampung_json_thingspeak);
-                document.getElementById('messages').innerHTML = 'field1 : ' + f.field1 + ', field2 : ' + f.field2 + ', field3 : ' + f.field3 + ', field4 : ' + f.field4;
+                document.getElementById('messages').innerHTML = f.field1 +  f.field2 +  f.field3 +  f.field4;
                 var loading_1 = document.getElementById("loading_1");
                 loading_1.style.display = "none";
                 updateTime();
@@ -867,8 +867,8 @@ function animasi_chart() {
             options: {
                 scales: {
                     y3: {
-                        suggestedMin: Math.min(...values_y3) - 0.5,
-                        suggestedMax: Math.max(...values_y3) + 0.5,
+                        suggestedMin: Math.min(...values_y3) - 0.1,
+                        suggestedMax: Math.max(...values_y3) + 0.1,
                         type: 'linear',
                         display: true,
                         position: 'right',
