@@ -284,7 +284,7 @@ function penguraiJson(dataHttp) {
     frequency = hpsnull(array_listrik[4]/100).toFixed(1);
     pf = array_listrik[5]/100;
     rata_rata_kwh = (array_listrik[6]/10000*48).toFixed(1);
-    kwh_jam = (array_listrik[7]/10000).toFixed(1);
+    kwh_jam = (array_listrik[7]/1000).toFixed(1);
     kwh_harian = (array_listrik[8]/10).toFixed(1);
     kecepatan_angin_atas = hpsnull(array_angin[0]/10000).toFixed(2);
     grafik_waktu = data_json.gwk;
@@ -423,7 +423,7 @@ function eksekutor(){
         document.getElementById("power").innerHTML = power;
         document.getElementById("energy").innerHTML = energy;
         document.getElementById("freq").innerHTML = frequency;
-        document.getElementById("rtrtkwh").innerHTML = 'Rata Rata Listrik perhari : ' + (kwh_jam*24).toFixed(1) + ' kWh';
+        document.getElementById("rtrtkwh").innerHTML = 'Rata Rata Listrik perhari : ' + kwh_harian + ' kWh';
         animasi_kipas();
         animasi_bar();
         animasi_tombol();
@@ -745,6 +745,8 @@ function formatTime(time) {
 
 var x1 = 0;
 let grafik;
+let grafik2;
+
 function animasi_chart() {
     const canvas1 = document.getElementById('grafik');
     if (!grafik) {
@@ -796,18 +798,7 @@ function animasi_chart() {
                     tension: 0.4,
                     pointStyle: false,
                     yAxisID: 'y2'
-                }/*, {
-                    label: 'kWh Listrik',
-                    data: [gls(0), gls(1), gls(2), gls(3), gls(4), gls(5), gls(6), gls(7), gls(8), gls(9), gls(10), gls(11), gls(12), gls(13), gls(14), gls(15), gls(16), gls(17), gls(18), gls(19), gls(20), gls(21), gls(22), gls(23)],
-                    backgroundColor: 'rgba(255,170,29,0.2)',
-                    borderColor: 'rgba(255,170,29,1)',
-                    borderWidth: 1,
-                    fill: true,
-                    cubicInterpolationMode: 'monotone',
-                    tension: 0.4,
-                    pointStyle: false,
-                    yAxisID: 'y3'
-                }*/]
+                }]
             },
             options: {
                 scales: {
@@ -838,15 +829,6 @@ function animasi_chart() {
                         ticks: { color: 'rgba(191, 39, 126,1)' },
                         grid: { display: false }
                     },
-                    /*y3: {
-                        min: 0,
-                        max: 6,
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        ticks: { color: 'rgba(255,255,0,1)' },
-                        grid: { display: false }
-                    },*/
                     x: { grid: { display: false } }
                 },
             }
@@ -860,6 +842,46 @@ function animasi_chart() {
                     
         grafik.update(); // Perbarui grafik dengan data terbaru
     }
+    
+    const canvas2 = document.getElementById('grafik_lst');
+    const values_y3 = Array.from({ length: 24 }, (_, i) => gls(i));
+
+    if (!grafik2) {
+        grafik2 = new Chart(canvas2, {
+            type: 'line',
+            data: {
+                labels: [gwk(0), gwk(1), gwk(2), gwk(3), gwk(4), gwk(5), gwk(6), gwk(7), gwk(8), gwk(9), gwk(10), gwk(11), gwk(12), gwk(13), gwk(14), gwk(15), gwk(16), gwk(17), gwk(18), gwk(19), gwk(20), gwk(21), gwk(22), gwk(23)],
+                datasets: [{
+                    label: 'Konsumsi Listrik (kwh)',
+                    data: [gls(0), gls(1), gls(2), gls(3), gls(4), gls(5), gls(6), gls(7), gls(8), gls(9), gls(10), gls(11), gls(12), gls(13), gls(14), gls(15), gls(16), gls(17), gls(18), gls(19), gls(20), gls(21), gls(22), gls(23)],
+                    backgroundColor: 'rgba(255,170,29,0.2)',
+                    borderColor: 'rgba(179, 112, 5, 1)',
+                    borderWidth: 1,
+                    fill: true,
+                    cubicInterpolationMode: 'monotone',
+                    tension: 0.4,
+                    pointStyle: false,
+                    yAxisID: 'y3'
+                }]
+            },
+            options: {
+                scales: {
+                    y3: {
+                        suggestedMin: Math.min(...values_y3) - 0.5,
+                        suggestedMax: Math.max(...values_y3) + 0.5,
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        ticks: { color: 'rgba(179, 112, 5,1)' },
+                        grid: { display: false }
+                    },
+                    x: { grid: { display: false } }
+                },
+            }
+        });
+    }else{
+        grafik2.update();
+    }
 
     if (x1 == 0) {
         hidden_chart1.style.display = "block";
@@ -868,50 +890,53 @@ function animasi_chart() {
     }
 }
 
+function ambilValid(arr, index, maxCheck = 24) {
+    let i = index;
+
+    for (let step = 0; step < maxCheck; step++) {
+
+        // Jika masih dalam range array
+        if (i >= 0 && arr[i] != 0 && arr[i] !== '' && !isNaN(arr[i])) {
+            
+            return arr[i];
+        }
+
+        // Mundur satu langkah ke index sebelumnya
+        i--;
+    }
+
+    // Jika sampai 24 langkah tidak ketemu data valid
+    return 0;
+}
+
 
 function gsa(x){
-    var hasil_gsa;
-    if(grafik_suhu_atas[x] > 400){
-        if(x<1){x=2;}
-        hasil_gsa = hpsnull(grafik_suhu_atas[x-1]/10).toFixed(1);
-    }else{
-        hasil_gsa = hpsnull(grafik_suhu_atas[x]/10).toFixed(1);
-    }
-    return hasil_gsa;
+    let val = ambilValid(grafik_suhu_atas, x);
+    return (hpsnull(val / 10)).toFixed(1);
 }
 
 function gka(x){
-    var hasil_gka = hpsnull(grafik_kelembapan_atas[x]/10).toFixed(1);
-    return hasil_gka;
+    let val = ambilValid(grafik_kelembapan_atas, x);
+    return (hpsnull(val / 10)).toFixed(1);
 }
 
 function gsb(x){
-    var hasil_gsb;
-    if(grafik_suhu_bawah[x] > 400){
-        if(x<1){x=2;}
-        hasil_gsb = hpsnull(grafik_suhu_bawah[x-1]/10).toFixed(1);
-    }else{
-        hasil_gsb = hpsnull(grafik_suhu_bawah[x]/10).toFixed(1);
-    }
-    return hasil_gsb;
+    let val = ambilValid(grafik_suhu_bawah, x);
+    return (hpsnull(val / 10)).toFixed(1);
 }
 
 function gls(x){
-    var hasil_gls = hpsnull(grafik_kwh_listrik[x]/1000).toFixed(1);
-    return hasil_gls;    
+    let val = ambilValid(grafik_kwh_listrik, x);
+    return (hpsnull(val / 10)).toFixed(1);
 }
 
 function gwk(x) {
-    var hasil_gwk = hpsnull(grafik_waktu[0])+x+1;
-    if(hasil_gwk>24){
-        hasil_gwk = hasil_gwk-24;
-    }
+    let start = hpsnull(grafik_waktu[0]); // ambil jam awal
+    let hasil_gwk = start + x + 1;
 
-    if(hasil_gwk<10){
-        return '0' + hasil_gwk + ':00';
-    }else{
-        return hasil_gwk + ':00';
-    }
+    if (hasil_gwk > 24) hasil_gwk -= 24;
+
+    return hasil_gwk < 10 ? '0' + hasil_gwk + ':00' : hasil_gwk + ':00';
 }
 
 function gts(){
@@ -1575,19 +1600,19 @@ const token = "Wl380IhMybLGDKPaG88Cg5Lvva7ylU7j"; // Ganti dengan tokenmu
 
           // Mulai polling setiap 1 detik, timeout setelah 10 detik
           let waktu = 0;
-          const interval = setInterval(() => {
+          const interval_p = setInterval(() => {
             fetch(`${readUrl}?token=${token}&v7`)
               .then(res => res.text())
               .then(data => {
                 if (data !== pesan) { // Kalau balasan beda dari pesan asli
-                  clearInterval(interval);
+                  clearInterval(interval_p);
                   document.getElementById("output").innerText = data;
                 }
               });
 
             waktu += 1;
             if (waktu >= 15) {
-              clearInterval(interval);
+              clearInterval(interval_p);
               document.getElementById("output").innerText = "Tidak ada balasan, mungkin sedang offline, coba lagi nanti";
             }
           }, 1000);
@@ -1622,98 +1647,111 @@ const statusEl = document.getElementById("statusBlynk");
     setInterval(cekStatusBlynk, 10000);
 
 let chartInstance = null; // Simpan referensi chart agar bisa diupdate
+var interval = 100;
+var rawData;
+var opti_bbt = false;
+var tst = 0;
+let listenerAdded = false;
 
-function tampilkanSebaranBobot() {
+function tampilkanSebaranBobot(pass_code = 0) {
     var parsed = JSON.parse(penampung_json_bobot);
-const rawData = parsed.raw;
+    rawData = parsed.raw;if(pass_code != 1){
+        if (listenerAdded) return;   // cegah duplikasi listener
+        listenerAdded = true;
 
-if (rawData.length === 0) return;
+        document.getElementById('intervalSelect').addEventListener('change', function () {
+            if (rawData.length === 0) return;
 
-// Ambil pilihan interval dari dropdown
-const intervalOption = document.getElementById('intervalSelect').value;
-let interval = 100;
+            const intervalOption = this.value;
 
-// Tentukan interval berdasarkan opsi
-if (intervalOption === '10') {
-    interval = 10;
-} else if (intervalOption === '100') {
-    interval = 100;
-} else if (intervalOption === 'sturges') {
-    const k = Math.ceil(1 + 3.322 * Math.log10(rawData.length));
-    const range = Math.max(...rawData) - Math.min(...rawData);
-    interval = Math.ceil(range / k);
-}
+            if (intervalOption === '10') {
+                interval = 10;
+            } else if (intervalOption === '100') {
+                interval = 100;
+            } else if (intervalOption === 'sturges') {
+                const k = Math.ceil(1 + 3.322 * Math.log10(rawData.length));
+                const range = Math.max(...rawData) - Math.min(...rawData);
+                interval = Math.ceil(range / k);
+            }
 
-// Cari batas bawah dan atas
-const minBobot = Math.floor(Math.min(...rawData) / interval) * interval;
-const maxBobot = Math.ceil(Math.max(...rawData) / interval) * interval;
+            tst = tst + 1;
+        });
+    }else{
+        interval = 100;
+    }
+    
 
-// Hitung jumlah kelas
-const totalRentang = Math.floor((maxBobot - minBobot) / interval) + 1;
-let sebaran_bobot = new Array(totalRentang + 1).fill(0);
-sebaran_bobot[0] = minBobot / interval;
+    // Cari batas bawah dan atas
+    const minBobot = Math.floor(Math.min(...rawData) / interval) * interval;
+    const maxBobot = Math.ceil(Math.max(...rawData) / interval) * interval;
 
-// Hitung frekuensi
-rawData.forEach((nilai) => {
-    let index = Math.floor((nilai - minBobot) / interval);
-    sebaran_bobot[index + 1]++;
-});
+    // Hitung jumlah kelas
+    const totalRentang = Math.floor((maxBobot - minBobot) / interval) + 1;
+    let sebaran_bobot = new Array(totalRentang + 1).fill(0);
+    sebaran_bobot[0] = minBobot / interval;
 
-// Hitung total sampel
-const totalSample = sebaran_bobot.slice(1).reduce((a, b) => a + b, 0);
+    // Hitung frekuensi
+    rawData.forEach((nilai) => {
+        let index = Math.floor((nilai - minBobot) / interval);
+        sebaran_bobot[index + 1]++;
+    });
 
-// === Hitung rata-rata dan standar deviasi ===
-const mean = rawData.reduce((a, b) => a + b, 0) / rawData.length;
-const variance = rawData.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (rawData.length - 1);
-const stdDev = Math.sqrt(variance);
+    // Hitung total sampel
+    const totalSample = sebaran_bobot.slice(1).reduce((a, b) => a + b, 0);
 
-// Hitung batas bawah dan atas deviasi
-const lowerBound = mean - stdDev;
-const upperBound = mean + stdDev;
+    // === Hitung rata-rata dan standar deviasi ===
+    const mean = rawData.reduce((a, b) => a + b, 0) / rawData.length;
+    const variance = rawData.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (rawData.length - 1);
+    const stdDev = Math.sqrt(variance);
 
-// Standar deviasi dalam persen terhadap rata-rata
-const stdPercent = ((stdDev / mean) * 100).toFixed(2);
+    // Hitung batas bawah dan atas deviasi
+    const lowerBound = mean - stdDev;
+    const upperBound = mean + stdDev;
 
-// Kosongkan tabel
-const tableBody = document.getElementById('tableBody');
-tableBody.innerHTML = '';
+    // Standar deviasi dalam persen terhadap rata-rata
+    const stdPercent = ((stdDev / mean) * 100).toFixed(2);
 
-// Siapkan data untuk grafik
-let labels = [];
-let values = [];
+    // Kosongkan tabel
+    const tableBody = document.getElementById('tableBody');
+    tableBody.innerHTML = '';
 
-// Isi tabel dan data chart
-for (let i = 0; i < totalRentang; i++) {
-    let rentangAwal = (sebaran_bobot[0] * interval) + (i * interval);
-    let rentangAkhir = rentangAwal + interval - 1;
-    let rentangLabel = `${rentangAwal}-${rentangAkhir}`;
-    let jumlahSampel = sebaran_bobot[i + 1];
-    let persentase = ((jumlahSampel / totalSample) * 100).toFixed(2);
+    // Siapkan data untuk grafik
+    let labels = [];
+    let values = [];
 
-    if (jumlahSampel != 0) {
-        let row = document.createElement('tr');
-        row.innerHTML = `
-            <td class="td_">${rentangLabel}</td>
-            <td class="td_">${jumlahSampel}</td>
-            <td class="td_">${persentase}%</td>
-            <td class="td_">${(((jumlahSampel / totalSample) * jumlah_ayam_awal) || 0).toFixed(0)}</td>
-        `;
-        tableBody.appendChild(row);
+    // Isi tabel dan data chart
+    for (let i = 0; i < totalRentang; i++) {
+        let rentangAwal = (sebaran_bobot[0] * interval) + (i * interval);
+        let rentangAkhir = rentangAwal + interval - 1;
+        let rentangLabel = `${rentangAwal}-${rentangAkhir}`;
+        let jumlahSampel = sebaran_bobot[i + 1];
+        let persentase = ((jumlahSampel / totalSample) * 100).toFixed(2);
+
+        if (jumlahSampel != 0) {
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="td_">${rentangLabel}</td>
+                <td class="td_">${jumlahSampel}</td>
+                <td class="td_">${persentase}%</td>
+                <td class="td_">${(((jumlahSampel / totalSample) * jumlah_ayam_awal) || 0).toFixed(0)}</td>
+            `;
+            tableBody.appendChild(row);
+        }
+
+        labels.push(rentangLabel);
+        values.push(jumlahSampel);
     }
 
-    labels.push(rentangLabel);
-    values.push(jumlahSampel);
-}
-
-// === Update info tambahan ===
-const Data_kalkulasi_panen = {
-    d1: { label: 'Bobot Rata-Rata : ', value: `${(mean / 1000).toFixed(2)} Kg/ekor`},
-    d2: { label: 'Standar Deviasi  : ', value: `±${stdDev.toFixed(0)} gram (${lowerBound.toFixed(0)} g - ${upperBound.toFixed(0)} g), ${stdPercent}%` },
-    d3: { label: 'Sampel Masuk Hari Ini: ', value: `${0} ekor` },
-    d4: { label: 'Sampel Masuk Kemarin : ', value: `${0} ekor` },
-    d5: { label: 'Interval  : ', value: `${interval} gram` },
-    d6: { label: 'Total Sampel : ', value: `${totalSample}` }
-};
+    // === Update info tambahan ===
+    const Data_kalkulasi_panen = {
+        d1: { label: 'Bobot Rata-Rata : ', value: `${(mean / 1000).toFixed(2)} Kg/ekor`},
+        d2: { label: 'Standar Deviasi  : ', value: `±${stdDev.toFixed(0)} gram (${lowerBound.toFixed(0)} g - ${upperBound.toFixed(0)} g), ${stdPercent}%` },
+        d3: { label: 'Sampel Masuk Hari Ini: ', value: `${0} ekor` },
+        d4: { label: 'Sampel Masuk Kemarin : ', value: `${0} ekor` },
+        d5: { label: 'Interval  : ', value: `${interval} gram` },
+        d6: { label: 'Total Sampel : ', value: `${totalSample}` },
+        d7: { label: 'Total  : ', value: `${tst}` }
+    };
     document.getElementById('data_kalkulasi_bobot').innerHTML = createOutputTable(Data_kalkulasi_panen, 8);
 
     const ctx = document.getElementById('lineChart').getContext('2d');
