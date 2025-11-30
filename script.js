@@ -423,7 +423,7 @@ function eksekutor(){
         document.getElementById("power").innerHTML = power;
         document.getElementById("energy").innerHTML = energy;
         document.getElementById("freq").innerHTML = frequency;
-        document.getElementById("rtrtkwh").innerHTML = 'Rata Rata Listrik perhari : ' + kwh_harian + ' kWh';
+        document.getElementById("rtrtkwh").innerHTML = 'Total Listrik perhari : ' + kwh_harian + ' kWh';
         animasi_kipas();
         animasi_bar();
         animasi_tombol();
@@ -859,7 +859,7 @@ function animasi_chart() {
                     borderWidth: 1,
                     fill: true,
                     cubicInterpolationMode: 'monotone',
-                    tension: 0.4,
+                    tension: 0.3,
                     pointStyle: false,
                     yAxisID: 'y3'
                 }]
@@ -867,7 +867,7 @@ function animasi_chart() {
             options: {
                 scales: {
                     y3: {
-                        suggestedMin: Math.min(...values_y3) - 0.1,
+                        suggestedMin: Math.min(...values_y3) - 0.3,
                         suggestedMax: Math.max(...values_y3) + 0.1,
                         type: 'linear',
                         display: true,
@@ -890,16 +890,21 @@ function animasi_chart() {
     }
 }
 
-function ambilValid(arr, index, maxCheck = 24) {
+function ambilValid(arr, index, maxCheck = 24,mode=1) {
     let i = index;
 
     for (let step = 0; step < maxCheck; step++) {
-
-        // Jika masih dalam range array
-        if (i >= 0 && arr[i] != 0 && arr[i] !== '' && !isNaN(arr[i])) {
-            
-            return arr[i];
+        if(mode==1){
+            if (i >= 0 && arr[i]<=1000 && arr[i] != 0 && arr[i] !== '' && !isNaN(arr[i]) ) {
+                return arr[i];
+            }
+        }else if(mode==2){
+            if (i >= 0 && arr[i]<=60 && arr[i] != 0 && arr[i] !== '' && !isNaN(arr[i]) ) {
+                return arr[i];
+            }
         }
+        // Jika masih dalam range array
+        
 
         // Mundur satu langkah ke index sebelumnya
         i--;
@@ -926,7 +931,7 @@ function gsb(x){
 }
 
 function gls(x){
-    let val = ambilValid(grafik_kwh_listrik, x);
+    let val = ambilValid(grafik_kwh_listrik, x, 24, 2);
     return (hpsnull(val / 10)).toFixed(1);
 }
 
