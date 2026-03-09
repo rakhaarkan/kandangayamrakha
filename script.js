@@ -196,7 +196,7 @@ var flag_mulai = false;
 async function data_thingspeak(){
 
     const lan_url = "http://192.168.0.156:8080/api/dataweb";
-    const ts_url  = "https://api.thingspnoeak.com/channels/2172969/feeds.json?results=1";
+    const ts_url  = "https://api.thingspeak.com/channels/2172969/feeds.json?results=1";
 
     let data; 
 
