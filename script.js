@@ -188,35 +188,91 @@ var bobot_timbang = 0;
 var bobot_rata_rata_timbang = 0;
 var jumlah_sample_timbang = 0;
 var sebaran_bobot = [];
+var dataValues;
 
 var first_mqtt = false;
 var flag_mulai = false;
 
-function data_thingspeak(){
-    const url = 'https://api.thingspeak.com/channels/2172969/feeds.json?results=1';
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                const lastUpdateTime = data.feeds[0].created_at;
-                penampung_data_waktu = lastUpdateTime;
-                const f = data.feeds[0];
-                var penampung_json_thingspeak = (f.field1 ?? "") + (f.field2 ?? "") + (f.field3 ?? "") +
-                        (f.field4 ?? "") + (f.field5 ?? "") + (f.field6 ?? "") +
-                        (f.field7 ?? "") + (f.field8 ?? "");
-                penguraiJson(penampung_json_thingspeak);
-                document.getElementById('messages').innerHTML = f.field1 +  f.field2 +  f.field3 +  f.field4;
-                var loading_1 = document.getElementById("loading_1");
-                loading_1.style.display = "none";
-                updateTime();
-                flag_mulai = true;
-                eksekutor();
-                if(!first_mqtt){
-                    koneksi_mqtt();
-                    first_mqtt = true;
-                }
-            })
-            //.catch(error => console.error('Error fetching data:', error));
-            
+async function data_thingspeak(){
+
+    const lan_url = "http://192.168.0.156:8080/api/dataweb";
+    const ts_url  = "https://api.thingspnoeak.com/channels/2172969/feeds.json?results=1";
+
+    let data; 
+
+    try {
+
+        // ----------- LAN REQUEST DENGAN TIMEOUT -------------
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 1500); // 1.5 detik
+
+        const response = await fetch(lan_url, { signal: controller.signal });
+        clearTimeout(timeout);
+
+        if(!response.ok) throw new Error("LAN response error");
+
+        const data = await response.json();
+
+        console.log("Data dari LAN");
+
+        // ambil timestamp
+        penampung_data_waktu = data.created_at;
+
+        // kirim seluruh JSON ke parser
+        penguraiJson(data);
+
+        document.getElementById('messages').innerHTML = JSON.stringify(data).slice(0,120);
+
+    }
+    catch(err){
+        
+        console.log("LAN gagal, fallback ke ThingSpeak");
+
+        // ----------- FALLBACK KE THINGSPEAK ----------------
+        try {
+
+            const response = await fetch(ts_url);
+            const tsdata = await response.json();
+
+            const lastUpdateTime = tsdata.feeds[0].created_at;
+            penampung_data_waktu = lastUpdateTime;
+
+            const f = tsdata.feeds[0];
+
+            var penampung_json_thingspeak =
+                (f.field1 ?? "") +
+                (f.field2 ?? "") +
+                (f.field3 ?? "") +
+                (f.field4 ?? "") +
+                (f.field5 ?? "") +
+                (f.field6 ?? "") +
+                (f.field7 ?? "") +
+                (f.field8 ?? "");
+
+            penguraiJson(penampung_json_thingspeak);
+
+            document.getElementById('messages').innerHTML =
+                f.field1 + f.field2 + f.field3 + f.field4;
+
+        }
+        catch(e){
+            console.error("ThingSpeak juga gagal:", e);
+        }
+    }
+
+    // ---------- kode yang tetap sama ----------
+    var loading_1 = document.getElementById("loading_1");
+    loading_1.style.display = "none";
+
+    updateTime();
+    flag_mulai = true;
+    eksekutor();
+
+    if(!first_mqtt){
+        koneksi_mqtt();
+        first_mqtt = true;
+    }
+
 }
 
 function data_thingspeak_2() {
@@ -245,7 +301,13 @@ function data_thingspeak_2() {
 
 var first_dipanen = false;
 function penguraiJson(dataHttp) {
-    data_json = JSON.parse(dataHttp);
+
+    if (typeof dataHttp === "string") {
+        data_json = JSON.parse(dataHttp);
+    } else {
+        data_json = dataHttp;
+    }
+
     var array_suhu = data_json.shu;
     var array_kelembapan = data_json.klb;
     var array_heat_index = data_json.dhi;
@@ -353,6 +415,7 @@ function eksekutor(){
             keterangan_air();
             data_thingspeak_2();
             sekali = 1;
+            createPieChart();
         }
         const gaugesHTML_atas = `
             <div class="wrapper">
@@ -1100,7 +1163,10 @@ function kalkulator(){
     if((cmt!= calc_ayam_mati)&&(getCookie("owner") == 1)){
         createPieChart();
         cmt = calc_ayam_mati;
-    };
+        dataValues = [sisa_ayam_hidup, total_ayam_dipanen, calc_ayam_mati];
+    
+    }
+    
 
     var ayam_tersisa = calc_ayam_awal - calc_ayam_mati;
     var persen_ayam_hidup = (ayam_tersisa/calc_ayam_awal)*100;
@@ -1237,7 +1303,8 @@ if(getCookie("owner") == 1){
     hidden_detail_kipas.style.display = "block";
     addButton.style.display = "none";
     dt_bakul.style.display = "none";
-    dt_calc_chart.style.display = "none";
+    dt_calc_chart.style.display = "block";
+    
 }
 
 closeButton.onclick = function() {
@@ -1456,8 +1523,12 @@ let myPieChart;
 var first_total_bobot = 0;
     
 async function createPieChart() {
-    const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData');
-    const result = await response.json();
+    var result = '';
+    if((getCookie("owner") == 1 || getCookie("owner") == 2)){
+        const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData');
+        result = await response.json();
+    }
+    
   
     if (!result || result.length === 0) {
         console.error("Data kosong");
@@ -1478,7 +1549,7 @@ async function createPieChart() {
     }
     document.getElementById('data_calc_total').innerHTML = createOutputTable(Data_kalkulasi_panen,8);
     const labels = ['Ayam Hidup', 'Ayam dipanen', 'Ayam Mati'];
-    const dataValues = [sisa_ayam_hidup, total_ayam_dipanen, calc_ayam_mati];
+    dataValues = [sisa_ayam_hidup, total_ayam_dipanen, calc_ayam_mati];
     const total = dataValues.reduce((acc, val) => acc + val, 0);
     const data = {
         labels: labels,
@@ -1753,9 +1824,7 @@ function tampilkanSebaranBobot(pass_code = 0) {
         d2: { label: 'Standar Deviasi  : ', value: `±${stdDev.toFixed(0)} gram (${lowerBound.toFixed(0)} g - ${upperBound.toFixed(0)} g), ${stdPercent}%` },
         d3: { label: 'Sampel Masuk Hari Ini: ', value: `${0} ekor` },
         d4: { label: 'Sampel Masuk Kemarin : ', value: `${0} ekor` },
-        d5: { label: 'Interval  : ', value: `${interval} gram` },
-        d6: { label: 'Total Sampel : ', value: `${totalSample}` },
-        d7: { label: 'Total  : ', value: `${tst}` }
+        d6: { label: 'Total Sampel : ', value: `${totalSample}` }
     };
     document.getElementById('data_kalkulasi_bobot').innerHTML = createOutputTable(Data_kalkulasi_panen, 8);
 
