@@ -272,11 +272,6 @@ async function data_thingspeak(){
     flag_mulai = true;
     eksekutor();
 
-    if(!first_mqtt){
-        koneksi_mqtt();
-        first_mqtt = true;
-    }
-
 }
 
 function data_thingspeak_2() {
