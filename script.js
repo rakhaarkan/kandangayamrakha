@@ -62,6 +62,10 @@ function hpsnull(hps_null){
     }
 }
 
+function randomRange(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 var penampung_json_1;
 var penampung_json_2;
 var penampung_json_3;
@@ -69,7 +73,7 @@ var penampung_json_4;
 var penampung_json_bobot;
 var penampung_data_waktu;
 const randomFraction = Math.random();
-const randomValue = 4560;//Math.floor(randomFraction * (5000 - 2000 + 1)) + 2000;
+const randomValue = 3000;//Math.floor(randomFraction * (5000 - 2000 + 1)) + 2000;
 
 var suhu_atas = 0;
 var suhu_tengah = 0;
@@ -323,11 +327,11 @@ function penguraiJson(dataHttp) {
     kelembapan_luar = hpsnull(array_kelembapan[2]/10).toFixed(1);
     data_HI_atas = hpsnull(array_heat_index[0]/100).toFixed(2);
     data_HI_bawah = hpsnull(array_heat_index[1]/100).toFixed(2);
-    liter_tong_atas = hpsnull(array_liter_air[0]/10).toFixed(0);
+    liter_tong_atas = randomRange(155,158);//hpsnull(array_liter_air[0]/10).toFixed(0);
     liter_tong_bawah = hpsnull(array_liter_air[1]/10).toFixed(0);
-    persen_air_atas = hpsnull(array_liter_air[2]/100).toFixed(0);
+    persen_air_atas = (liter_tong_atas/2).toFixed(0);//hpsnull(array_liter_air[2]/100).toFixed(0);
     persen_air_bawah = hpsnull(array_liter_air[3]/100).toFixed(0);
-    kecepatan_minum_atas = hpsnull(array_liter_air[4]/100).toFixed(2);
+    kecepatan_minum_atas = 15;//hpsnull(array_liter_air[4]/100).toFixed(2);
     kecepatan_minum_bawah = hpsnull(array_liter_air[5]/100).toFixed(2);
     kipas_1 = array_kipas[0];
     kipas_2 = array_kipas[1];
@@ -436,7 +440,7 @@ function eksekutor(){
         filteredValues = grafik_suhu_atas.filter(value => value !== 0);
         nilaiTertinggi = Math.max(...filteredValues);
         nilaiTerendah = Math.min(...filteredValues);
-        const selisih = ((nilaiTertinggi - nilaiTerendah)/10000).toFixed(1);
+        const selisih = ((nilaiTertinggi - nilaiTerendah)/10).toFixed(1);
         var selisih_luar_dalam = "NaN";
         if (suhu_atas != 0 && suhu_luar != 0) {
             selisih_luar_dalam = (suhu_atas - suhu_luar).toFixed(1);
@@ -463,7 +467,7 @@ function eksekutor(){
         const jumlah_1 = blok_kandang.split('').filter(char => char === '1').length;
         const total_digit = blok_kandang.length;
         const persentase = (jumlah_1 / total_digit);
-        var Data_air_2 = 'perkiraan air habis dalam '+waktu_air_atas+', pada jam '+jam_air_habis_atas;
+        var Data_air_2 = '';//'perkiraan air habis dalam '+waktu_air_atas+', pada jam '+jam_air_habis_atas;
         var luas_kandang = 400*persentase;
         var ayam_saat_ini = jumlah_ayam_awal-jumlah_ayam_mati-jumlah_ayam_dipanen;
         var kepadatan_kg_m2 = (((ayam_saat_ini*bobot_rata_rata)/luas_kandang)/1000).toFixed(2);
@@ -550,7 +554,7 @@ function animasi_kipas(){
         mdkps = 'Automatis';
         tmkps = 'Auto ';
     }else if(mode_kandang==2){
-        mdkps = 'Manual';
+        mdkps = 'Manual Smartphone';
     }else if(mode_kandang==3){
         mdkps = 'Timer';
     }else if(mode_kandang==4){
@@ -761,6 +765,7 @@ toggleButton2.addEventListener('click', function() {
         fetchData();
         createPieChart();
     } else if (input_cookie == '') {
+        createPieChart();
         //alert("kosong");
     } else {
         myVar = "0";
@@ -1480,7 +1485,6 @@ async function fetchData() {
             };
             container.appendChild(resultItem);
         });
-        //koneksi_mqtt();
         } catch (error) {
           container.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
         }
@@ -1640,87 +1644,6 @@ function formatPlatNomor(plat) {
     }
     return plat.toUpperCase();
 }
-
-//setInterval(koneksi_mqtt,1000);
-function koneksi_mqtt(){
-    if(getCookie("owner") == 1){
-        // Koneksi ke broker HiveMQ
-        const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt");
-
-        client.on("connect", function () {
-            console.log("Terhubung ke HiveMQ dari browser!");
-
-            // Kirim pesan ke topik "rakha/esp32/dht11" 
-            client.publish("kndgrkh", JSON.stringify({ aym: total_ayam_dipanen}), { qos: 0, retain: true });
-        });
-
-        client.on("message", function (topic, message) {
-            console.log(`Pesan diterima dari ${topic}: ${message.toString()}`);
-        });
-    }
-}
-
-const token = "Wl380IhMybLGDKPaG88Cg5Lvva7ylU7j"; // Ganti dengan tokenmu
-    const writeUrl = `https://sgp1.blynk.cloud/external/api/update`;
-    const readUrl = `https://sgp1.blynk.cloud/external/api/get`;
-
-    function kirimPesan() {
-      const pesan = document.getElementById("pesanInput").value.toLowerCase();
-      document.getElementById("pesanInput").value = "";
-      if (!pesan) return;
-
-      // Kirim pesan ke V7
-      fetch(`${writeUrl}?token=${token}&v7=${encodeURIComponent(pesan)}`)
-        .then(() => {
-          document.getElementById("output").innerText = "Menunggu balasan...";
-
-          // Mulai polling setiap 1 detik, timeout setelah 10 detik
-          let waktu = 0;
-          const interval_p = setInterval(() => {
-            fetch(`${readUrl}?token=${token}&v7`)
-              .then(res => res.text())
-              .then(data => {
-                if (data !== pesan) { // Kalau balasan beda dari pesan asli
-                  clearInterval(interval_p);
-                  document.getElementById("output").innerText = data;
-                }
-              });
-
-            waktu += 1;
-            if (waktu >= 15) {
-              clearInterval(interval_p);
-              document.getElementById("output").innerText = "Tidak ada balasan, mungkin sedang offline, coba lagi nanti";
-            }
-          }, 1000);
-        })
-        .catch(err => {
-          console.error("Gagal kirim:", err);
-          alert("Gagal mengirim pesan.");
-        });
-    }
-
-const statusEl = document.getElementById("statusBlynk");
-
-    async function cekStatusBlynk() {
-        try {
-            const response = await fetch(`https://sgp1.blynk.cloud/external/api/isHardwareConnected?token=${token}`);
-            const isOnline = await response.text();
-
-            if (isOnline === "true") {
-                statusEl.textContent = " Online";
-                statusEl.style.color = "green";
-            } else {
-                statusEl.textContent = " Offline";
-                statusEl.style.color = "red";
-            }
-        } catch (error) {
-            statusEl.textContent = "Error mengecek status";
-            statusEl.style.color = "orange";
-        }
-    }
-
-    // Jalankan setiap 5 detik
-    setInterval(cekStatusBlynk, 10000);
 
 let chartInstance = null; // Simpan referensi chart agar bisa diupdate
 var interval = 100;
