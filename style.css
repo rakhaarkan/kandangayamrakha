@@ -863,4 +863,97 @@ svg{
     border: 1px solid #d9e2f3;
   }
 
-  
+.kandang-container {
+            display: flex;
+            width: 95%; /* Skala 10:40 -> 200:800 piksel */
+            height: 25vw;
+            border: 2px solid black;
+            position: relative;
+            overflow: hidden; /* Penting untuk animasi panah */
+        }
+
+        /* Bagian Inlet (Biru) */
+        .inlet-section {
+            width: 3vw; /* Area inlet sempit di kiri */
+            background-color: #add8e6; /* Biru muda */
+            border-right: 1px solid blue;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            color: blue;
+            font-weight: bold;
+            padding: 1vw;
+        }
+
+        /* Bagian Utama (Heatmap) */
+        .heatmap-section {
+            flex-grow: 1; /* Mengisi sisa ruang */
+            position: relative;
+            background: linear-gradient(to right, rgb(0, 0, 255), rgb(255, 0, 0)); /* Default gradient */
+        }
+
+        /* Bagian Outlet (Kipas) */
+        .outlet-section {
+            width: 4vw;
+            border-left: 1px solid black;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Wadah Kipas */
+        .kipas-container {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        /* Container Panah Animasi */
+        .panah-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        /* Panah Individual */
+        .panah {
+            position: absolute;
+            font-size: 8vw;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+            animation: movePanah 20s linear infinite; /* Animasi bergerak */
+        }
+
+        /* Variasi Panah */
+        .panah:nth-child(1) { top: 5%; animation-delay: 0s; }
+        .panah:nth-child(2) { top: 45%; animation-delay: 0s; }
+        .panah:nth-child(3) { top: 5%; animation-delay: 10s; }
+        .panah:nth-child(4) { top: 45%; animation-delay:10s; }
+
+        /* Animasi Bergerak dari Kiri ke Kanan */
+        @keyframes movePanah {
+            0% { left: -30px; }
+            100% { left: 100%; }
+        }
+
+        /* Panel Kontrol untuk simulasi input sensor */
+        .controls-panel {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }

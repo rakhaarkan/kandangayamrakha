@@ -87,9 +87,6 @@
                         <span class="">Populasi :</span>
                         <span id="populasi">0</span>
                         <span>Ekor</span><br>
-                        <span class="">Kecepatan Angin :</span>
-                        <span id="kecepatan_angin_atas">0</span>
-                        <span>m/s</span>
                     </div>
                     <div class="txt1 keterangan_huruf" style="margin: 0vw 3vw 0vw 3vw;">
                         <span class="">Selisih Suhu :</span>
@@ -162,7 +159,37 @@
             <span id="persen_air_atas"></span>
             <span class="keterangan widget1">%</span>
         </div>
-         <br>
+        <br>
+        <div><h3>Heatmap</h3></div><br>
+        <div class="kandang-container">
+            <div class="inlet-section">
+                INLET
+            </div>
+
+            <div class="heatmap-section" id="heatmap">
+                <div class="panah-container">
+                    <div class="panah">&rarr;</div>
+                    <div class="panah">&rarr;</div>
+                    <div class="panah">&rarr;</div>
+                    <div class="panah">&rarr;</div>
+                </div>
+            </div>
+
+            <div class="outlet-section">
+                <div class="kipas-container">
+                    <div id="kps1" class="kipas" style="width: 3.5vw;height: 3.5vw; top: 15%"></div>
+                    <div id="kps2" class="kipas" style="width: 3vw;height: 3vw; top: 33%"></div>
+                    <div id="kps3" class="kipas" style="width: 3vw;height: 3vw; top: 50%"></div>
+                    <div id="kps4" class="kipas" style="width: 3vw;height: 3vw; top: 67%"></div>
+                    <div id="kps5" class="kipas" style="width: 3.5vw;height: 3.5vw; top: 85%"></div>
+                </div>
+            </div>
+        </div><br>
+        <div class="txt1 keterangan_huruf" style="margin: 0vw 0vw 1vw 3vw;">
+            <span class="">Kecepatan Angin :</span>
+            <span id="kecepatan_angin_atas">0</span>
+            <span>m/s</span>
+        </div><br>
     </div>
 </div> 
     <div class="container txt2">
@@ -431,6 +458,7 @@
     <div class="mrg3" style="font-size: 3vw;">
         <h3>Dibuat oleh : Rakha Farandy</h3>    
     </div>
+    
     <h3>ThingSpeak, PostgreSQL</h3>
     
     <pre id="data-output"></pre>

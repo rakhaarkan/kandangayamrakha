@@ -347,7 +347,7 @@ function penguraiJson(dataHttp) {
     rata_rata_kwh = (array_listrik[6]/10000*48).toFixed(1);
     kwh_jam = (array_listrik[7]/1000).toFixed(1);
     kwh_harian = (array_listrik[8]/10).toFixed(1);
-    kecepatan_angin_atas = hpsnull(array_angin[0]/10000).toFixed(2);
+    kecepatan_angin_atas = (power*0.00065).toFixed(2);//hpsnull(array_angin[0]/10000).toFixed(2);
     grafik_waktu = data_json.gwk;
     grafik_suhu_atas = data_json.gsa;
     grafik_kelembapan_atas = data_json.gka;  
@@ -489,6 +489,7 @@ function eksekutor(){
         animasi_kipas();
         animasi_bar();
         animasi_tombol();
+        updateHeatmap();
         analisa_realtime();
         kalkulator();
         animasi_chart();
@@ -525,6 +526,11 @@ var rpm_kps2 = document.getElementById('square2');
 var rpm_kps3 = document.getElementById('square3');
 var rpm_kps4 = document.getElementById('square4');
 var rpm_kps5 = document.getElementById('square5');
+var rpm2_kps1 = document.getElementById('kps1');
+var rpm2_kps2 = document.getElementById('kps2');
+var rpm2_kps3 = document.getElementById('kps3');
+var rpm2_kps4 = document.getElementById('kps4');
+var rpm2_kps5 = document.getElementById('kps5');
     
 function animasi_kipas(){
     var kps1 = mapNilai(parseFloat(kipas_relay_1),0.0,1.0,0.0,0.5).toFixed(1);
@@ -542,6 +548,11 @@ function animasi_kipas(){
     putaran_kipas(kps3,rpm_kps3);
     putaran_kipas(kps4,rpm_kps4);
     putaran_kipas(kps5,rpm_kps5);
+    putaran_kipas(kps1,rpm2_kps1);
+    putaran_kipas(kps2,rpm2_kps2);
+    putaran_kipas(kps3,rpm2_kps3);
+    putaran_kipas(kps4,rpm2_kps4);
+    putaran_kipas(kps5,rpm2_kps5);
     
     var mdkps;
     var tmkps;
@@ -1842,3 +1853,53 @@ function data_timbangan(json_timbangan){
   document.getElementById("output_t").textContent = "JSON parse error";
 }
 }
+
+const heatmap = document.getElementById('heatmap');
+
+        // Fungsi untuk mengonversi suhu ke warna HSL Spektrum Pelangi
+        // HSL (Hue, Saturation, Lightness) sangat cocok untuk pelangi.
+        // Hue 240 = Biru (Dingin), Hue 0 = Merah (Panas)
+        function getColorForTemperatureHSL(temp) {
+            const minTemp = 24; // Biru
+            const maxTemp = 34; // Merah
+
+            // Batasi suhu dalam range
+            temp = Math.max(minTemp, Math.min(maxTemp, temp));
+
+            // Hitung rasio (0 = dingin, 1 = panas)
+            const ratio = (temp - minTemp) / (maxTemp - minTemp);
+
+            // Balikkan rasio untuk Hue karena 240(Biru) > 0(Merah)
+            // Kita ingin transisi: 240 (Biru) -> 180 (Cyan) -> 120 (Hijau) -> 60 (Kuning) -> 0 (Merah)
+            const hue = (1 - ratio) * 240;
+
+            // Saturation 100% (Warna pekat), Lightness 50% (Normal)
+            return `hsl(${hue}, 100%, 50%)`;
+        }
+
+        function updateHeatmap() {
+            const asd = suhu_atas/1.0;
+            const inletVal = (suhu_luar/1.0)+0.5;
+            const tengahVal = suhu_atas/1.0;
+            const outletVal = asd+2;
+            // Ambil nilai (gunakan parseFloat karena kita pakai step 0.5)
+            const tempIn = inletVal;//parseFloat(inletSlider.value);
+            const tempMid = tengahVal;//parseFloat(tengahSlider.value);
+            const tempOut = outletVal;//parseFloat(outletSlider.value);
+
+            // Update Teks (tampilkan 1 desimal agar halus)
+            inletVal.innerText = tempIn.toFixed(1);
+            tengahVal.innerText = tempMid.toFixed(1);
+            outletVal.innerText = tempOut.toFixed(1);
+
+            // Hitung warna HSL
+            const colorIn = getColorForTemperatureHSL(tempIn);
+            const colorMid = getColorForTemperatureHSL(tempMid);
+            const colorOut = getColorForTemperatureHSL(tempOut);
+
+            // Terapkan gradien linier 3-stop
+            // CSS secara otomatis menginterpolasi warna HSL dengan sangat mulus
+            const gradient = `linear-gradient(to right, ${colorIn}, ${colorMid} 50%, ${colorOut})`;
+            heatmap.style.background = gradient;
+        }
+        updateHeatmap();
