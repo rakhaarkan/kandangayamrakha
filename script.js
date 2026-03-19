@@ -1886,6 +1886,10 @@ const heatmap = document.getElementById('heatmap');
             const tempIn = inletVal;//parseFloat(inletSlider.value);
             const tempMid = tengahVal;//parseFloat(tengahSlider.value);
             const tempOut = outletVal;//parseFloat(outletSlider.value);
+            
+            document.getElementById("htm_kiri").innerText   = inletVal + "°C";
+            document.getElementById("htm_tengah").innerText = tengahVal + "°C";
+            document.getElementById("htm_kanan").innerText  = outletVal + "°C";
 
             // Update Teks (tampilkan 1 desimal agar halus)
             inletVal.innerText = tempIn.toFixed(1);

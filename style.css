@@ -957,3 +957,27 @@ svg{
             flex-direction: column;
             align-items: center;
         }
+
+.suhu-label {
+    position: absolute;
+    bottom: 1px;
+    color: white;
+    font-size: 2.5vw;
+    text-shadow: 1px 1px 3px black;
+}
+
+/* kiri */
+.suhu-label.kiri {
+    left: 1vw;
+}
+
+/* tengah */
+.suhu-label.tengah {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* kanan */
+.suhu-label.kanan {
+    right: 1vw;
+}
