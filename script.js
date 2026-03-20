@@ -1877,19 +1877,19 @@ const heatmap = document.getElementById('heatmap');
             return `hsl(${hue}, 100%, 50%)`;
         }
 
-        function updateHeatmap() {
-            const asd = suhu_atas/1.0;
-            const inletVal = (suhu_luar/1.0)+0.5;
-            const tengahVal = suhu_atas/1.0;
-            const outletVal = asd+2;
-            // Ambil nilai (gunakan parseFloat karena kita pakai step 0.5)
-            const tempIn = inletVal;//parseFloat(inletSlider.value);
-            const tempMid = tengahVal;//parseFloat(tengahSlider.value);
-            const tempOut = outletVal;//parseFloat(outletSlider.value);
-            
-            document.getElementById("htm_kiri").innerText   = inletVal + "°C";
-            document.getElementById("htm_tengah").innerText = tengahVal + "°C";
-            document.getElementById("htm_kanan").innerText  = outletVal + "°C";
+function updateHeatmap() {
+    const asd = suhu_atas/1.0;
+    const inletVal = (suhu_luar/1.0)+0.5;
+    const tengahVal = suhu_atas/1.0;
+    const outletVal = ((suhu_atas/1.0)+(Math.abs((suhu_luar/1.0)-(suhu_atas/1.0)))+0.1);
+    // Ambil nilai (gunakan parseFloat karena kita pakai step 0.5)
+    const tempIn = inletVal;//parseFloat(inletSlider.value);
+    const tempMid = tengahVal;//parseFloat(tengahSlider.value);
+    const tempOut = outletVal;//parseFloat(outletSlider.value);
+         
+    document.getElementById("htm_kiri").innerText   = inletVal + "°C";
+    document.getElementById("htm_tengah").innerText = tengahVal + "°C";
+    document.getElementById("htm_kanan").innerText  =(outletVal).toFixed(1) + "°C";
 
             // Update Teks (tampilkan 1 desimal agar halus)
             inletVal.innerText = tempIn.toFixed(1);
@@ -1905,5 +1905,26 @@ const heatmap = document.getElementById('heatmap');
             // CSS secara otomatis menginterpolasi warna HSL dengan sangat mulus
             const gradient = `linear-gradient(to right, ${colorIn}, ${colorMid} 50%, ${colorOut})`;
             heatmap.style.background = gradient;
+
+    let durasi = 40 / kecepatan_angin_atas;
+    // batas biar tidak terlalu ekstrim
+    durasi = Math.max(2, Math.min(durasi, 60));
+
+    // delay setengah siklus biar gelombang rapi
+    let delay = durasi / 2;
+    setAnimasiPanah(durasi, [0, 0, delay, delay]);
+}
+
+function setAnimasiPanah(durasi, delayArray) {
+    const panahList = document.querySelectorAll(".panah");
+
+    panahList.forEach((el, i) => {
+        el.style.animationDuration = durasi + "s";
+
+        if (delayArray && delayArray[i] !== undefined) {
+            el.style.animationDelay = delayArray[i] + "s";
         }
-        updateHeatmap();
+    });
+}
+
+setAnimasiPanah(4, [0, 0, 2, 2]);
