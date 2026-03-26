@@ -191,6 +191,7 @@ var jumlah_ayam_dipanen = 0;
 var bobot_timbang = 0;
 var bobot_rata_rata_timbang = 0;
 var jumlah_sample_timbang = 0;
+var jumlah_sample_timbang_kemarin = 0;
 var sebaran_bobot = [];
 var dataValues;
 
@@ -384,6 +385,7 @@ function penguraiJson(dataHttp) {
     bobot_timbang = data_json.bbt[0];
     bobot_rata_rata_timbang = data_json.bbt[1];
     jumlah_sample_timbang = data_json.bbt[2];
+    jumlah_sample_timbang_kemarin = data_json.bbt[3];
     sebaran_bobot[0] = data_json.bbt[3];
     sebaran_bobot[1] = data_json.bbt[4];
     sebaran_bobot[2] = data_json.bbt[5];
@@ -1749,10 +1751,10 @@ function tampilkanSebaranBobot(pass_code = 0) {
 
     // === Update info tambahan ===
     const Data_kalkulasi_panen = {
-        d1: { label: 'Bobot Rata-Rata : ', value: `${(mean / 1000).toFixed(2)} Kg/ekor`},
+        d1: { label: 'Bobot Rata-Rata : ', value: `${(mean / 1000).toFixed(3)} Kg/ekor`},
         d2: { label: 'Standar Deviasi  : ', value: `±${stdDev.toFixed(0)} gram (${lowerBound.toFixed(0)} g - ${upperBound.toFixed(0)} g), ${stdPercent}%` },
-        d3: { label: 'Sampel Masuk Hari Ini: ', value: `${0} ekor` },
-        d4: { label: 'Sampel Masuk Kemarin : ', value: `${0} ekor` },
+        d3: { label: 'Sampel Masuk Hari Ini: ', value: `${jumlah_sample_timbang} ekor` },
+        d4: { label: 'Sampel Masuk Kemarin : ', value: `${jumlah_sample_timbang_kemarin} ekor` },
         d6: { label: 'Total Sampel : ', value: `${totalSample}` }
     };
     document.getElementById('data_kalkulasi_bobot').innerHTML = createOutputTable(Data_kalkulasi_panen, 8);
