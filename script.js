@@ -348,7 +348,7 @@ function penguraiJson(dataHttp) {
     rata_rata_kwh = (array_listrik[6]/10000*48).toFixed(1);
     kwh_jam = (array_listrik[7]/1000).toFixed(1);
     kwh_harian = (array_listrik[8]/100).toFixed(1);
-    kecepatan_angin_atas = (power*0.00065).toFixed(2);//hpsnull(array_angin[0]/10000).toFixed(2);
+    kecepatan_angin_atas = (power*0.00065).toFixed(1);//hpsnull(array_angin[0]/10000).toFixed(2);
     grafik_waktu = data_json.gwk;
     grafik_suhu_atas = data_json.gsa;
     grafik_kelembapan_atas = data_json.gka;  
