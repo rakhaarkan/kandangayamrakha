@@ -1,10 +1,6 @@
-const { Pool } = require('pg');
+// netlify/functions/yourFunction.js
 
-// Membuat pool koneksi PostgreSQL
-const pool = new Pool({
-  connectionString: 'postgresql://kandangrakha_owner:5Psm3KGwHfdO@ep-winter-cloud-a1b56pb2.ap-southeast-1.aws.neon.tech/kandangrakha?sslmode=require',
-  ssl: { rejectUnauthorized: false },
-});
+const { Client } = require('pg');
 
 exports.handler = async function (event, context) {
   const headers = {
@@ -20,54 +16,68 @@ exports.handler = async function (event, context) {
     };
   }
 
+  const client = new Client({
+    connectionString: 'postgresql://kandangrakha_owner:5Psm3KGwHfdO@ep-winter-cloud-a1b56pb2.ap-southeast-1.aws.neon.tech/kandangrakha?sslmode=require',
+    ssl: { rejectUnauthorized: false },
+  });
+
   try {
-    const client = await pool.connect();
+    await client.connect();
+
     const body = JSON.parse(event.body);
-    const { action, tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, id, nama_do} = body;
-    
+    const { action, tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, id, nama_do } = body;
+
     console.log('Action yang diterima:', action);
+
     let query, result;
 
-    // Cek jenis perintah SQL berdasarkan action
     if (action === 'insert') {
       query = `
         INSERT INTO data_bakul (tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, nama_do)
         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
       `;
-        result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, nama_do]);
+      result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, nama_do]);
+
     } else if (action === 'delete') {
-        query = `DELETE FROM data_bakul WHERE id = $1 RETURNING *;`;
-        result = await client.query(query, [id]);
+      query = `DELETE FROM data_bakul WHERE id = $1 RETURNING *;`;
+      result = await client.query(query, [id]);
+
     } else if (action === 'droop') {
-        query = `DROP TABLE IF EXISTS data_bakul;`;
-        result = await client.query(query);
+      query = `DROP TABLE IF EXISTS data_bakul;`;
+      result = await client.query(query);
+
     } else if (action === 'edit') {
-        query = `
+      query = `
         UPDATE data_bakul 
         SET tanggal = $1, nama_bakul = $2, plat_nomor = $3, jumlah_ekor_ambil = $4, jumlah_kg_ambil = $5, nama_do = $7 
         WHERE id = $6 
         RETURNING *;
-        `;
-        result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, id, nama_do]);
+      `;
+      result = await client.query(query, [tanggal, nama_bakul, plat_nomor, jumlah_ekor_ambil, jumlah_kg_ambil, id, nama_do]);
+
     } else {
-        throw new Error('Unsupported action');
+      throw new Error('Unsupported action');
     }
 
     console.log('Hasil query:', result.rows);
-
-    client.release();
 
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({ message: 'Operasi berhasil', data: result.rows }),
     };
+
   } catch (error) {
     console.error('Database error:', error.message);
+
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({ error: 'Database error', details: error.message }),
     };
+
+  } finally {
+    // 🔥 WAJIB: tutup koneksi supaya Neon bisa sleep
+    await client.end();
   }
 };
