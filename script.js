@@ -1883,7 +1883,7 @@ function updateHeatmap() {
     const asd = suhu_atas/1.0;
     const inletVal = (suhu_luar/1.0)+0.5;
     const tengahVal = suhu_atas/1.0;
-    const outletVal = ((suhu_atas/1.0)+(Math.abs((suhu_luar/1.0)-(suhu_atas/1.0)))+0.1);
+    const outletVal = ((suhu_atas/1.0)+((Math.abs((suhu_luar/1.0)-(suhu_atas/1.0)))/1.5));
     // Ambil nilai (gunakan parseFloat karena kita pakai step 0.5)
     const tempIn = inletVal;//parseFloat(inletSlider.value);
     const tempMid = tengahVal;//parseFloat(tengahSlider.value);
