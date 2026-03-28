@@ -1007,8 +1007,8 @@ function gsb(x){
 }
 
 function gls(x){
-    let val = ambilValid(grafik_kwh_listrik, x, 24, 2);
-    return (hpsnull(val / 10)).toFixed(1);
+    let val = ambilValid(grafik_kwh_listrik, x);
+    return (hpsnull(val / 100)).toFixed(2);
 }
 
 function gwk(x) {
