@@ -361,55 +361,50 @@
                 </div>
             <br>
                 <!-- Form input -->
-                <div class="section-title">📝 Input Data</div>
-
                 <div class="input-group">
-                    <label for="input_kalkulator_1">Umur Ayam (hari)</label>
-                    <input type="number" min="1" max="45" id="input_kalkulator_1" placeholder="0">
+                    <label for="input_kalkulator_1">Umur Ayam</label>
+                    <input type="number" min="1" max="45" id="input_kalkulator_1" placeholder="">
                 </div>
                 <div class="input-group">
-                    <label for="input_kalkulator_2">Jumlah Ayam Awal (ekor)</label>
-                    <input type="number" min="0" max="100000" step="100" id="input_kalkulator_2" placeholder="0">
+                    <label for="input_kalkulator_2">Jumlah Ayam Awal</label>
+                    <input type="number" min="0" max="100000" step="100" id="input_kalkulator_2" placeholder="">
                 </div>
                 <div class="input-group">
-                    <label for="input_kalkulator_3">Jumlah Ayam Mati (ekor)</label>
-                    <input type="number" min="0" max="100000" id="input_kalkulator_3" placeholder="0">
+                    <label for="input_kalkulator_3">Jumlah Ayam Mati</label>
+                    <input type="number" min="0" max="100000" id="input_kalkulator_3" placeholder="">
                 </div>
                 <div class="input-group">
                     <label for="input_kalkulator_4">Jumlah Pakan (sak)</label>
-                    <input type="number" min="0" max="100000" id="input_kalkulator_4" placeholder="0">
+                    <input type="number" min="0" max="100000" id="input_kalkulator_4" placeholder="">
                 </div>
                 <div class="input-group">
-                    <label for="input_kalkulator_5">Bobot Rata-rata (kg)</label>
-                    <input type="number" min="0" max="100000" step="0.1" id="input_kalkulator_5" placeholder="0.0">
+                    <label for="input_kalkulator_5">Bobot Rata-rata</label>
+                    <input type="number" min="0" max="100000" step="0.1" id="input_kalkulator_5" placeholder="">
                 </div>
                 <div class="input-group">
-                    <label for="input_kalkulator_6">Harga Kontrak Ayam (Rp/kg)</label>
-                    <input type="number" min="0" max="100000" id="input_kalkulator_6" placeholder="0">
+                    <label for="input_kalkulator_6">Harga Kontrak Ayam</label>
+                    <input type="number" min="0" max="100000" id="input_kalkulator_6" placeholder="">
                 </div>
                 <div class="input-group">
-                    <label for="input_kalkulator_7">Harga Bibit/Ekor (Rp)</label>
-                    <input type="number" min="0" max="100000" id="input_kalkulator_7" placeholder="0">
+                    <label for="input_kalkulator_7">Harga Bibit/Ekor</label>
+                    <input type="number" min="0" max="100000" id="input_kalkulator_7" placeholder="">
                 </div>
                 <div class="input-group">
-                    <label for="input_kalkulator_8">Harga Obat & Lainnya (Rp)</label>
-                    <input type="number" min="0" max="100000000" id="input_kalkulator_8" placeholder="0">
+                    <label for="input_kalkulator_8">Harga Obat dll</label>
+                    <input type="number" min="0" max="100000000" id="input_kalkulator_8" placeholder="">
                 </div>
                 <div class="input-group">
-                    <label for="input_kalkulator_9">Harga Pakan/kg (Rp)</label>
-                    <input type="number" min="0" max="100000" id="input_kalkulator_9" placeholder="0">
+                    <label for="input_kalkulator_9">Harga Pakan/kg</label>
+                    <input type="number" min="0" max="100000" id="input_kalkulator_9" placeholder="">
                 </div>
-
                 <div class="output-group">
-                    <div class="section-title">📊 Hasil Perhitungan</div>
+                    <div style="padding-bottom: 2vw;"><h3>hasil Perhitungan :</h3></div>
                     <div id="output_group_container"></div>
                     <div style="color: red;"><span id="output_kalkulator_keterangan"></span></div>
                     <div id="data_kalkulator_chart" style="display: none;">
                         <div id="output_group_container_2"></div>
                         <div id="data_calc_total" style="font-size: large;"></div>
-                        <div class="chart-wrapper">
-                            <canvas id="myPieChart"></canvas>
-                        </div><br><br>
+                        <canvas id="myPieChart" width="400" height="400"></canvas><br><br>
                     </div>
                     <br>
                     <input type="text" id="input_test_kosong" placeholder="">
