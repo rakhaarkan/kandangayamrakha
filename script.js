@@ -1932,7 +1932,7 @@ function setAnimasiPanah(durasi, delayArray) {
 setAnimasiPanah(4, [0, 0, 2, 2]);
 
 async function ambilData() {
-  const res = await fetch("http://localhost:3000/api/harga_ayam");
+  const res = await fetch("http://localhost:3000/api/HargaAyam");
   const data = await res.json();
 
   const output = document.getElementById("output");
