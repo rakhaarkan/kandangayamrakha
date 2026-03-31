@@ -1932,7 +1932,7 @@ function setAnimasiPanah(durasi, delayArray) {
 setAnimasiPanah(4, [0, 0, 2, 2]);
 
 async function ambilData() {
-  const res = await fetch("https://kandangayamrakha.netlify.app/api/HargaAyam");
+  const res = await fetch("https://kandangayamrakha.netlify.app/api/hargaAyam");
   const data = await res.json();
 
   const output = document.getElementById("output");
