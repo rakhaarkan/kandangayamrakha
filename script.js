@@ -1375,7 +1375,7 @@ async function fetchData() {
         total_ayam_dipanen = 0;
         total_kg_diambil = 0;
         try {
-          const response = await fetch('https://kandangayamrakha.netlify.app/api/HargaAyam'); 
+          const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData'); 
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
