@@ -1375,7 +1375,7 @@ async function fetchData() {
         total_ayam_dipanen = 0;
         total_kg_diambil = 0;
         try {
-          const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData'); 
+          const response = await fetch('https://kandangayamrakha.netlify.app/api/HargaAyam'); 
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
@@ -1930,3 +1930,20 @@ function setAnimasiPanah(durasi, delayArray) {
 }
 
 setAnimasiPanah(4, [0, 0, 2, 2]);
+
+async function ambilData() {
+  const res = await fetch("http://localhost:3000/api/harga_ayam");
+  const data = await res.json();
+
+  const output = document.getElementById("output");
+  output.innerHTML = "";
+
+  for (let key in data) {
+    output.innerHTML += `
+      <div class="card">
+        <h3>${key}</h3>
+        <p>Harga: ${data[key]}</p>
+      </div>
+    `;
+  }
+}
