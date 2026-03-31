@@ -1,3 +1,5 @@
+global.File = class {}; // 🔥 FIX ERROR UNDICI
+
 const cheerio = require('cheerio');
 
 exports.handler = async function (event, context) {
@@ -24,38 +26,30 @@ exports.handler = async function (event, context) {
     const html = await response.text();
     const $ = cheerio.load(html);
 
-    const rows = $("tr");
-
-    let last_kota = "";
-    let last_wilayah = "";
     let hasil = {};
+    let last_kota = "";
 
-    rows.each((i, row) => {
+    $("tr").each((i, row) => {
       const cols = $(row).find("td");
 
       if (cols.length === 4) {
-        let wilayah = $(cols[0]).text().trim();
         let kota = $(cols[1]).text().trim();
         let berat = $(cols[2]).text().trim();
         let harga = $(cols[3]).text().trim();
 
-        if (wilayah) last_wilayah = wilayah;
         if (kota) last_kota = kota;
 
         if (last_kota.toLowerCase().includes("yogyakarta")) {
-          let harga_split = harga.split("-");
-          if (harga_split.length < 2) return;
+          let split = harga.split("-");
+          if (split.length < 2) return;
 
-          let harga_min = parseInt(harga_split[0].replace(/\D/g, ""));
-          let harga_max = parseInt(harga_split[1].replace(/\D/g, ""));
+          let min = parseInt(split[0].replace(/\D/g, ""));
+          let max = parseInt(split[1].replace(/\D/g, ""));
 
-          let avg = Math.floor((harga_min + harga_max) / 2);
+          let avg = Math.floor((min + max) / 2);
 
-          if (berat.includes("<")) {
-            hasil["kecil"] = avg;
-          } else if (berat.includes(">")) {
-            hasil["besar"] = avg;
-          }
+          if (berat.includes("<")) hasil.kecil = avg;
+          if (berat.includes(">")) hasil.besar = avg;
         }
       }
     });
@@ -63,23 +57,14 @@ exports.handler = async function (event, context) {
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({
-        source: "chickin",
-        wilayah: "Yogyakarta",
-        data: hasil
-      }),
+      body: JSON.stringify(hasil),
     };
 
-  } catch (error) {
-    console.error("Scraping error:", error);
-
+  } catch (err) {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({
-        error: "Gagal ambil data",
-        details: error.message
-      }),
+      body: JSON.stringify({ error: err.message }),
     };
   }
 };
