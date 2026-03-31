@@ -1,4 +1,3 @@
-const axios = require('axios');
 const cheerio = require('cheerio');
 
 exports.handler = async function (event, context) {
@@ -9,25 +8,26 @@ exports.handler = async function (event, context) {
     'Access-Control-Allow-Headers': 'Content-Type',
   };
 
-  // 🔥 Handle preflight (CORS)
   if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 204,
-      headers,
-    };
+    return { statusCode: 204, headers };
   }
 
   try {
     const url = "https://chickin.id/blog/update/harga-ayam/jawa-tengah/";
-    const response = await axios.get(url);
 
-    const $ = cheerio.load(response.data);
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0"
+      }
+    });
+
+    const html = await response.text();
+    const $ = cheerio.load(html);
 
     const rows = $("tr");
 
     let last_kota = "";
     let last_wilayah = "";
-
     let hasil = {};
 
     rows.each((i, row) => {
@@ -43,8 +43,6 @@ exports.handler = async function (event, context) {
         if (kota) last_kota = kota;
 
         if (last_kota.toLowerCase().includes("yogyakarta")) {
-
-          // 🔥 parsing harga aman
           let harga_split = harga.split("-");
           if (harga_split.length < 2) return;
 
@@ -73,7 +71,7 @@ exports.handler = async function (event, context) {
     };
 
   } catch (error) {
-    console.error("Scraping error:", error.message);
+    console.error("Scraping error:", error);
 
     return {
       statusCode: 500,
