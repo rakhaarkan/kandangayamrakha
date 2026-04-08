@@ -209,25 +209,31 @@ async function data_thingspeak(){
     try {
 
         // ----------- LAN REQUEST DENGAN TIMEOUT -------------
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 1500); // 1.5 detik
+        // Hanya jalankan jika cookie owner adalah "1"
+        if (getCookie("owner") == "1") {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 1500); // 1.5 detik
 
-        const response = await fetch(lan_url, { signal: controller.signal });
-        clearTimeout(timeout);
+            const response = await fetch(lan_url, { signal: controller.signal });
+            clearTimeout(timeout);
 
-        if(!response.ok) throw new Error("LAN response error");
+            if(!response.ok) throw new Error("LAN response error");
 
-        const data = await response.json();
+            const data = await response.json();
 
-        console.log("Data dari LAN");
+            console.log("Data dari LAN");
 
-        // ambil timestamp
-        penampung_data_waktu = data.created_at;
+            // ambil timestamp
+            penampung_data_waktu = data.created_at;
 
-        // kirim seluruh JSON ke parser
-        penguraiJson(data);
+            // kirim seluruh JSON ke parser
+            penguraiJson(data);
 
-        document.getElementById('messages').innerHTML = JSON.stringify(data).slice(0,120);
+            document.getElementById('messages').innerHTML = JSON.stringify(data).slice(0,120);
+        } else {
+            // Bukan mode owner, lempar error agar langsung ke ThingSpeak
+            throw new Error("Bukan owner mode");
+        }
 
     }
     catch(err){
