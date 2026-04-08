@@ -186,6 +186,7 @@ var harga_obat_ayam = 0;
 var harga_pakan_kg = 0;
 var epr_jumlah_ayam_mati;
 var epr_jumlah_pakan_sak;
+var harga_pasar = [];
 var blok_kandang = 0;
 var jumlah_ayam_dipanen = 0;
 var bobot_timbang = 0;
@@ -382,6 +383,10 @@ function penguraiJson(dataHttp) {
     harga_kontrak_ayam = data_json.mtd[6];
     bobot_rata_rata = data_json.mtd[7];
     blok_kandang = data_json.mtd[8];
+    harga_pasar[0] = data_json.mtd[9];
+    harga_pasar[1] = data_json.mtd[10];
+    harga_pasar[2] = data_json.mtd[11];
+    harga_pasar[3] = data_json.mtd[12];
     bobot_timbang = data_json.bbt[0];
     bobot_rata_rata_timbang = data_json.bbt[1];
     jumlah_sample_timbang = data_json.bbt[2];
@@ -494,6 +499,7 @@ function eksekutor(){
         updateHeatmap();
         analisa_realtime();
         kalkulator();
+        isilkanDataHargaAyam();
         animasi_chart();
         tampilkanSebaranBobot();
         //fetchData();
@@ -1946,4 +1952,14 @@ async function ambilData() {
       </div>
     `;
   }
+}
+
+function isilkanDataHargaAyam() {
+    const dataHargaAyam = {
+        "Ayam < 2 Kg": `Rp ${harga_pasar[0]} - Rp ${harga_pasar[1]}`,
+        "Ayam > 2 Kg": `Rp ${harga_pasar[2]} - Rp ${harga_pasar[3]}`
+    };
+
+    document.getElementById("harga_kurang_2kg").innerText = dataHargaAyam["Ayam < 2 Kg"];
+    document.getElementById("harga_lebih_2kg").innerText = dataHargaAyam["Ayam > 2 Kg"];
 }
