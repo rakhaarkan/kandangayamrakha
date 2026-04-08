@@ -1007,13 +1007,13 @@ svg{
 .harga_label {
     font-weight: 600;
     color: #333;
-    font-size: 1rem;
+    font-size: 0.9rem;
 }
 
 .harga_nilai {
     font-weight: 700;
     color: tomato;
-    font-size: 1rem;
+    font-size: 0.9rem;
 }
 
 .container h4 {
