@@ -389,10 +389,10 @@ function penguraiJson(dataHttp) {
     harga_kontrak_ayam = data_json.mtd[6];
     bobot_rata_rata = data_json.mtd[7];
     blok_kandang = data_json.mtd[8];
-    harga_pasar[0] = data_json.mtd[9];
-    harga_pasar[1] = data_json.mtd[10];
-    harga_pasar[2] = data_json.mtd[11];
-    harga_pasar[3] = data_json.mtd[12];
+    harga_pasar[0] = data_json.mtd[12];
+    harga_pasar[1] = data_json.mtd[13];
+    harga_pasar[2] = data_json.mtd[14];
+    harga_pasar[3] = data_json.mtd[15];
     bobot_timbang = data_json.bbt[0];
     bobot_rata_rata_timbang = data_json.bbt[1];
     jumlah_sample_timbang = data_json.bbt[2];
