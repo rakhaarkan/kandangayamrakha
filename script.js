@@ -1585,6 +1585,12 @@ async function createPieChart() {
                 'rgba(255, 206, 86, 0.6)', // Kuning (Ayam dipanen)
                 'rgba(255, 99, 132, 0.6)'  // Merah (Ayam Mati)
             ],
+            borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(255, 99, 132, 1)',
+            ],
+            borderWidth: 2,
         }]
     };
 
@@ -1962,8 +1968,12 @@ async function ambilData() {
 
 function isilkanDataHargaAyam() {
     const dataHargaAyam = {
-        "Ayam < 2 Kg": `Rp ${harga_pasar[0]} - Rp ${harga_pasar[1]}`,
-        "Ayam > 2 Kg": `Rp ${harga_pasar[2]} - Rp ${harga_pasar[3]}`
+        "Ayam < 2 Kg": harga_pasar[0] === harga_pasar[1] 
+            ? `Rp ${harga_pasar[0]}` 
+            : `Rp ${harga_pasar[0]} - Rp ${harga_pasar[1]}`,
+        "Ayam > 2 Kg": harga_pasar[2] === harga_pasar[3] 
+            ? `Rp ${harga_pasar[2]}` 
+            : `Rp ${harga_pasar[2]} - Rp ${harga_pasar[3]}`
     };
 
     document.getElementById("harga_kurang_2kg").innerText = dataHargaAyam["Ayam < 2 Kg"];
