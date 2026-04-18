@@ -80,6 +80,10 @@ var suhu_tengah = 0;
 var suhu_bawah = 0;
 var suhu_luar = 0;
 var suhu_depan = 0;
+var suhu_inlet_atas = 0;
+var suhu_inlet_bawah = 0;
+var suhu_outlet_atas = 0;
+var suhu_outlet_bawah = 0;
 var suhu_belakang = 0;
 var suhu_greenhouse = 0;
 var kelembapan_atas = 0;
@@ -89,6 +93,10 @@ var kelembapan_luar = 0;
 var kelembapan_depan = 0;
 var kelembapan_belakang = 0;
 var kelembapan_greenhouse = 0;
+var kelembapan_inlet_atas = 0;
+var kelembapan_inlet_bawah = 0;
+var kelembapan_outlet_atas = 0;
+var kelembapan_outlet_bawah = 0;
 var data_HI_atas = 0;
 var data_HI_tengah = 0;
 var data_HI_bawah = 0;
@@ -96,6 +104,10 @@ var data_HI_luar = 0;
 var data_HI_depan = 0;
 var data_HI_belakang = 0;
 var data_HI_greenhouse = 0;
+var data_HI_inlet_atas = 0;
+var data_HI_inlet_bawah = 0;
+var data_HI_outlet_atas = 0;
+var data_HI_outlet_bawah = 0;
 var ppm_gas_atas = 0;
 var ppm_gas_tengah = 0;
 var ppm_gas_bawah = 0;
@@ -325,6 +337,8 @@ function penguraiJson(dataHttp) {
     suhu_atas = hpsnull(array_suhu[0]/10).toFixed(1);
     suhu_bawah = hpsnull(array_suhu[1]/10).toFixed(1);
     suhu_luar = hpsnull(array_suhu[2]/10).toFixed(1);
+    suhu_inlet_atas = hpsnull(array_suhu[3]/10).toFixed(1);
+    suhu_outlet_atas = hpsnull(array_suhu[4]/10).toFixed(1);
     kelembapan_atas = hpsnull(array_kelembapan[0]/10).toFixed(1);
     kelembapan_bawah = hpsnull(array_kelembapan[1]/10).toFixed(1);
     kelembapan_luar = hpsnull(array_kelembapan[2]/10).toFixed(1);
@@ -431,17 +445,18 @@ function eksekutor(){
         }
         const gaugesHTML_atas = `
             <div class="wrapper">
-            ${createGaugeCard('Suhu Atas', suhu_atas, 40, '20', '40', 'red')}
-            ${createGaugeCard('Kelembapan Atas', kelembapan_atas, 40, '0', '100', 'rgb(0, 218, 251)')}
-            ${createGaugeCard('Heat Index Atas', data_HI_atas,40, '100', '200', 'url(#GradientColor)')}
+            ${createGaugeCard('Suhu Atas', suhu_atas, 20, 40, 'red')}
+            ${createGaugeCard('Kelembapan Atas', kelembapan_atas, 0, 100, 'rgb(0, 218, 251)')}
+            ${createGaugeCard('Heat Index Atas', data_HI_atas, 100, 200, 'gradien')}
             </div>
         `;
         const gaugesHTML_luar = `
             <div class="wrapper">
-            ${createGaugeCard('Suhu Luar', suhu_luar, 40, '20', '40', 'red')}
-            ${createGaugeCard('Kelembapan Luar', kelembapan_luar, 40, '0', '100', 'rgb(0, 218, 251)')}
+            ${createGaugeCard('Suhu Luar', suhu_luar, 20, 40, 'red')}
+            ${createGaugeCard('Kelembapan Luar', kelembapan_luar, 0, 100, 'rgb(0, 218, 251)')}
             </div>
         `;
+        //createGaugeCard(title, value_gauge, minLabel, maxLabel, color, id) {
         var filteredValues = 0;
         var nilaiTertinggi = 0;
         var nilaiTerendah = 0;
@@ -689,37 +704,168 @@ function animasi_tombol(){
 
 }
 
-function createGaugeCard(title, value_gauge, ukuran_1, minLabel, maxLabel, color, size = 10) {
-    var ukuran_2 = (-0.1 * ukuran_1 ** 2) + (14 * ukuran_1) - 150;;
-    var lingkar_gauge = mapNilai(value_gauge, minLabel, maxLabel, ukuran_2, ukuran_2*0.25);
+const gaugeStore = new Map();
+
+function getContainer() {
+    let container = document.getElementById("container");
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "container";
+        // Tambahkan gaya agar kartu berjajar rapi
+        container.style.display = "flex";
+        container.style.flexWrap = "wrap";
+        container.style.gap = "20px";
+        document.body.appendChild(container);
+    }
+    return container;
+}
+
+// 🔥 Siapkan Cache di luar fungsi agar data dan Observer tidak ter-reset
+const gaugeCache = new Map();
+
+function createGaugeCard(title, value_gauge, minLabel, maxLabel, color) {
+    // 1. Buat ID yang STABIL berdasarkan judul (Misal: "Suhu Atas" -> "gauge_Suhu_Atas")
+    // Jangan gunakan Math.random() jika fungsinya dipanggil berkali-kali!
+    const uniqueId = 'gauge_' + title.replace(/[^a-zA-Z0-9]/g, '_');
+
+    // 2. Simpan nilai terbaru ke Cache
+    if (!gaugeCache.has(uniqueId)) {
+        gaugeCache.set(uniqueId, { value: value_gauge, observerSet: false });
+    } else {
+        gaugeCache.get(uniqueId).value = value_gauge;
+    }
+
+    // 3. Fungsi Gambar Utama (Aman dipanggil ratusan kali)
+    const draw = () => {
+        const canvas = document.getElementById(uniqueId);
+        if (!canvas) return; // Bypass jika elemen HTML belum siap
+
+        const ctx = canvas.getContext('2d');
+        const canvasBox = canvas.parentElement;
+        const card = canvasBox.parentElement;
+        const titleEl = card.querySelector('.judul_widget_gauge');
+        const labelsEl = card.querySelector('.labels_gauge');
+
+        const rect = canvasBox.getBoundingClientRect();
+        if (rect.width === 0) return; // Cegah error jika elemen tersembunyi (display: none)
+
+        const dpr = window.devicePixelRatio || 1;
+        
+        // ✅ RESET TRANSFORM: Wajib pakai setTransform agar skala tidak menumpuk saat dilooping
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const w = rect.width;
+        const h = rect.height;
+        const centerX = w / 2;
+        const centerY = h / 2;
+        const radius = w * 0.35;
+        const lineWidth = w * 0.07;
+
+        // --- DINAMISASI FONT LUAR ---
+        if (titleEl) titleEl.style.fontSize = (w * 0.07) + 'px';
+        if (labelsEl) labelsEl.style.fontSize = (w * 0.07) + 'px';
+
+        ctx.clearRect(0, 0, w, h);
+
+        const startAngle = 0.75 * Math.PI;
+        const endAngle = 0.25 * Math.PI;
+
+        // 1. Background Arc
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.strokeStyle = 'rgb(220, 220, 220)';
+        ctx.lineWidth = lineWidth;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // 2. Progress Arc (Ambil nilainya dari Cache!)
+        const currentValue = gaugeCache.get(uniqueId).value;
+        let percentage = (currentValue - minLabel) / (maxLabel - minLabel);
+        percentage = Math.max(0, Math.min(1, percentage));
+        let targetAngle = startAngle + (percentage * 1.5 * Math.PI);
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, startAngle, targetAngle);
+                // --- LOGIKA WARNA (Solid atau Gradien) ---
+        if (color.startsWith('gradien')) {
+            // Format: gradien_#warna1_#warna2 -> split berdasarkan '_'
+            const parts = color.split('_');
+            const color1 = parts[1] || '#e51e60'; // Default pink
+            const color2 = parts[2] || '#673ab7'; // Default ungu
+
+            // Buat gradien dari kiri ke kanan (sesuai lebar canvas)
+            const gradient = ctx.createLinearGradient(0, h, w, h);
+            gradient.addColorStop(0, color1);
+            gradient.addColorStop(1, color2);
+            ctx.strokeStyle = gradient;
+        } else {
+            // Jika bukan format gradien, gunakan warna solid (red, blue, hex, dll)
+            ctx.strokeStyle = color;
+        }
+
+        ctx.lineWidth = lineWidth;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+                // 3. Teks Angka Tengah
+        ctx.fillStyle = '#555';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        const fontSize = Math.floor(w * 0.15);
+        // Pastikan tidak ada spasi kosong sebelum deklarasi ukuran font
+        ctx.font = `${fontSize}px sans-serif`; 
+        
+        let unit = '';
+        if (title.includes('Kelembapan')) {
+            unit = '%';
+        } else if (title.includes('Suhu')) {
+            unit = '°';
+        }
+        
+        // 🔥 Wajib dikonversi ke Number agar tidak error saat dipanggil .toFixed()
+        const safeValue = Number(currentValue);
+        const valText = (isNaN(safeValue) ? "--" : safeValue.toFixed(1)) + unit;
+        // Posisikan pas di tengah
+        ctx.fillText(valText, centerX, centerY);
+
+    };
+
+    // 4. 🔥 LOGIKA PINTAR: Cek apakah Gauge sudah ada di dalam DOM?
+    const existingContainer = document.getElementById(`container_${uniqueId}`);
     
+    if (existingContainer) {
+        // JIKA SUDAH ADA (Update data): Cukup gambar ulang canvasnya pakai requestAnimationFrame agar anti-lag.
+        // Tidak perlu membuat/mereturn HTML baru.
+        requestAnimationFrame(draw);
+        return existingContainer.outerHTML; 
+    }
+
+    // 5. JIKA BELUM ADA (Inisialisasi Awal): Render string HTML & siapkan ResizeObserver
+    setTimeout(() => {
+        const cacheData = gaugeCache.get(uniqueId);
+        const canvasBox = document.getElementById(uniqueId)?.parentElement;
+        
+        // Pastikan observer cuma di-set 1 KALI seumur hidup elemen tersebut
+        if (canvasBox && !cacheData.observerSet) {
+            const ro = new ResizeObserver(() => requestAnimationFrame(draw));
+            ro.observe(canvasBox);
+            cacheData.observerSet = true;
+        }
+        requestAnimationFrame(draw);
+    }, 0);
+
     return `
-        <div class="card_gauge" style="grid-template-rows: 1fr auto; gap: 1em;">
-            <div class="judul_widget">${title}</div>
-            <div class="skill" style="width: calc(20vw*var(--rasio-gauge));height: calc(20vw*var(--rasio-gauge));">
-                <div class="outer" style="width: 100%; height: 100%;">
-                    <div class="inner">
-                        <div id="number">
-                            <span class="keterangan widget1">${value_gauge}</span>
-                            <span>${title.includes('Kelembapan') ? '%' : '°'}</span>
-                        </div>
-                    </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" 
-                         viewBox="0 0 100 100" style="width: 100%; height: 100%;">
-                        <defs>
-                            <linearGradient id="GradientColor">
-                                <stop offset="0%" stop-color="#e91e63" />
-                                <stop offset="100%" stop-color="#673ab7"/>
-                            </linearGradient>
-                        </defs>
-                        <circle cx="50" cy="50" r="${ukuran_1}" stroke-linecap="round" 
-                                style="stroke-dasharray: ${ukuran_2}; stroke-dashoffset: calc(0.25*${ukuran_2});"/>
-                        <circle cx="50" cy="50" r="${ukuran_1}" stroke-linecap="round" 
-                                style="stroke:${color}; stroke-dasharray: ${ukuran_2}; stroke-dashoffset: calc(${lingkar_gauge});"/>  
-                    </svg>
-                    <div class="ket_gauge_kiri">${minLabel}</div>
-                    <div class="ket_gauge_kanan">${maxLabel}</div>
-                </div>
+        <div class="gauge-container" id="container_${uniqueId}">
+            <div class="judul_widget_gauge">${title}</div>
+            <div class="canvas-box">
+                <canvas id="${uniqueId}"></canvas>
+            </div>
+            <div class="labels_gauge">
+                <span>${minLabel}</span>
+                <span>${maxLabel}</span>
             </div>
         </div>
     `;
@@ -1899,9 +2045,9 @@ const heatmap = document.getElementById('heatmap');
 
 function updateHeatmap() {
     const asd = suhu_atas/1.0;
-    const inletVal = (suhu_luar/1.0)+0.5;
+    const inletVal = suhu_inlet_atas/1.0;
     const tengahVal = suhu_atas/1.0;
-    const outletVal = ((suhu_atas/1.0)+((Math.abs((suhu_luar/1.0)-(suhu_atas/1.0)))/1.5));
+    const outletVal = suhu_outlet_atas/1.0;
     // Ambil nilai (gunakan parseFloat karena kita pakai step 0.5)
     const tempIn = inletVal;//parseFloat(inletSlider.value);
     const tempMid = tengahVal;//parseFloat(tengahSlider.value);

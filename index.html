@@ -17,43 +17,35 @@
         <a>☰ My Project</a>
         <a href="https://kandangayamrakha.netlify.app/" onclick="navigate(event, 'https://kandangayamrakha.netlify.app/')">Kandang Ayam</a>
         <a href="https://kebunmelonrakha.netlify.app/" onclick="navigate(event, 'https://kebunmelonrakha.netlify.app/')">Kebun dan Tanaman (Coming Soon)</a>
+        <a href="https://rakhagitar.netlify.app/" onclick="navigate(event, 'https://rakhagitar.netlify.app/')">Visualisasi Gitar Piano</a>
         <a href="https://projekrakha.netlify.app/" onclick="navigate(event, 'https://projekrakha.netlify.app/')">Projek Lainnya</a>
     </div>
     <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
-    <div class="grid-container">
-        <div class="grid-card_header header_judul">
-            <div></div>
-            <div class="grid-judul_header tx2">
-                <div class="judul_header1">Kandang</div>
-                <div class="judul_header2" style="display: grid;grid-template-columns: auto auto;">
-                    <div>Ayam</div>
-                    <div class="kipas0"></div>
-                </div>
-            </div>
-            <div></div>
-            <div class="grid" style="grid-template-rows: auto auto auto auto;padding-top: 5%;">
-                <div class="tx5">terakhir diperbarui:</div>
-                <div class="tx4" id="current-date"></div>
-                <div class="tx4" id="current-time"></div>
-                <div class="header_wrapper">
-                <div class="header_card tx1" style="width:5vw;">
-                    <div class="indikator_online" id="ind_online">
-                        <div id="data-container" class="tx4" style="margin-top: 0.3vw;"></div>
-                    </div>
-                </div>
+    <div class="header_container">
+    <div class="judul_group">
+        <div class="teks_kandang">Kandang</div>
+        <div class="baris_ayam">
+            <span>Ayam</span>
+            <div class="kipas_mini"></div>
+        </div>
+    </div>
+
+    <div class="status_info_group">
+        <div class="waktu_stack">
+            <span class="label_update">terakhir diperbarui:</span>
+            <span id="current-date" class="teks_detail">- - -</span>
+            <span id="current-time" class="teks_detail">- : - : -</span>
+        </div>
+        
+        <div class="status_box">
+            <div class="indikator_online" id="ind_online">
+                <span id="data-container"></span>
             </div>
         </div>
     </div>
-        <!--<div class="gauge_sha" id="gaugesha">gauge_sha</div>
-        <div class="gauge_kla">gauge_kla</div>
-        <div class="gauge_hia">gauge_hia</div>
-        <div class="gauge_shl">gauge_shl</div>
-        <div class="gauge_kll">gauge_kll</div>
-    <div class="menu">Menu</div>
-    <div class="content">Content</div>
-    <div class="sidebar">Sidebar</div>
-    <div class="footer">Footer</div>-->
-    </div>
+</div>
+
+
     
     <div class="container txt2">
         <h3>Kandang Ayam Atas</h3>
