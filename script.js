@@ -206,6 +206,7 @@ var bobot_rata_rata_timbang = 0;
 var jumlah_sample_timbang = 0;
 var jumlah_sample_timbang_kemarin = 0;
 var sebaran_bobot = [];
+var average_daily_gain = 0;
 var dataValues;
 
 var first_mqtt = false;
@@ -411,17 +412,7 @@ function penguraiJson(dataHttp) {
     bobot_rata_rata_timbang = data_json.bbt[1];
     jumlah_sample_timbang = data_json.bbt[2];
     jumlah_sample_timbang_kemarin = data_json.bbt[3];
-    sebaran_bobot[0] = data_json.bbt[3];
-    sebaran_bobot[1] = data_json.bbt[4];
-    sebaran_bobot[2] = data_json.bbt[5];
-    sebaran_bobot[3] = data_json.bbt[6];
-    sebaran_bobot[4] = data_json.bbt[7];
-    sebaran_bobot[5] = data_json.bbt[8];
-    sebaran_bobot[6] = data_json.bbt[9];
-    sebaran_bobot[7] = data_json.bbt[10];
-    sebaran_bobot[8] = data_json.bbt[11];
-    sebaran_bobot[9] = data_json.bbt[12];
-    sebaran_bobot[10] = data_json.bbt[13];
+    average_daily_gain = data_json.bbt[4];
     if(!first_dipanen){
         jumlah_ayam_dipanen = data_json.mtd[9];
     }   
@@ -1917,9 +1908,10 @@ function tampilkanSebaranBobot(pass_code = 0) {
     const Data_kalkulasi_panen = {
         d1: { label: 'Bobot Rata-Rata : ', value: `${(mean / 1000).toFixed(3)} Kg/ekor`},
         d2: { label: 'Standar Deviasi  : ', value: `±${stdDev.toFixed(0)} gram (${lowerBound.toFixed(0)} g - ${upperBound.toFixed(0)} g), ${stdPercent}%` },
-        d3: { label: 'Sampel Masuk Hari Ini: ', value: `${jumlah_sample_timbang} ekor` },
-        d4: { label: 'Sampel Masuk Kemarin : ', value: `${jumlah_sample_timbang_kemarin} ekor` },
-        d6: { label: 'Total Sampel : ', value: `${totalSample}` }
+        d3: { label: 'Average Daily Gain (ADG) : ', value: `${average_daily_gain.toFixed(2)} g/hari` },
+        d4: { label: 'Sampel Masuk Hari Ini : ', value: `${jumlah_sample_timbang} ekor` },
+        d5: { label: 'Sampel Masuk Kemarin : ', value: `${jumlah_sample_timbang_kemarin} ekor` },
+        d6: { label: 'Batas Sampel : ', value: `${totalSample} ekor` }
     };
     document.getElementById('data_kalkulasi_bobot').innerHTML = createOutputTable(Data_kalkulasi_panen, 8);
 
@@ -1994,30 +1986,31 @@ function tampilkanSebaranBobot(pass_code = 0) {
       }
     }
 
-function data_timbangan(json_timbangan){
-
+function data_timbangan(json_timbangan) {
     try {
-  const obj = JSON.parse(json_timbangan);
-  const data = obj.raw;
+        const obj = JSON.parse(json_timbangan);
+        const data = obj.raw || [];
 
-  const perBaris = 10; // jumlah angka per baris
-  let hasilCSV = "";
+        const perBaris = 10;
 
-  for (let i = 0; i < data.length; i++) {
-    hasilCSV += data[i];
-    if ((i + 1) % perBaris === 0) {
-      hasilCSV += "\n"; // ganti baris setiap 10 angka
-    } else if (i < data.length - 1) {
-      hasilCSV += ", "; // pisahkan antar angka
+        // 🔥 pakai array biar lebih aman
+        let lines = [];
+
+        for (let i = 0; i < data.length; i += perBaris) {
+            let slice = data.slice(i, i + perBaris);
+            lines.push(slice.join(", "));
+        }
+
+        const hasilCSV = lines.join("\n");
+
+        const el = document.getElementById("output_t");
+        if (el) el.textContent = hasilCSV;
+
+    } catch (err) {
+        console.error("JSON error:", err);
+        const el = document.getElementById("output_t");
+        if (el) el.textContent = "JSON parse error";
     }
-  }
-
-  document.getElementById("output_t").textContent = hasilCSV;
-
-} catch (err) {
-  console.error("JSON error:", err);
-  document.getElementById("output_t").textContent = "JSON parse error";
-}
 }
 
 const heatmap = document.getElementById('heatmap');
