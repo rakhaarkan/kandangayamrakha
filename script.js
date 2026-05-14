@@ -1908,7 +1908,7 @@ function tampilkanSebaranBobot(pass_code = 0) {
     const Data_kalkulasi_panen = {
         d1: { label: 'Bobot Rata-Rata : ', value: `${(mean / 1000).toFixed(3)} Kg/ekor`},
         d2: { label: 'Standar Deviasi  : ', value: `±${stdDev.toFixed(0)} gram (${lowerBound.toFixed(0)} g - ${upperBound.toFixed(0)} g), ${stdPercent}%` },
-        d3: { label: 'Average Daily Gain (ADG) : ', value: `${average_daily_gain.toFixed(2)} g/hari` },
+        d3: { label: 'Average Daily Gain : ', value: `${average_daily_gain.toFixed(2)} g/hari` },
         d4: { label: 'Perkiraan Bobot Besok (24 jam): ', value: `${((mean / 1000) + (average_daily_gain/1000 * 1.05)).toFixed(3)} Kg/ekor` },
         d5: { label: 'Sampel Masuk Hari Ini : ', value: `${jumlah_sample_timbang} ekor` },
         d6: { label: 'Sampel Masuk Kemarin : ', value: `${jumlah_sample_timbang_kemarin} ekor` }
