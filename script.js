@@ -1839,7 +1839,7 @@ function tampilkanSebaranBobot() {
             }
         });
     }
-    const currentSignature = JSON.stringify(rawData);
+    const currentSignature = JSON.stringify(rawData)+ interval;
     
 
     // Cari batas bawah dan atas
@@ -1961,16 +1961,15 @@ function tampilkanSebaranBobot() {
     });
 
 } else {
-    if (currentSignature === lastDataSignature) {
+    if (currentSignature !== lastDataSignature) {
         lastDataSignature = currentSignature;
-    // update data saja
-    chartInstance.data.labels = labels;
-    chartInstance.data.datasets[0].data = values;
+        // update data saja
+        chartInstance.data.labels = labels;
+        chartInstance.data.datasets[0].data = values;
 
-    chartInstance.options.scales.y.suggestedMin = suggestedMin;
-    chartInstance.options.scales.y.suggestedMax = suggestedMax;
+        chartInstance.options.scales.y.suggestedMax = suggestedMax;
 
-    chartInstance.update();
+        chartInstance.update();
         return;
     }
 
