@@ -1900,7 +1900,7 @@ function tampilkanSebaranBobot() {
         }
 
         labels.push(rentangLabel);
-        values.push(jumlahSampel);
+        values.push((((jumlahSampel / totalSample) * jumlah_ayam_awal) || 0).toFixed(0));
     }
 
     // === Update info tambahan ===
