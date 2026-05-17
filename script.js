@@ -512,8 +512,8 @@ function eksekutor(){
         analisa_realtime();
         kalkulator();
         isilkanDataHargaAyam();
-        animasi_chart();
         tampilkanSebaranBobot();
+        animasi_chart();
         //fetchData();
     }
 }
