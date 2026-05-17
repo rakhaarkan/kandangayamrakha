@@ -1814,6 +1814,7 @@ var rawData;
 var opti_bbt = false;
 var tst = 0;
 let listenerAdded = false;
+let lastDataSignature = "";
 
 function tampilkanSebaranBobot() {
     var parsed = JSON.parse(penampung_json_bobot);
@@ -1838,7 +1839,8 @@ function tampilkanSebaranBobot() {
             }
         });
     }
-
+    const currentSignature = JSON.stringify(rawData);
+    
 
     // Cari batas bawah dan atas
     const minBobot = Math.floor(Math.min(...rawData) / interval) * interval;
@@ -1923,12 +1925,8 @@ function tampilkanSebaranBobot() {
     const suggestedMin = minValue - offset;
     const suggestedMax = maxValue + offset;
 
-    // Hapus chart sebelumnya jika sudah ada
-    if (chartInstance) {
-        chartInstance.destroy();
-    }
+    if (!chartInstance) {
 
-    // Buat chart baru
     chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
@@ -1951,15 +1949,33 @@ function tampilkanSebaranBobot() {
             scales: {
                 y: {
                     beginAtZero: false,
-                    suggestedMin: suggestedMin,
                     suggestedMax: suggestedMax,
                     ticks: { color: 'rgba(75, 192, 192, 1)' },
                     grid: { display: false }
                 },
-                x: { grid: { display: false } }
+                x: {
+                    grid: { display: false }
+                }
             }
         }
     });
+
+} else {
+    if (currentSignature === lastDataSignature) {
+        lastDataSignature = currentSignature;
+    // update data saja
+    chartInstance.data.labels = labels;
+    chartInstance.data.datasets[0].data = values;
+
+    chartInstance.options.scales.y.suggestedMin = suggestedMin;
+    chartInstance.options.scales.y.suggestedMax = suggestedMax;
+
+    chartInstance.update();
+        return;
+    }
+
+    
+}
 
 }
 
