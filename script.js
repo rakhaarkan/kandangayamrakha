@@ -511,8 +511,8 @@ function eksekutor(){
         updateHeatmap();
         analisa_realtime();
         kalkulator();
-        isilkanDataHargaAyam();
         tampilkanSebaranBobot();
+        isilkanDataHargaAyam();
         animasi_chart();
         //fetchData();
     }
@@ -1815,19 +1815,20 @@ var opti_bbt = false;
 var tst = 0;
 let listenerAdded = false;
 
-function tampilkanSebaranBobot(pass_code = 0) {
+function tampilkanSebaranBobot() {
     var parsed = JSON.parse(penampung_json_bobot);
-    rawData = parsed.raw;if(pass_code != 1){
-        if (listenerAdded) return;   // cegah duplikasi listener
+    rawData = parsed.raw;
+    if (!listenerAdded) {
         listenerAdded = true;
-
         document.getElementById('intervalSelect').addEventListener('change', function () {
             if (rawData.length === 0) return;
-
             const intervalOption = this.value;
-
             if (intervalOption === '10') {
                 interval = 10;
+            } else if (intervalOption === '20') {
+                interval = 20;
+            } else if (intervalOption === '50') {
+                interval = 50;
             } else if (intervalOption === '100') {
                 interval = 100;
             } else if (intervalOption === 'sturges') {
@@ -1835,13 +1836,9 @@ function tampilkanSebaranBobot(pass_code = 0) {
                 const range = Math.max(...rawData) - Math.min(...rawData);
                 interval = Math.ceil(range / k);
             }
-
-            tst = tst + 1;
         });
-    }else{
-        interval = 100;
     }
-    
+
 
     // Cari batas bawah dan atas
     const minBobot = Math.floor(Math.min(...rawData) / interval) * interval;

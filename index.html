@@ -426,9 +426,12 @@
         <h2 style="margin-left: 5.5%;">Sebaran Bobot</h2>
         <div style="text-align:left; margin:20px;">
         <label for="intervalSelect">Pilih Interval:</label>
-        <select id="intervalSelect" onchange="tampilkanSebaranBobot()" style="padding:5px; margin-left:10px;">
+        <select id="intervalSelect" style="padding:5px; margin-left:10px;width: auto;">
+            <option value="10">10 gram</option>
+            <option value="20">20 gram</option>
+            <option value="50">50 gram</option>
             <option value="100" selected>100 gram</option>
-            <option value="sturges">Auto</option>
+            <option value="sturges">Auto (Sturges)</option>
         </select>
         </div>
         <table style="width: 80%;margin: 20px auto;border-collapse: collapse;text-align: center;" id="sebaranTable">
