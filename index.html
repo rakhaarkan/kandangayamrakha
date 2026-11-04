@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Data Kandang</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/widgets.css">
+<link rel="stylesheet" href="css/dashboard.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -12,404 +15,248 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 </head>
 <body>
-    <button id="menuBtn" class="open-btn" onclick="toggleSidebar()">☰</button>
+    <button id="menuBtn" class="open-btn">☰</button>
     <div id="mySidebar" class="sidebar">
         <a>☰ My Project</a>
-        <a href="https://kandangayamrakha.netlify.app/" onclick="navigate(event, 'https://kandangayamrakha.netlify.app/')">Kandang Ayam</a>
-        <a href="https://kebunmelonrakha.netlify.app/" onclick="navigate(event, 'https://kebunmelonrakha.netlify.app/')">Kebun dan Tanaman (Coming Soon)</a>
-        <a href="https://rakhagitar.netlify.app/" onclick="navigate(event, 'https://rakhagitar.netlify.app/')">Visualisasi Gitar Piano</a>
-        <a href="https://projekrakha.netlify.app/" onclick="navigate(event, 'https://projekrakha.netlify.app/')">Projek Lainnya</a>
+        <a class="sidebar-link" href="https://kandangayamrakha.netlify.app/">Kandang Ayam</a>
+        <a class="sidebar-link" href="https://kebunmelonrakha.netlify.app/">Kebun dan Tanaman (Coming Soon)</a>
+        <a class="sidebar-link" href="https://rakhagitar.netlify.app/">Visualisasi Gitar Piano</a>
+        <a class="sidebar-link" href="https://projekrakha.netlify.app/">Projek Lainnya</a>
     </div>
-    <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
-    <div class="header_container">
-    <div class="judul_group">
-        <div class="teks_kandang">Kandang</div>
-        <div class="baris_ayam">
-            <span>Ayam</span>
-            <div class="kipas_mini"></div>
-        </div>
-    </div>
+    <div id="overlay" class="overlay"></div>
 
-    <div class="status_info_group">
-        <div class="waktu_stack">
-            <span class="label_update">terakhir diperbarui:</span>
-            <span id="current-date" class="teks_detail">- - -</span>
-            <span id="current-time" class="teks_detail">- : - : -</span>
+    <div class="header_container">
+        <div class="judul_group">
+            <div class="teks_kandang">Kandang</div>
+            <div class="baris_ayam">
+                <span>Ayam</span>
+                <div class="kipas_mini"></div>
+            </div>
         </div>
-        
-        <div class="status_box">
-            <div class="indikator_online" id="ind_online">
-                <span id="data-container"></span>
+        <div class="status_info_group">
+            <div class="waktu_stack">
+                <span class="label_update">terakhir diperbarui:</span>
+                <span id="current-date" class="teks_detail">- - -</span>
+                <span id="current-time" class="teks_detail">- : - : -</span>
+            </div>
+            <div class="status_box">
+                <div class="indikator_online" id="ind_online">
+                    <span id="data-container"></span>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
+    <div class="page-wrap">
 
-    
-    <div class="container txt2">
-        <h3>Kandang Ayam Atas</h3>
-        <div id="container_gauges_kandang_atas"></div>
-        <div style="display:flex;">
-        <div class="card_widget">
-            <div class="container_group_widget">
-                <div class="wrapper_group_widget txt1" style="display: grid;width: 30vw;">
-                <div class="txt1 tengah">Usia Ayam</div>
-                    <div class="card_group_widget tengah">
-                        <div class="card_group_widget logo_ayam ">
-                            <div class="gambar_widget" style="width: 10vw; height: 10vw;">
-                                <img class="logo_ayam" src="https://www.svgrepo.com/show/396002/chicken.svg" alt="">
-                            </div>
+    <section id="dashboard-grid">
+
+        <section class="area-gauge-atas container txt2">
+            <h3>Kandang Ayam Atas</h3>
+            <div id="container_gauges_kandang_atas"></div>
+        </section>
+
+        <section class="area-usia container txt2">
+            <div class="wrapper">
+                <div class="card_widget usia-widget">
+                    <div class="container_group_widget usia-ayam-row">
+                        <div class="gambar_widget" style="position: static; width: 3.6rem; height: 3.6rem;">
+                            <img class="logo_ayam" src="https://www.svgrepo.com/show/396002/chicken.svg" alt="">
+                        </div>
+                        <div class="usia-ayam-text">
+                            <div class="txt2">Usia Ayam</div>
+                            <div class="txt1" id="usia_ayam">--</div>
                         </div>
                     </div>
-                    <div class="card_group_widget tengah txt1" style="width: auto;justify-content: center;">
-                            <span class="txt1" id="usia_ayam">--</span>
+                </div>
+                <div class="card_widget">
+                    <div class="container_group_widget">
+                        <div class="txt1 keterangan_huruf">
+                            <span>Populasi :</span>
+                            <span id="populasi">0</span>
+                            <span>Ekor</span>
+                        </div>
+                        <div class="txt1 keterangan_huruf">
+                            <span>Selisih Suhu :</span>
+                            <span id="data_selisih"></span>
+                        </div>
                     </div>
-                    <div class="card_group_widget">
-                        <div class=""></div>
-                    </div>
-                </div>    
-            </div>                  
-        </div>
-        <div class="card_widget">
-            <div class="container_group_widget" style="width: 50vw;height: 31vw;box-shadow: none;">
-                <div class="txt2" style="margin: 0vw 5vw 2vw 5vw;"></div> 
-                <div class="">
-                    <div class="txt1 keterangan_huruf" style="margin: 0vw 0vw 1vw 3vw;">
-                        <span class="">Populasi :</span>
-                        <span id="populasi">0</span>
-                        <span>Ekor</span><br>
-                    </div>
-                    <div class="txt1 keterangan_huruf" style="margin: 0vw 3vw 0vw 3vw;">
-                        <span class="">Selisih Suhu :</span>
-                        <span id="data_selisih"></span>
-                    </div>
-                </div>  
-            </div>                  
-        </div>
-    </div>
-        <button class="txt3" id="button_bar1" style="margin-left: 3vw;border: 0.1vw solid rgb(255, 255, 255);padding: 1vw;background-color: rgb(248, 248, 248);width: 85vw;">Lihat Grafik</button>
-        <div id="hidden_chart1" style="display: none;">
-            Data 24 jam terakhir
-            <canvas id="grafik" style="height: 75vw;width: 100vw;"></canvas>
-        </div>
-        <br>
-        <div class="wrapper">
-        <h3>Analisis Cepat</h3>
+                </div>
+            </div>
+        </section>
+
+        <section class="area-grafik container txt2">
+            <button class="btn-toggle" id="button_bar1">Lihat Grafik</button>
+            <div id="hidden_chart1" style="display: none;">
+                Data 24 jam terakhir
+                <canvas id="grafik" style="width: 100%; aspect-ratio: 4 / 3; height: auto;"></canvas>
+            </div>
+        </section>
+
+        <section class="area-analisis container txt2">
+            <h3>Analisis Cepat</h3>
             <div class="card2">
-                <div class="container_group_widget txt1" style="width: 85vw;box-shadow: none; border-radius: 0vw;">                
-                    <div class="wrapper_group_widget" style="flex-wrap: nowrap;width:80vw; justify-content: left;">
-                        <div class="card_group_widget ">
-                            <div class="card_group_widget logo_analisa" style="margin-top: 20%;">
-                                <div class="gambar_widget" style="width: 20vw; height: 20vw;">
+                <div class="container_group_widget txt1">
+                    <div class="wrapper_group_widget" style="flex-wrap: nowrap; justify-content: left;">
+                        <div class="card_group_widget">
+                            <div class="card_group_widget logo_analisa">
+                                <div class="gambar_widget" style="position: static; width: 4.85rem; height: 4.85rem;">
                                     <img id="gambar_analisa" class="logo_analisa" src="" alt="">
                                 </div>
                             </div>
                         </div>
-                        <div class="">
-                            <div class="txt1 ">
-                                <span id="judul_analisa">-</span>
-                            </div>
-                            <div class="txt1 keterangan_huruf" style="width: 60vw;">
-                                <span id="isi_analisa">-</span>
-                            </div>
-                            <div class="txt1 keterangan_huruf">
-                                <span id="dsp">-</span>
-                            </div>                                        
+                        <div>
+                            <div class="txt1"><span id="judul_analisa">-</span></div>
+                            <div class="txt1 keterangan_huruf"><span id="isi_analisa">-</span></div>
+                            <div class="txt1 keterangan_huruf"><span id="dsp">-</span></div>
                         </div>
-                        <div class="card_group_widget">
-                            <div class=""></div>
-                        </div>
-                    </div>   
-                                                           
-                </div>
-            </div>
-            <div class="txt1 keterangan_huruf">
-                <span id="kepadatan_kg_m2"></span>
-            </div>
-        </div>
-        <br>
-        <div><h3>Air Tersisa</h3></div><br>
-        <div class="card2">
-            <div class="water-level-control">
-                <div class="glass-container">
-                    <div class="glass">
-                        <div id="water" class="water"></div>
                     </div>
                 </div>
-            </div> 
-            <div>
-                <div class="txt3" id="data_air_1" style="padding: 0vw 3vw 0vw 5vw;"></div>
-                <div class="txt3" id="data_air_2" style="padding: 0vw 0vw 0vw 7vw;"></div>
             </div>
-        </div>
-        <div class="txt3 keterangan_huruf" style="margin: 3vw 0vw 3vw 3vw;">
-            <span class="" style="margin-right: 0vw;">Sisa Air</span>
-            <span>:</span>
-            <span id="liter_air_atas"></span>
-            <span class="keterangan widget1">liter,</span>
-            <span id="persen_air_atas"></span>
-            <span class="keterangan widget1">%</span>
-        </div>
-        <br>
-        <div><h3>Heatmap</h3></div><br>
-        <div class="kandang-container">
-            <div class="inlet-section">
-                INLET
-            </div>
+            <div class="txt1 keterangan_huruf"><span id="kepadatan_kg_m2"></span></div>
+        </section>
 
-            <div class="heatmap-section" id="heatmap">
-                <div class="panah-container">
-                    <div class="panah">&rarr;</div>
-                    <div class="panah">&rarr;</div>
-                    <div class="panah">&rarr;</div>
-                    <div class="panah">&rarr;</div>
-                </div>
-                <div class="suhu-label kiri" id="htm_kiri">28°C</div>
-                <div class="suhu-label tengah" id="htm_tengah">30°C</div>
-                <div class="suhu-label kanan" id="htm_kanan">32°C</div>
-            </div>
-
-            <div class="outlet-section">
-                <div class="kipas-container">
-                    <div id="kps1" class="kipas" style="width: 3.5vw;height: 3.5vw; top: 15%"></div>
-                    <div id="kps2" class="kipas" style="width: 3vw;height: 3vw; top: 33%"></div>
-                    <div id="kps3" class="kipas" style="width: 3vw;height: 3vw; top: 50%"></div>
-                    <div id="kps4" class="kipas" style="width: 3vw;height: 3vw; top: 67%"></div>
-                    <div id="kps5" class="kipas" style="width: 3.5vw;height: 3.5vw; top: 85%"></div>
-                </div>
-            </div>
-        </div><br>
-        <div class="txt1 keterangan_huruf" style="margin: 0vw 0vw 1vw 3vw;">
-            <span class="">Kecepatan Angin :</span>
-            <span id="kecepatan_angin_atas">0</span>
-            <span>m/s</span>
-        </div><br>
-    </div>
-</div> 
-    <div class="container txt2">
-        <h3>Data Luar Kandang</h3>
-        <div id="container_gauges_kandang_luar"></div>
-    </div> 
-    <div class="container txt2">
-        <h3>Daya Listrik</h3>
-        <div class="wrapper">
+        <section class="area-air container txt2">
+            <h3>Air Tersisa</h3>
             <div class="card2">
-                <div class="container_group_widget txt1" style="width: 40vw;">
-                    <h4 class="txt1">Power</h4>
-                    <div class="wrapper_group_widget" style="flex-wrap: nowrap;width:50vw; justify-content: left;">
-                        <div class="card_group_widget ">
-                            <div class="card_group_widget logo_listrik">
-                                <div class="gambar_widget" style="width: 10vw; height: 10vw;">
-                                    <img class="logo_listrik" src="https://www.svgrepo.com/show/20303/lightning.svg" alt="">
-                                </div>
-                            </div>
+                <div class="water-level-control">
+                    <div class="glass-container">
+                        <div class="glass">
+                            <div id="water" class="water"></div>
                         </div>
-                        <div class="">
-                            <div class="txt1 keterangan_huruf">
-                                <span class="">Daya :</span>
-                                <span id="power">0</span>
-                                <span>W</span>
-                            </div>
-                            <div class="txt1 keterangan_huruf">
-                                <span class="">Volt :</span>
-                                <span id="volt">0</span>
-                                <span>V</span>
-                            </div>
-                            <div class="txt1 keterangan_huruf">
-                                <span class="">Amp :</span>
-                                <span id="amp">0</span>
-                                <span>A</span>
-                            </div>                  
+                    </div>
+                </div>
+                <div>
+                    <div class="txt3" id="data_air_1"></div>
+                    <div class="txt3" id="data_air_2"></div>
+                </div>
+            </div>
+            <div class="txt3 keterangan_huruf">
+                <span>Sisa Air</span>
+                <span>:</span>
+                <span id="liter_air_atas"></span>
+                <span class="keterangan widget1">liter,</span>
+                <span id="persen_air_atas"></span>
+                <span class="keterangan widget1">%</span>
+            </div>
+        </section>
+
+        <section class="area-heatmap container txt2">
+            <h3>Heatmap dan Angin</h3>
+            <div class="heatmap-row">
+                <div class="heatmap-label-kiri txt1 keterangan_huruf">Kandang Atas</div>
+                <div class="kandang-container">
+                    <div class="inlet-section">INLET</div>
+                    <div class="heatmap-section" id="heatmap">
+                        <div class="panah-container">
+                            <div class="panah">&rarr;</div>
+                            <div class="panah">&rarr;</div>
+                            <div class="panah">&rarr;</div>
+                            <div class="panah">&rarr;</div>
                         </div>
-                        <div class="card_group_widget">
-                            <div class=""></div>
+                        <div class="suhu-label kiri" id="htm_kiri">28°C</div>
+                        <div class="suhu-label tengah" id="htm_tengah">30°C</div>
+                        <div class="suhu-label kanan" id="htm_kanan">32°C</div>
+                    </div>
+                    <div class="outlet-section">
+                        <div class="kipas-container">
+                            <div id="kps1" class="kipas" style="width: 0.85rem; height: 0.85rem; top: 15%"></div>
+                            <div id="kps2" class="kipas" style="width: 0.73rem; height: 0.73rem; top: 33%"></div>
+                            <div id="kps3" class="kipas" style="width: 0.73rem; height: 0.73rem; top: 50%"></div>
+                            <div id="kps4" class="kipas" style="width: 0.73rem; height: 0.73rem; top: 67%"></div>
+                            <div id="kps5" class="kipas" style="width: 0.85rem; height: 0.85rem; top: 85%"></div>
                         </div>
-                    </div>    
-                </div>     
-                <div class="container_group_widget txt1" style="width: 40vw;">
-                    <div class="wrapper_group_widget" style="flex-wrap: wrap;width:50vw; justify-content: left;">
-                        <div class="card_group_widget ">
-                            <div class="wrapper_group_widget" style="flex-wrap: nowrap;justify-content: left;">
-                                <div class="txt1 keterangan_huruf">
-                                    <span class="">Power Factor :</span>
-                                    <span id="pf">0</span>
-                                </div>
-                            </div>
-                            <div class="wrapper_group_widget" style="flex-wrap: nowrap;">
-                                <div class="keterangan_bar_pf">0</div>
-                                <div class="card_group_widget">
-                                    <div class="progres_bar">
-                                        <div class="progres_bar progres_bar_listrik" id="bar_pf"></div>
+                    </div>
+                </div>
+                <div class="heatmap-label-kanan txt1 keterangan_huruf">
+                    <span id="kecepatan_angin_atas">0</span><span class="heatmap-angin-satuan"> m/dtk</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="area-gauge-luar container txt2">
+            <h3>Data Luar Kandang</h3>
+            <div id="container_gauges_kandang_luar"></div>
+        </section>
+
+        <section class="area-kipas container txt2">
+            <div class="judul_container_kipas txt1"><h3>Kipas</h3></div>
+            <div class="container_kipas">
+                <div class="kipas_1 kipas" style="width: 3.5rem; height: 3.5rem" id="square1"></div>
+                <div class="kipas_2 kipas" id="square2"></div>
+                <div class="kipas_3 kipas" id="square3"></div>
+                <div class="kipas_4 kipas" id="square4"></div>
+                <div class="kipas_5 kipas" style="width: 3.5rem; height: 3.5rem" id="square5"></div>
+            </div>
+            <div class="container_keterangan_kipas">
+                <div class="card_keterangan_kipas txt1"><span id="rpm1">100</span></div>
+                <div class="card_keterangan_kipas txt1"><span id="rpm2">100</span></div>
+                <div class="card_keterangan_kipas txt1"><span id="rpm3">100</span></div>
+                <div class="card_keterangan_kipas txt1"><span id="rpm4">100</span></div>
+                <div class="card_keterangan_kipas txt1"><span id="rpm5">100</span></div>
+            </div>
+            <div style="margin-left: 1rem;">
+                <span>Mode Kipas : </span><span id="mode_kipas"></span><br>
+                <span>Timer Kipas : </span><span id="timer_kipas"></span><br><br>
+                <button class="btn-toggle" id="button_detail_kipas">Sembunyikan Detail</button>
+                <div id="hidden_detail_kipas" style="display: none;">
+                    <span id="detail_kipas"></span>
+                </div>
+            </div>
+        </section>
+
+        <section class="area-listrik container txt2">
+            <h3>Daya Listrik</h3>
+            <div class="wrapper">
+                <div class="card2">
+                    <div class="container_group_widget txt1">
+                        <h4 class="txt1">Power</h4>
+                        <div class="wrapper_group_widget" style="flex-wrap: nowrap; justify-content: left;">
+                            <div class="card_group_widget">
+                                <div class="card_group_widget logo_listrik">
+                                    <div class="gambar_widget" style="position: static; width: 2.9rem; height: 3.9rem;">
+                                        <img class="logo_listrik" src="https://www.svgrepo.com/show/20303/lightning.svg" alt="">
                                     </div>
                                 </div>
-                                <div class="keterangan_bar_pf">1</div>
+                            </div>
+                            <div>
+                                <div class="txt1 keterangan_huruf"><span>Daya :</span><span id="power">0</span><span>W</span></div>
+                                <div class="txt1 keterangan_huruf"><span>Volt :</span><span id="volt">0</span><span>V</span></div>
+                                <div class="txt1 keterangan_huruf"><span>Amp :</span><span id="amp">0</span><span>A</span></div>
                             </div>
                         </div>
-                        <div class="">
-                            <div class="txt1 keterangan_huruf">
-                                <span class="">Energy :</span>
-                                <span id="energy">0</span>
-                                <span>kWh</span>
-                            </div>      
-                            <div class="txt1 keterangan_huruf">
-                                <span class="">Freq :</span>
-                                <span class="" id="freq">0</span>
-                                <span class="">Hz</span>
-                            </div>           
+                    </div>
+                    <div class="container_group_widget txt1">
+                        <div class="wrapper_group_widget" style="flex-wrap: wrap; justify-content: left;">
+                            <div class="card_group_widget">
+                                <div class="wrapper_group_widget" style="flex-wrap: nowrap; justify-content: left;">
+                                    <div class="txt1 keterangan_huruf"><span>Power Factor :</span><span id="pf">0</span></div>
+                                </div>
+                                <div class="wrapper_group_widget" style="flex-wrap: nowrap;">
+                                    <div class="keterangan_bar_pf">0</div>
+                                    <div class="card_group_widget">
+                                        <div class="progres_bar"><div class="progres_bar progres_bar_listrik" id="bar_pf"></div></div>
+                                    </div>
+                                    <div class="keterangan_bar_pf">1</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="txt1 keterangan_huruf"><span>Energy :</span><span id="energy">0</span><span>kWh</span></div>
+                                <div class="txt1 keterangan_huruf"><span>Freq :</span><span id="freq">0</span><span>Hz</span></div>
+                            </div>
                         </div>
-                        <div class="card_group_widget">
-                            <div class=""></div>
-                        </div>
-                    </div>    
-                </div>               
-            </div>
-        </div>
-        <div class="wrapper">
-            <canvas id="grafik_lst" style="height: 50vw;width: 100vw;"></canvas><br><br>
-            <div class="card2 txt3">
-                <span id="rtrtkwh"></span>
-            </div>
-            
-        </div>
-    </div>   
-    <div class="judul_container_kipas txt1">
-        <h3>Kipas</h3>
-    </div>
-    <div class="container_kipas">
-        <div class="kipas_1 kipas" style="width: 15vw;height: 15vw" id="square1"></div>
-        <div class="kipas_2 kipas" id="square2"></div>
-        <div class="kipas_3 kipas" id="square3"></div>
-        <div class="kipas_4 kipas" id="square4"></div>
-        <div class="kipas_5 kipas" style="width: 15vw;height: 15vw" id="square5"></div>
-    </div>
-    <div class="container_keterangan_kipas">
-        <div class="card_keterangan_kipas txt1">
-            <span id="rpm1">100</span>
-        </div>
-        <div class="card_keterangan_kipas txt1">
-            <span id="rpm2">100</span>
-        </div>
-        <div class="card_keterangan_kipas txt1">
-            <span id="rpm3">100</span>
-        </div>
-        <div class="card_keterangan_kipas txt1">
-            <span id="rpm4">100</span>
-        </div>
-        <div class="card_keterangan_kipas txt1">
-            <span id="rpm5">100</span>
-        </div>
-    </div>
-    <div style="margin-left: 5vw;">
-        <span>Mode Kipas : </span>
-        <span id="mode_kipas"></span><br>
-        <span>Timer Kipas : </span>
-        <span id="timer_kipas"></span><br><br>
-        <button class="txt3" id="button_detail_kipas">Sembunyikan Detail</button>
-        <div id="hidden_detail_kipas" style="display: none;">
-            <span id="detail_kipas"></span>
-        </div>
-    </div>
-    <br>
-    <button class="txt3" id="button_calculator" style="margin-left: 3vw;border: 0.1vw solid rgb(255, 255, 255);padding: 1vw;background-color: rgb(248, 248, 248);width: 94vw;">Lihat Kalkulator Ayam</button>
-    <br>
-        <div id="hidden_calculator" style="display: none;">
-            <div class="container_input">
-            <button id="addButton">Tambahkan Bakul</button>
-            <div id="resultContainer" style="display: none;">
-                <h3>Data yang Di-submit:</h3>
-            </div>
-                <div id="modal" class="modal">
-                    <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <h2>Input Data Bakul</h2>
-                        <br>
-                        <div class="input-group">
-                            <label for="tanggal">Tanggal</label>
-                            <input type="date" id="tanggal" placeholder="">
-                        </div>
-                        <div class="input-group">
-                            <label for="nama_do">Nama DO</label>
-                            <input type="text" id="nama_do" placeholder="">
-                        </div>
-                        <div class="input-group">
-                            <label for="nama_bakul">Nama Bakul</label>
-                            <input type="text" id="nama_bakul" placeholder="">
-                        </div>
-                        <div class="input-group">
-                            <label for="plat_nomor">Plat Nomor</label>
-                            <input type="text" id="plat_nomor" placeholder="">
-                        </div>
-                        <div class="input-group">
-                            <label for="jumlah_ekor_ambil">Jumlah Ekor Ambil</label>
-                            <input type="number" id="jumlah_ekor_ambil" placeholder="">
-                        </div>
-                        <div class="input-group">
-                            <label for="jumlah_kg_ambil">Jumlah kg Ambil</label>
-                            <input type="number" id="jumlah_kg_ambil" placeholder="">
-                        </div>
-                        <button id="submitButton">Kirim</button>
                     </div>
                 </div>
-            <br>
-                <!-- Form input -->
-                <div class="input-group">
-                    <label for="input_kalkulator_1">Umur Ayam</label>
-                    <input type="number" min="1" max="45" id="input_kalkulator_1" placeholder="">
-                </div>
-                <div class="input-group">
-                    <label for="input_kalkulator_2">Jumlah Ayam Awal</label>
-                    <input type="number" min="0" max="100000" step="100" id="input_kalkulator_2" placeholder="">
-                </div>
-                <div class="input-group">
-                    <label for="input_kalkulator_3">Jumlah Ayam Mati</label>
-                    <input type="number" min="0" max="100000" id="input_kalkulator_3" placeholder="">
-                </div>
-                <div class="input-group">
-                    <label for="input_kalkulator_4">Jumlah Pakan (sak)</label>
-                    <input type="number" min="0" max="100000" id="input_kalkulator_4" placeholder="">
-                </div>
-                <div class="input-group">
-                    <label for="input_kalkulator_5">Bobot Rata-rata</label>
-                    <input type="number" min="0" max="100000" step="0.1" id="input_kalkulator_5" placeholder="">
-                </div>
-                <div class="input-group">
-                    <label for="input_kalkulator_6">Harga Kontrak Ayam</label>
-                    <input type="number" min="0" max="100000" id="input_kalkulator_6" placeholder="">
-                </div>
-                <div class="input-group">
-                    <label for="input_kalkulator_7">Harga Bibit/Ekor</label>
-                    <input type="number" min="0" max="100000" id="input_kalkulator_7" placeholder="">
-                </div>
-                <div class="input-group">
-                    <label for="input_kalkulator_8">Harga Obat dll</label>
-                    <input type="number" min="0" max="100000000" id="input_kalkulator_8" placeholder="">
-                </div>
-                <div class="input-group">
-                    <label for="input_kalkulator_9">Harga Pakan/kg</label>
-                    <input type="number" min="0" max="100000" id="input_kalkulator_9" placeholder="">
-                </div>
-                <div class="output-group">
-                    <div style="padding-bottom: 2vw;"><h3>hasil Perhitungan :</h3></div>
-                    <div id="output_group_container"></div>
-                    <div style="color: red;"><span id="output_kalkulator_keterangan"></span></div>
-                    <div id="data_kalkulator_chart" style="display: none;">
-                        <div id="output_group_container_2"></div>
-                        <div id="data_calc_total" style="font-size: large;"></div>
-                        <canvas id="myPieChart" width="400" height="400"></canvas><br><br>
-                    </div>
-                    <br>
-                    <input type="text" id="input_test_kosong" placeholder="">
-                    <button id="toggleButton2" style="margin: 1vw;">set</button>                    
-                </div>
-                <div></div>
-            <!-- Harga Ayam Section -->
-            
             </div>
-        </div>
-        <div class="container txt2">
-                <h3>Info Harga Ayam Jogja per Kg (livebird) :</h3>
-                <div class="card_harga_ayam">
+            <div class="wrapper">
+                <canvas id="grafik_lst" style="height: 12rem; width: 100%;"></canvas>
+                <div class="card2 txt3"><span id="rtrtkwh"></span></div>
+            </div>
+        </section>
+
+        <section class="area-harga container txt2">
+            <h3>Info Harga Ayam Jogja per Kg (livebird) :</h3>
+            <div class="card_harga_ayam">
                 <div class="harga_item">
                     <div class="harga_label">Ayam &lt; 2 Kg : </div>
                     <div class="harga_nilai" id="harga_kurang_2kg">Rp 0 - Rp 0</div>
@@ -418,76 +265,112 @@
                     <div class="harga_label">Ayam &gt; 2 Kg : </div>
                     <div class="harga_nilai" id="harga_lebih_2kg">Rp 0 - Rp 0</div>
                 </div>
-                </div>
-            </div><br><br>
-        <h2 style="margin-left: 5.5%;">Mesin Sample Auto</h2>
-        <h5 style="margin-left: 5.5%;">sample 200 ekor terbaru :</h5>
-        <div id="output_t" style="white-space: pre; font-family: monospace;"></div>
-        
-        <h2 style="margin-left: 5.5%;">Sebaran Bobot</h2>
-        <div style="text-align:left; margin:20px;">
-        <label for="intervalSelect">Pilih Interval:</label>
-        <select id="intervalSelect" style="padding:5px; margin-left:10px;width: auto;">
-            <option value="10">10 gram</option>
-            <option value="20">20 gram</option>
-            <option value="50">50 gram</option>
-            <option value="100" selected>100 gram</option>
-            <option value="sturges">Auto (Sturges)</option>
-        </select>
-        </div>
-        <table style="width: 80%;margin: 20px auto;border-collapse: collapse;text-align: center;" id="sebaranTable">
-            <thead>
-              <tr>
-                <th class="th_">Rentang Bobot (gram)</th>
-                <th class="th_">Jumlah Sampel</th>
-                <th class="th_">Persentase</th>
-                <th class="th_">perkiraan jumlah (ekor)</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody">
-              <!-- Data akan diisi oleh JavaScript -->
-            </tbody>
-        </table>
-        <div style="height: 75vw;width: 100vw;">
-            <canvas id="lineChart"></canvas>
-        </div>
-        <div class="mrg3" id = data_kalkulasi_bobot></div>
-        <div style="margin: 5.5%;">data diambil dari mesin timbang automatis dan diupdate setiap menit</div>
+            </div>
+        </section>
 
-    <button id="toggleButton" style="margin: 3vw;">Lihat Teks Data</button>
-    <div id="hiddenText" style="display: none;">
-        <div class="container" style="box-shadow: none;">
-            <div class="wrapper">
-                <div class="card txt1" style="overflow-y: auto;" id="messages"></div>
+    </section><!-- /dashboard-grid -->
+
+    <div class="scroll-hint">&darr; Kalkulator &amp; manajemen data &darr;</div>
+
+    <section id="manajemen-grid">
+
+        <div class="container_input">
+            <button class="btn-toggle" id="button_calculator">Lihat Kalkulator Ayam</button>
+            <div id="hidden_calculator" style="display: none;">
+                <button class="btn-toggle" id="addButton">Tambahkan Bakul</button>
+                <div id="resultContainer" style="display: none;"><h3>Data yang Di-submit:</h3></div>
+                <div id="modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Input Data Bakul</h2>
+                        <div class="input-group"><label for="tanggal">Tanggal</label><input type="date" id="tanggal"></div>
+                        <div class="input-group"><label for="nama_do">Nama DO</label><input type="text" id="nama_do"></div>
+                        <div class="input-group"><label for="nama_bakul">Nama Bakul</label><input type="text" id="nama_bakul"></div>
+                        <div class="input-group"><label for="plat_nomor">Plat Nomor</label><input type="text" id="plat_nomor"></div>
+                        <div class="input-group"><label for="jumlah_ekor_ambil">Jumlah Ekor Ambil</label><input type="number" id="jumlah_ekor_ambil"></div>
+                        <div class="input-group"><label for="jumlah_kg_ambil">Jumlah kg Ambil</label><input type="number" id="jumlah_kg_ambil"></div>
+                        <button id="submitButton">Kirim</button>
+                    </div>
+                </div>
+
+                <div class="input-group"><label for="input_kalkulator_1">Umur Ayam</label><input type="number" min="1" max="45" id="input_kalkulator_1"></div>
+                <div class="input-group"><label for="input_kalkulator_2">Jumlah Ayam Awal</label><input type="number" min="0" max="100000" step="100" id="input_kalkulator_2"></div>
+                <div class="input-group"><label for="input_kalkulator_3">Jumlah Ayam Mati</label><input type="number" min="0" max="100000" id="input_kalkulator_3"></div>
+                <div class="input-group"><label for="input_kalkulator_4">Jumlah Pakan (sak)</label><input type="number" min="0" max="100000" id="input_kalkulator_4"></div>
+                <div class="input-group"><label for="input_kalkulator_5">Bobot Rata-rata</label><input type="number" min="0" max="100000" step="0.1" id="input_kalkulator_5"></div>
+                <div class="input-group"><label for="input_kalkulator_6">Harga Kontrak Ayam</label><input type="number" min="0" max="100000" id="input_kalkulator_6"></div>
+                <div class="input-group"><label for="input_kalkulator_7">Harga Bibit/Ekor</label><input type="number" min="0" max="100000" id="input_kalkulator_7"></div>
+                <div class="input-group"><label for="input_kalkulator_8">Harga Obat dll</label><input type="number" min="0" max="100000000" id="input_kalkulator_8"></div>
+                <div class="input-group"><label for="input_kalkulator_9">Harga Pakan/kg</label><input type="number" min="0" max="100000" id="input_kalkulator_9"></div>
+
+                <div class="output-group">
+                    <h3>hasil Perhitungan :</h3>
+                    <div id="output_group_container"></div>
+                    <div style="color: red;"><span id="output_kalkulator_keterangan"></span></div>
+                    <div id="data_kalkulator_chart" style="display: none;">
+                        <div id="output_group_container_2"></div>
+                        <div id="data_calc_total" style="font-size: large;"></div>
+                        <canvas id="myPieChart" width="400" height="400"></canvas>
+                    </div>
+                    <input type="text" id="input_test_kosong">
+                    <button class="btn-toggle" id="toggleButton2">set</button>
+                </div>
             </div>
         </div>
-    </div>
-    <div style="margin: 15vw;"></div>
-    <a class="maps-button mrg3" href="https://maps.app.goo.gl/4qVmETM1T7DM4zv79" target="_blank">
-        <img src="https://cdn.worldvectorlogo.com/logos/google-maps-2020-icon.svg" alt="Google Maps Icon">
-        Maps Kandang
-      </a>
-    <div id="tks1"></div>
-    <div class="loading_1" id="loading_1"></div>     
-    <div class="mrg3" style="font-size: 3vw;">
-        <h3>Dibuat oleh : Rakha Farandy</h3>    
-    </div>
-    
-    <h3>ThingSpeak, PostgreSQL</h3>
 
-<div id="output"></div>
+        <div class="container txt2">
+            <h2>Mesin Sample Auto</h2>
+            <h5>sample 200 ekor terbaru :</h5>
+            <div id="output_t" style="white-space: pre; font-family: monospace;"></div>
 
-    <pre id="data-output"></pre>
-    <pre id="data-output2"></pre>
-</form> 
-    
-<style>
+            <h2>Sebaran Bobot</h2>
+            <label for="intervalSelect">Pilih Interval:</label>
+            <select id="intervalSelect" style="padding:5px; margin-left:10px;">
+                <option value="10">10 gram</option>
+                <option value="20">20 gram</option>
+                <option value="50">50 gram</option>
+                <option value="100" selected>100 gram</option>
+                <option value="sturges">Auto (Sturges)</option>
+            </select>
+            <table style="width: 100%; margin: 20px 0; border-collapse: collapse; text-align: center;" id="sebaranTable">
+                <thead>
+                    <tr>
+                        <th class="th_">Rentang Bobot (gram)</th>
+                        <th class="th_">Jumlah Sampel</th>
+                        <th class="th_">Persentase</th>
+                        <th class="th_">perkiraan jumlah (ekor)</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+            <canvas id="lineChart"></canvas>
+            <div class="mrg3" id="data_kalkulasi_bobot"></div>
+            <div>data diambil dari mesin timbang automatis dan diupdate setiap menit</div>
+        </div>
 
-</style>
-<script>
-    
-</script>
-<script src="script.js"></script>
+        <div class="container">
+            <button class="btn-toggle" id="toggleButton">Lihat Teks Data</button>
+            <div id="hiddenText" style="display: none;">
+                <div class="wrapper"><div class="card" id="messages" style="overflow-y: auto;"></div></div>
+            </div>
+            <a class="maps-button mrg3" href="https://maps.app.goo.gl/4qVmETM1T7DM4zv79" target="_blank">
+                <img src="https://cdn.worldvectorlogo.com/logos/google-maps-2020-icon.svg" alt="Google Maps Icon">
+                Maps Kandang
+            </a>
+            <div id="tks1"></div>
+            <div class="mrg3" style="font-size: 1rem;"><h3>Dibuat oleh : Rakha Farandy</h3></div>
+            <h3>ThingSpeak, PostgreSQL</h3>
+            <div id="output"></div>
+            <pre id="data-output"></pre>
+            <pre id="data-output2"></pre>
+        </div>
 
+    </section><!-- /manajemen-grid -->
+
+    </div><!-- /page-wrap -->
+
+    <div class="loading_1" id="loading_1"></div>
+
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>

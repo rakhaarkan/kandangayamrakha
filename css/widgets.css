@@ -1,0 +1,375 @@
+/* ==========================================================================
+   widgets.css — styling spesifik per komponen/widget
+   ========================================================================== */
+
+/* --- Gauge (suhu / kelembaban / heat index) ---
+   Mekanisme canvas + ResizeObserver di JS sudah reponsif berbasis persen,
+   jadi cukup pastikan container pembungkusnya diberi lebar wajar oleh
+   parent grid (lihat dashboard.css). Style intinya tidak diubah. */
+.gauge-container {
+  width: 100%;
+  background: white;
+  max-width: 33%;
+  margin: var(--sp-sm) 0 var(--sp-md) 0;
+  text-align: center;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.judul_widget_gauge { text-align: left; margin-left: 5%; }
+
+.canvas-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+}
+
+canvas { width: 100%; height: 100%; display: block; }
+
+.labels_gauge {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 25%;
+  margin-top: -20%;
+}
+
+/* --- Ikon widget (usia ayam, listrik, analisa) --- */
+.gambar_widget {
+  width: 100px;
+  height: 100px;
+  background-size: cover;
+  position: absolute;
+}
+
+.logo_ayam { width: 3.6rem; height: 3.6rem; }
+.logo_listrik { width: 2.9rem; height: 3.9rem; }
+.logo_analisa { width: 4.85rem; height: 4.85rem; }
+
+/* --- Bar power factor --- */
+.progres_bar {
+  width: 8rem;
+  height: 0.6rem;
+  background-color: red;
+  border-radius: 0.3rem;
+}
+
+.progres_bar_listrik { background-color: lightseagreen; }
+
+.keterangan_bar_pf { font-size: var(--fs-sm); margin: 0.2rem; }
+
+/* --- Kipas berputar (ikon animasi) --- */
+.putar {
+  transform: translate(-50%, -50%);
+  animation: rotateSquare 3s linear infinite;
+}
+
+.kipas {
+  width: 2.9rem;
+  height: 2.9rem;
+  top: 50%;
+  position: absolute;
+  background-image: var(--propeller-svg);
+  background-size: cover;
+  transform: translate(-50%, -50%);
+  animation: rotateSquare 1s linear infinite;
+}
+
+.kipas_1 { left: 13%; }
+.kipas_2 { left: 33%; }
+.kipas_3 { left: 50%; }
+.kipas_4 { left: 67%; }
+.kipas_5 { left: 87%; }
+
+.judul_container_kipas {
+  width: auto;
+  height: auto;
+  color: black;
+  margin: var(--sp-lg) 0 0 var(--sp-lg);
+}
+
+.container_kipas {
+  width: 90%;
+  height: 5rem;
+  position: relative;
+  padding: 1px;
+  border: 4px solid black;
+  margin: var(--sp-xs) 5% 0 5%;
+}
+
+.container_keterangan_kipas {
+  top: 10%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  position: relative;
+  padding-left: 6.5%;
+  width: 90%;
+  margin: 0 5% 5% 5%;
+}
+
+.card_keterangan_kipas { width: 3rem; text-align: center; }
+
+/* --- Air tersisa (gelas) --- */
+.water-level-control { display: flex; flex-direction: column; justify-content: center; }
+
+.glass-container { position: relative; width: 8rem; height: 12rem; }
+
+.glass {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 5px solid var(--warna-air-border);
+  border-top: none;
+  border-radius: 0 0 40px 40px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.water {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  bottom: 0;
+  background-color: var(--warna-air);
+}
+
+/* --- Heatmap kandang --- */
+.kandang-container {
+  display: flex;
+  width: 95%;
+  height: 6.1rem;
+  border: 2px solid black;
+  position: relative;
+  overflow: hidden;
+}
+
+.inlet-section {
+  width: 0.75rem;
+  background-color: #add8e6;
+  border-right: 1px solid blue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  color: blue;
+  font-weight: bold;
+  padding: var(--sp-xs);
+}
+
+.heatmap-section {
+  flex-grow: 1;
+  position: relative;
+  background: linear-gradient(to right, rgb(0, 0, 255), rgb(255, 0, 0));
+}
+
+.outlet-section {
+  width: 1rem;
+  border-left: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.kipas-container { display: flex; gap: 5px; align-items: center; }
+.panah-container { position: absolute; width: 100%; height: 100%; top: 0; left: 0; }
+
+.panah {
+  position: absolute;
+  font-size: 2rem;
+  color: white;
+  text-shadow: 1px 1px 2px black;
+  animation: movePanah 4s linear infinite;
+}
+
+.panah:nth-child(1) { top: 5%; animation-delay: 0s; }
+.panah:nth-child(2) { top: 50%; animation-delay: 0s; }
+.panah:nth-child(3) { top: 5%; animation-delay: 2s; }
+.panah:nth-child(4) { top: 50%; animation-delay: 2s; }
+
+@keyframes movePanah {
+  0% { left: -30px; }
+  100% { left: 100%; }
+}
+
+.suhu-label {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  font-size: 1rem;
+  text-shadow: 1px 1px 3px black;
+}
+
+.suhu-label.kiri { left: 0.5rem; }
+.suhu-label.tengah { left: 50%; transform: translate(-50%, -50%); }
+.suhu-label.kanan { right: 0.5rem; }
+
+/* Label "Kandang Atas" di sisi kiri heatmap hanya dipakai di layout desktop
+   (lihat dashboard.css) -- di HP disembunyikan supaya tampilan tetap sama
+   seperti sebelum refactor. */
+.heatmap-label-kiri { display: none; }
+
+/* --- Harga ayam --- */
+.card_harga_ayam {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-md);
+  margin-top: var(--sp-md);
+  padding: var(--sp-md);
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.harga_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  background: white;
+  border-radius: 0.5rem;
+  border-left: 4px solid var(--warna-aksen);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.harga_label { font-weight: 600; color: #333; font-size: 0.9rem; }
+.harga_nilai { font-weight: 700; color: tomato; font-size: 0.9rem; }
+.container h4 { margin-bottom: 0.5rem; color: #333; font-weight: 600; }
+
+/* --- Kalkulator ayam & form input --- */
+.container_input {
+  max-width: 100%;
+  margin: auto;
+  padding: var(--sp-lg);
+  border: 1px solid #ddd;
+  border-radius: var(--radius-sm);
+  background-color: #f9f9f9;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--sp-sm);
+  gap: var(--sp-sm);
+}
+
+.input-group label { flex: 1; min-width: 40%; }
+
+.input-group input {
+  flex: 2;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.output-group { margin-top: var(--sp-lg); }
+
+/* --- Modal input Bakul/DO --- */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 400px;
+  border-radius: var(--radius-sm);
+}
+
+.close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+
+#resultContainer {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+}
+
+.edit-button {
+  background-color: #40e0d0;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 5px 0;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.delete-button {
+  background-color: #ff6347;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.result-item {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 5px;
+  position: relative;
+  max-width: 400px;
+}
+
+.result-item button { display: block; margin-top: 5px; }
+
+/* --- Tabel sebaran bobot --- */
+.th_ { padding: 10px; border: 1px solid #ddd; background-color: #f2f2f2; font-size: 1rem; }
+.td_ { padding: 3px; border: 1px solid #ddd; background-color: #f9f9f9; font-size: 1rem; }
+
+#output_t {
+  white-space: pre-wrap;
+  text-align: left;
+  border-radius: 8px;
+  padding: 8px;
+  margin: 20px 0;
+  line-height: 1.4em;
+  font-size: 15px;
+  overflow-x: auto;
+  border: 1px solid #d9e2f3;
+}
+
+/* --- Tombol maps --- */
+.maps-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #fff;
+  border: 2px solid #4285f4;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+  color: #4285f4;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.maps-button:hover { background-color: #4285f4; color: white; }
+.maps-button img { width: 24px; height: 24px; margin-right: 8px; }
+
+/* --- Tombol umum (dulu inline style, sekarang class) --- */
+.btn-toggle {
+  margin: var(--sp-xs);
+  border: 1px solid #fff;
+  padding: 0.6rem 1rem;
+  background-color: rgb(248, 248, 248);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  width: 100%;
+}

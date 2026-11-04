@@ -1,0 +1,503 @@
+/* ==========================================================================
+   dashboard.css — layout desktop (min-width: 1024px)
+   Di bawah breakpoint ini, semua section mengalir normal seperti versi HP.
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  html, body { height: 100%; }
+  body { overflow-x: hidden; }
+
+  .page-wrap {
+    max-width: var(--dashboard-max-width);
+    margin: 0 auto;
+  }
+
+  /* --- Header dipertipis & isinya dikecilkan khusus di layar lebar --- */
+  .header_container {
+    height: calc(var(--header-height) / 2);
+    padding: 0 var(--sp-lg);
+  }
+  .teks_kandang { font-size: 1.1rem; margin: 0 0 0 5px; }
+  .baris_ayam { font-size: 1.1rem; margin: 0 5px; gap: 6px; }
+  .kipas_mini { width: 16px; height: 16px; }
+  .label_update { font-size: 0.55rem; margin-bottom: 0; }
+  .teks_detail { font-size: 0.75rem; }
+  .indikator_online { width: 0.9rem; height: 0.9rem; }
+
+  /* --- Grid utama dashboard: 3 kolom x 4 baris, masing2 kolom simetris ---
+     kiri: usia / gauge-atas (2 baris) / analisis
+     tengah: grafik (2 baris) / heatmap / air   <- urutan sesuai revisi
+     kanan: gauge-luar / kipas / listrik / harga */
+  #dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr 1fr;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+      "usia       grafik   luar"
+      "gaugeatas  grafik   kipas"
+      "gaugeatas  heatmap  listrik"
+      "analisis   air      harga";
+    gap: var(--sp-xs) var(--sp-sm);
+    height: calc(100vh - (var(--header-height) / 2));
+    max-height: calc(100vh - (var(--header-height) / 2));
+    padding: var(--sp-xs) var(--sp-sm);
+    overflow: hidden;
+  }
+
+  .area-usia { grid-area: usia; }
+  .area-gauge-atas { grid-area: gaugeatas; }
+  .area-gauge-luar { grid-area: luar; }
+  .area-heatmap { grid-area: heatmap; }
+  .area-air { grid-area: air; }
+  .area-grafik { grid-area: grafik; }
+  .area-kipas { grid-area: kipas; }
+  .area-listrik { grid-area: listrik; }
+  .area-analisis { grid-area: analisis; }
+  .area-harga { grid-area: harga; }
+
+  #dashboard-grid > section {
+    margin: 0;
+    padding: 0.3rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+    min-width: 0;
+  }
+
+  #dashboard-grid h3 {
+    font-size: 0.78rem;
+    margin: 0 0 0.15rem 0;
+    padding-top: 0.1rem;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
+  }
+
+  /* Teks & spacing dikecilkan + dijaga tidak meluber keluar kartu */
+  #dashboard-grid, #dashboard-grid * { min-width: 0; }
+  #dashboard-grid .txt1 { font-size: 0.8rem; }
+  #dashboard-grid .txt2 { font-size: 0.72rem; }
+  #dashboard-grid .txt3 { font-size: 0.7rem; }
+  #dashboard-grid .keterangan_huruf {
+    font-size: 0.62rem;
+    margin: 0.1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #dashboard-grid .container_group_widget { padding: 0.2rem; margin: 0.1rem; }
+  #dashboard-grid .card_group_widget { padding: 0.1rem; margin: 0.1rem; }
+  #dashboard-grid .card2 { padding: 0.1rem; margin: 1px; }
+  #dashboard-grid .wrapper_group_widget { gap: 0.2rem; }
+
+  /* --- Kartu gauge (Kandang Ayam Atas): 3 gauge sejajar --- */
+  /* JS membungkus gauge dalam <div class="wrapper"> tambahan di dalam
+     container ini -- makanya grid harus disasarkan ke .wrapper itu, bukan
+     ke #container_gauges_kandang_atas langsung (yang cuma py 1 anak: .wrapper) */
+  .area-gauge-atas #container_gauges_kandang_atas {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+  .area-gauge-atas #container_gauges_kandang_atas .wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.3rem;
+    width: 100%;
+    flex-wrap: unset;
+  }
+  .area-gauge-atas .gauge-container { max-width: 90%; margin: 0 auto; }
+  .area-gauge-atas .judul_widget_gauge { font-size: 0.6rem; }
+
+  /* Kartu gauge (Data Luar Kandang): 2 gauge sejajar */
+  .area-gauge-luar #container_gauges_kandang_luar {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+  .area-gauge-luar #container_gauges_kandang_luar .wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.3rem;
+    width: 100%;
+    flex-wrap: unset;
+  }
+  .area-gauge-luar .gauge-container { max-width: 90%; margin: 0 auto; }
+  .area-gauge-luar .judul_widget_gauge { font-size: 0.6rem; }
+
+  /* --- Usia ayam: kompak & sejajar --- */
+  .area-usia .wrapper { flex-wrap: nowrap; height: 100%; }
+  .area-usia .card_widget { width: auto; flex: 1; display: flex; }
+  .area-usia .container_group_widget { width: 100%; }
+  .area-usia .gambar_widget { width: 1.8rem !important; height: 1.8rem !important; }
+
+  /* --- Analisis Cepat: icon dikecilkan, teks dibuat bisa wrap supaya
+     tidak tumpang tindih atau terpotong --- */
+  /* --- Analisis Cepat: icon persegi ukuran tetap yang cukup besar,
+     teks mengisi sisa ruang di kanan. (Sempat dicoba height:100%+aspect-ratio
+     tapi itu ambigu di flexbox dan bikin ukurannya meledak -- jadi dipakai
+     ukuran rem eksplisit yang jauh lebih aman.) --- */
+  .area-analisis .card2 { flex-shrink: 0; }
+  .area-analisis .wrapper_group_widget {
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+  .area-analisis .gambar_widget {
+    position: static !important;
+    width: 3.6rem !important;
+    height: 3.6rem !important;
+    flex-shrink: 0;
+  }
+  .area-analisis .logo_analisa {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .area-analisis .wrapper_group_widget > div:last-child {
+    flex: 1;
+    min-width: 0;
+  }
+  #dashboard-grid .area-analisis .txt1 {
+    font-size: 0.68rem;
+    white-space: normal;
+    overflow-wrap: break-word;
+    line-height: 1.25;
+  }
+  #dashboard-grid .area-analisis .keterangan_huruf {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+  .area-usia .logo_ayam { width: 1.8rem; height: 1.8rem; }
+  .area-usia .txt1 { font-size: 0.85rem; }
+
+  /* --- Heatmap: baris sejajar (label kiri, heatmap ~80% lebar, keterangan
+     angin di kanan). Di HP, .heatmap-row tetap flow normal (label kiri
+     disembunyikan, keterangan angin tetap di bawah seperti semula). --- */
+  .heatmap-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 1;
+    min-height: 0;
+  }
+  #dashboard-grid .heatmap-label-kiri {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 0.36rem;
+    white-space: nowrap;
+    height: 3.4rem;
+    max-height: 3.6rem;
+    margin: 0;
+    color: var(--warna-teks-muted);
+  }
+  #dashboard-grid .heatmap-label-kanan {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 3.6rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: normal;
+    overflow-wrap: break-word;
+    margin: 0;
+  }
+  .heatmap-label-kanan .heatmap-angin-satuan {
+    font-size: 0.55rem;
+    font-weight: 400;
+  }
+  .area-heatmap .kandang-container {
+    flex: 0 0 80%;
+    width: 80%;
+    max-width: 80%;
+    height: 3.6rem;
+    margin: 0;
+    flex-shrink: 0;
+  }
+  /* Panah & kipas kecil di heatmap dikecilkan lagi khusus desktop --
+     box-nya sekarang jauh lebih pendek (3.6rem) dari mobile (6.1rem) */
+  .area-heatmap .panah { font-size: 0.9rem; }
+  .area-heatmap .outlet-section { width: 0.65rem; }
+  .area-heatmap .suhu-label { font-size: 0.65rem; }
+  .area-heatmap .kipas {
+    width: 0.45rem !important;
+    height: 0.45rem !important;
+  }
+
+  .area-kipas .container_kipas {
+    width: 100%;
+    max-width: 13rem;
+    height: 3.2rem;
+    margin: 0.2rem auto 0 auto;
+    flex-shrink: 0;
+  }
+  .area-kipas .kipas { width: 1.5rem !important; height: 1.5rem !important; }
+
+  /* Keterangan RPM/mode/timer kipas TIDAK ditampilkan di dashboard (hanya di HP) */
+  .area-kipas .container_keterangan_kipas,
+  .area-kipas > div[style*="margin-left"] {
+    display: none;
+  }
+
+  .glass-container { width: 3.2rem; height: 4.6rem; }
+
+  /* --- Grafik: sekarang selalu tampil, tombol toggle disembunyikan --- */
+  .area-grafik #button_bar1 { display: none; }
+  .area-grafik #hidden_chart1 {
+    display: flex !important;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+  .area-grafik canvas#grafik {
+    height: 100% !important;
+    width: 100% !important;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .area-listrik canvas#grafik_lst {
+    display: none; /* sudah menyatu ke grafik utama (area-grafik) di desktop */
+  }
+  .area-listrik h4 { display: none; } /* judul "Power" dilebur, hemat 1 baris */
+
+  /* Icon listrik: dibesarkan & dipersegikan, konsep sama seperti Analisis Cepat */
+  .area-listrik .wrapper_group_widget { align-items: center; }
+  .area-listrik .gambar_widget {
+    position: static !important;
+    width: 3.2rem !important;
+    height: 3.2rem !important;
+    flex-shrink: 0;
+  }
+  .area-listrik .logo_listrik {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Power factor: bar dipadatkan supaya tidak menggeser teks lain ke bawah */
+  .area-listrik .progres_bar { width: 3.2rem; height: 0.35rem; }
+  .area-listrik .keterangan_bar_pf { font-size: 0.55rem; margin: 0 0.15rem; }
+  .area-listrik .card2 > .container_group_widget {
+    flex: 1;
+    min-width: 0;
+  }
+  .area-listrik .card2 .wrapper_group_widget[style*="wrap: wrap"] {
+    flex-wrap: nowrap !important;
+  }
+
+  /* --- Harga ayam: kartu kecil di kanan-bawah --- */
+  .area-harga {
+    justify-content: center;
+  }
+  .area-harga .card_harga_ayam {
+    margin-top: 0.3rem;
+    gap: 0.5rem;
+    padding: 0.6rem;
+    flex: 1;
+    justify-content: center;
+  }
+  .area-harga .harga_item { padding: 0.5rem 0.7rem; }
+  .area-harga .harga_label,
+  .area-harga .harga_nilai { font-size: 0.85rem; }
+
+  /* --- Penanda transisi ke area manajemen --- */
+  .scroll-hint {
+    text-align: center;
+    padding: var(--sp-sm) 0;
+    color: var(--warna-teks-muted);
+    font-size: 0.85rem;
+  }
+
+  /* --- Area manajemen: lebih lega, multi-kolom --- */
+  #manajemen-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: var(--sp-lg);
+    padding: var(--sp-lg);
+    align-items: start;
+  }
+
+  #manajemen-grid .container_input,
+  #manajemen-grid .container,
+  #manajemen-grid .container_bbt {
+    height: 100%;
+  }
+}
+
+@media (min-width: 1440px) {
+  #dashboard-grid { grid-template-columns: 1fr 1.35fr 1fr; }
+}
+/* ==========================================================================
+   MODE HP (< 1024px) — section Usia Ayam / Populasi / Selisih Suhu
+
+   Kiri  : kartu vertikal  [ label · ikon ayam · nilai ]
+   Kanan : teks polos (tanpa kotak) Populasi & Selisih Suhu
+
+   Seluruh blok ada di dalam media query, jadi desktop (>= 1024px) tidak
+   tersentuh sama sekali. Tidak ada perubahan HTML: urutan label/ikon/nilai
+   diatur lewat `display: contents` + `order`.
+   ========================================================================== */
+@media (max-width: 1023.98px) {
+  .area-usia .wrapper {
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: var(--sp-md);
+  }
+
+  /* --- kiri: kartu Usia --- */
+  .area-usia .usia-widget {
+    flex: 0 0 7.5rem;
+    width: 7.5rem;
+    padding: 0;
+    margin: 0;
+  }
+
+  .area-usia .usia-ayam-row {
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--sp-xs);
+    width: 100%;
+    margin: 0;
+    padding: var(--sp-xs);
+    text-align: center;
+  }
+
+  /* bungkus teks "dilebur" agar label & nilai bisa berada di atas/bawah ikon */
+  .area-usia .usia-ayam-text { display: contents; }
+  .area-usia .usia-ayam-text > .txt2 { order: 1; }
+  .area-usia .usia-ayam-row > .gambar_widget { order: 2; flex: none; }
+  .area-usia .usia-ayam-text > .txt1 { order: 3; }
+
+  .area-usia .usia-ayam-text > div {
+    font-size: var(--fs-lg);
+    line-height: 1.3;
+    max-width: 100%;
+    text-wrap: balance;        /* "Selesai Panen" terbagi rata 2 baris, bukan 1 kata menggantung */
+  }
+
+  /* --- kanan: Populasi & Selisih Suhu sebagai teks polos --- */
+  .area-usia .wrapper > .card_widget:not(.usia-widget) {
+    flex: 1 1 0;
+    min-width: 0;              /* boleh menyusut; teks membungkus, tidak meluap */
+    width: auto;
+    padding: 0;
+    margin: 0;
+  }
+
+  .area-usia .wrapper > .card_widget:not(.usia-widget) .container_group_widget {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  /* nilai (kolom ke-2 tabel selisih) tidak boleh terpotong jadi "-" / "Infinity°" */
+  .area-usia #data_selisih td:last-child { white-space: nowrap; }
+}
+
+/* ==========================================================================
+   MODE HP (< 1024px) — card Grafik + Analisis Cepat
+
+   Keduanya tampil sebagai SATU kartu menyatu (tanpa celah/bayangan di antaranya):
+     [ tombol Lihat/Sembunyikan Grafik ] [ caption ] [ grafik 4:3 ]
+     [ Analisis Cepat ] [ ikon | judul + penjelasan + target ] [ kepadatan ]
+
+   Seluruh blok ada di dalam media query -> desktop (>= 1024px) tidak tersentuh.
+   Rasio 4:3 grafik diatur di JS (animasi_chart -> opsiGrafik).
+   ========================================================================== */
+@media (max-width: 1023.98px) {
+
+  /* --- dua section digabung jadi satu kartu --- */
+  .area-grafik,
+  .area-analisis {
+    padding-inline: 0.625rem;
+  }
+  .area-grafik {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    /* buang bayangan DI BAWAH kotak (agar tak ada garis sambungan), tapi ekor bayangan di sisi kiri/kanan
+       dibiarkan menerus ke bawah supaya menyambung mulus dengan bayangan section analisis */
+    clip-path: polygon(-40px -40px, calc(100% + 40px) -40px, calc(100% + 40px) calc(100% + 40px),
+                       100% calc(100% + 40px), 100% 100%, 0 100%, 0 calc(100% + 40px), -40px calc(100% + 40px));
+  }
+  .area-analisis {
+    margin-top: 0;
+    padding-top: 1.4rem;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    clip-path: polygon(-40px -40px, 0 -40px, 0 0, 100% 0, 100% -40px, calc(100% + 40px) -40px,
+                       calc(100% + 40px) calc(100% + 40px), -40px calc(100% + 40px));
+  }
+
+  /* --- tombol + caption + canvas --- */
+  .area-grafik .btn-toggle {
+    display: block;
+    width: calc(100% - 13px);
+    margin: 0 0 0 13px;
+    padding: 0.3rem 1rem;
+    border: 0;
+    font-size: 0.75rem;
+  }
+  .area-grafik #hidden_chart1 { font-size: var(--fs-md); }
+  .area-grafik #grafik { margin-top: 0; }
+
+  /* --- analisis: tanpa kotak bersarang --- */
+  .area-analisis h3 {
+    font-size: var(--fs-lg);
+    margin: 0 0 0.9rem;
+  }
+  .area-analisis .card2 {
+    padding: 0;
+    margin: 0;
+  }
+  .area-analisis .container_group_widget {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  .area-analisis .wrapper_group_widget { align-items: center; }
+
+  /* ikon: kotak 5,4rem, rata tengah vertikal terhadap kolom teks */
+  .area-analisis .card_group_widget {
+    width: auto;
+    margin: 0;
+    padding: 0;
+  }
+  .area-analisis .wrapper_group_widget > .card_group_widget {
+    flex: none;
+    margin: 0 5px 0 20px;
+  }
+  .area-analisis .gambar_widget,
+  .area-analisis .logo_analisa {
+    width: 5.4rem !important;                  /* !important: lebar/tinggi awal ada di atribut style inline HTML */
+    height: 5.4rem !important;
+  }
+
+  /* kolom teks: judul 1.1rem, penjelasan 0.8rem dengan jarak rapat 4px */
+  .area-analisis .wrapper_group_widget > div:last-child {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .area-analisis .wrapper_group_widget .txt1:not(.keterangan_huruf) { font-size: var(--fs-lg); }
+  .area-analisis .keterangan_huruf { margin: var(--sp-2xs); }
+  .area-analisis .wrapper_group_widget > div:last-child > .keterangan_huruf:nth-child(2) { margin-top: 5.5px; }   /* judul -> penjelasan */
+  .area-analisis #dsp { display: block; margin-top: 3px; }             /* "Target Suhu" sedikit lebih renggang dari paragraf */
+  .area-analisis > .keterangan_huruf { margin-top: 1.1rem; }          /* "Kepadatan Ayam" terpisah dari blok di atasnya */
+}

@@ -1,0 +1,299 @@
+/* ==========================================================================
+   base.css — reset, tipografi dasar, header, sidebar, primitif layout
+   Ini adalah "mode HP" (default/mobile-first). Tampilan visualnya dijaga
+   sama seperti versi lama; yang berubah cuma cara nilainya dihitung
+   (rem tetap, bukan vw yang membesar tanpa batas).
+   ========================================================================== */
+
+*, html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--warna-teks);
+  overflow-x: hidden;
+}
+
+/* --- Skala teks lama (dipertahankan agar HTML lama yang masih memakainya tidak patah) --- */
+.tx1 { font-size: 2rem; color: black; }
+.tx2 { font-size: 1.6rem; color: black; }
+.tx3 { font-size: 1.2rem; color: black; }
+.tx4 { font-size: 0.8rem; color: black; }
+.tx5 { font-size: 0.4rem; color: black; }
+.tx6 { font-size: 2rem; color: black; }
+.tx7 { font-size: 1.6rem; color: black; }
+.tx8 { font-size: 0.6rem; color: black; }
+.tx9 { font-size: 0.4rem; color: black; }
+.tx10 { font-size: 0.2rem; color: black; }
+
+.txt1 { font-size: var(--fs-2xl); }
+.txt2 { font-size: var(--fs-xl); }
+.txt3 { font-size: var(--fs-lg); }
+.txt4 { font-size: var(--fs-md); }
+.txt5 { font-size: var(--fs-sm); }
+.txt6 { font-size: var(--fs-xs); }
+
+/* --- Loading spinner --- */
+.loading_1 {
+  position: fixed;
+  z-index: 9999;
+  top: 50%;
+  left: 50%;
+  width: 3rem;
+  height: 3rem;
+  background-image: var(--propeller-svg);
+  background-size: cover;
+  transform: translate(-50%, -50%);
+  animation: rotateSquare 1s linear infinite;
+  display: block;
+}
+
+/* --- Header --- */
+.header_container {
+  display: flex;
+  width: 100%;
+  height: var(--header-height);
+  background: #ffffff;
+  padding: 0 20px;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--warna-border);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.3);
+}
+
+.judul_group { display: flex; flex-direction: column; justify-content: center; }
+
+.teks_kandang {
+  margin: 5px 0 0 5px;
+  font-size: 1.875rem;
+  font-weight: 400;
+  color: #000;
+  line-height: 1;
+}
+
+.baris_ayam {
+  margin: 5px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.875rem;
+  font-weight: 400;
+}
+
+.kipas_mini {
+  width: 22px;
+  height: 22px;
+  background-image: var(--propeller-svg);
+  background-size: cover;
+  animation: rotate 2s linear infinite;
+}
+
+.status_info_group { display: flex; align-items: center; gap: 15px; }
+.waktu_stack { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.label_update { font-size: 0.6rem; color: var(--warna-teks-muted); margin-bottom: 2px; }
+.teks_detail { font-size: 0.95rem; font-weight: 500; color: #000; }
+.status_box { display: flex; align-items: center; }
+
+.indikator_online {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  background-color: rgb(59, 225, 89);
+  border-radius: 10%;
+  display: flex;
+  justify-content: center;
+}
+
+#data-container { color: black; font-size: 10px; }
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rotateSquare {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@media (max-width: 600px) {
+  .teks_kandang, .baris_ayam { font-size: 1.3rem; }
+  .teks_detail { font-size: 0.8rem; }
+  .header_container { padding: 0 10px; }
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgb(248, 248, 248);
+  overflow-x: hidden;
+  transition: 0.3s;
+  padding-top: 10px;
+  z-index: 1000;
+}
+
+.sidebar a {
+  padding: 10px 15px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #111;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidebar a:hover { background-color: #575757; color: white; }
+
+.open-btn {
+  position: fixed;
+  top: 40vh;
+  left: 0;
+  width: 20px;
+  height: 80px;
+  background-color: #5f5f5f;
+  color: white;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  clip-path: polygon(0 0, 100% 30%, 100% 70%, 0 100%);
+  transition: 0.3s;
+  z-index: 1100;
+}
+
+.open-btn:hover { background-color: #282828; }
+.open-btn.active { left: 250px; }
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.overlay.active { display: block; }
+
+/* --- Primitif layout umum (dipakai berulang di banyak widget) --- */
+.container {
+  width: auto;
+  height: auto;
+  padding: var(--sp-sm) var(--sp-md);
+  color: black;
+  margin: var(--sp-md);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-lg);
+}
+
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: left;
+  width: auto;
+  height: auto;
+}
+
+.card {
+  width: auto;
+  height: auto;
+  color: black;
+  padding: var(--sp-xs);
+  margin: var(--sp-xs);
+}
+
+.card2 {
+  display: flex;
+  flex-wrap: nowrap;
+  width: auto;
+  height: auto;
+  color: black;
+  padding: var(--sp-xs);
+  margin: 1px;
+}
+
+.card_widget {
+  width: 30%;
+  height: auto;
+  color: black;
+  padding: 1%;
+  margin: 1px;
+}
+
+/* Kartu usia ayam: baris icon + teks (bukan lagi 3 baris ditumpuk ke bawah) */
+.usia-ayam-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.usia-ayam-text {
+  min-width: 0;
+  line-height: 1.2;
+}
+.usia-widget { width: 48%; }
+
+.judul_widget { font-size: calc(var(--fs-lg) * var(--rasio-gauge)); }
+
+.container_group_widget {
+  width: 100%;
+  height: auto;
+  padding: 1%;
+  color: black;
+  margin: 1%;
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-lg);
+  font-size: 1rem;
+}
+
+.wrapper_group_widget {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: auto;
+  height: auto;
+}
+
+.card_group_widget {
+  color: black;
+  padding: 1%;
+  margin: 1%;
+  font-size: 1rem;
+  border-radius: 10px;
+}
+
+.tengah {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.keterangan_huruf {
+  font-size: var(--fs-sm);
+  margin: var(--sp-xs);
+  padding: 1px;
+}
+
+.mrg3 { margin: var(--sp-lg); }
+
+/* CSS asli tidak pernah menata h3 secara eksplisit (mengandalkan ukuran
+   default browser, ~1.5rem) -- di kartu yang sekarang lebih ringkas,
+   ukuran itu jadi terlalu besar dan bikin kartu memanjang. Diberi ukuran
+   proporsional di sini; dashboard.css mengecilkannya lagi khusus desktop. */
+.container h3,
+.container_input h3 {
+  font-size: 1.05rem;
+  margin: 0 0 0.4rem 0;
+  line-height: 1.2;
+}

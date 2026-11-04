@@ -1,0 +1,50 @@
+/* ==========================================================================
+   tokens.css — variabel desain terpusat
+   Semua ukuran vw yang dulu tersebar di style.css dikalibrasi ulang jadi
+   rem tetap (referensi lebar HP ~390px) supaya tampilan HP tetap sama,
+   tapi tidak lagi membesar tak terkendali di layar lebar.
+   ========================================================================== */
+
+:root {
+  /* --- Warna --- */
+  --bg-primary: white;
+  --bg-secondary: #222;
+  --txt-putih: white;
+  --warna-teks: #000;
+  --warna-teks-muted: #666;
+  --warna-border: #eee;
+  --warna-aksen: #ff6b6b;
+  --warna-air: #00b4d8;
+  --warna-air-border: #0077b6;
+
+  /* --- Aset --- */
+  --propeller-svg: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 320.001 320.001'><path d='M270.284,86.478c-28.856,0-57.708,21.743-75.186,37.922c-5.953-5.87-13.372-10.249-21.658-12.558c6.697-14.545,19.465-25.857,32.511-34.555c27.571-18.381,24.65-49.542,0-64.333C160-14.617,86.477,3.764,86.477,49.716c0,28.856,21.743,57.708,37.922,75.186c-5.87,5.953-10.249,13.372-12.557,21.657c-14.546-6.697-25.859-19.465-34.556-32.511c-18.38-27.57-49.541-24.65-64.332,0C-14.617,160,3.764,233.523,49.716,233.523c28.856,0,57.709-21.743,75.186-37.922c5.953,5.87,13.372,10.249,21.657,12.557c-6.697,14.546-19.465,25.858-32.51,34.556c-27.571,18.381-24.651,49.542,0,64.333c45.952,27.571,119.475,9.19,119.475-36.762c0-28.856-21.743-57.709-37.922-75.186c5.87-5.953,10.249-13.372,12.557-21.657c14.546,6.697,25.859,19.465,34.556,32.511c18.38,27.57,49.542,24.65,64.333,0C334.617,160,316.236,86.478,270.284,86.478z M160,180c-11.045,0-20-8.954-20-20s8.955-20,20-20s20,8.954,20,20S171.045,180,160,180z'/></svg>");
+
+  /* --- Skala tipografi (dikalibrasi dari vw lama di viewport ~390px) --- */
+  --fs-2xl: 1.6rem;   /* dulu txt1 4.2vw */
+  --fs-xl: 1.35rem;   /* dulu txt2 3.5vw */
+  --fs-lg: 1.1rem;    /* dulu txt3 2.8vw */
+  --fs-md: 0.95rem;   /* dulu txt4 2.1vw */
+  --fs-sm: 0.8rem;    /* dulu txt5 1.4vw / keterangan_huruf */
+  --fs-xs: 0.7rem;    /* dulu txt6 0.7vw & label kecil */
+
+  /* --- Skala spacing --- */
+  --sp-2xs: 0.25rem;
+  --sp-xs: 0.5rem;
+  --sp-sm: 0.75rem;
+  --sp-md: 1rem;
+  --sp-lg: 1.5rem;
+  --sp-xl: 2rem;
+  --sp-2xl: 3rem;
+
+  /* --- Radius & shadow --- */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+  /* --- Layout --- */
+  --rasio-gauge: 1.1;
+  --dashboard-max-width: 1400px;
+  --header-height: 90px;
+}
