@@ -876,17 +876,28 @@ export function animasi_chart() {
                     }]
                 },
                 options: {
+                    // Font & legenda sedikit lebih besar agar terbaca di HP (sama seperti grafik utama)
+                    font: { size: 13 },
+                    plugins: { legend: { labels: { boxWidth: 45, padding: 12, font: { size: 13.7 } } } },
                     scales: {
                         y3: {
-                            min: 0,
+                            // tanpa min:0 -> sumbu menyesuaikan rentang data (mis. 1,2 - 2,4) sehingga
+                            // perubahan konsumsi terlihat jelas; tick dibatasi maksimal 4 supaya tidak padat
                             suggestedMax: Math.max(...values_y3) + 0.1,
                             type: 'linear',
                             display: true,
                             position: 'right',
-                            ticks: { color: 'rgba(179, 112, 5,1)' },
+                            ticks: {
+                                color: 'rgba(179, 112, 5,1)',
+                                padding: 7.5,
+                                stepSize: langkahTick(Math.min(...values_y3), Math.max(...values_y3) + 0.1, 4)
+                            },
                             grid: { display: false }
                         },
-                        x: { grid: { display: false } }
+                        x: {
+                            grid: { display: false },
+                            ticks: { maxTicksLimit: 12, minRotation: 50, maxRotation: 50, padding: 7.5 }
+                        }
                     },
                 }
             });
@@ -900,6 +911,17 @@ export function animasi_chart() {
         state.button_bar1.textContent = "Sembunyikan Grafik";
         state.x1 = 1;
     }
+}
+
+// Pilih langkah tick yang "rapi" supaya jumlah tick (dari kelipatan langkah di bawah min sampai di atas max)
+// tidak lebih dari maksTick. Dipakai grafik listrik di HP.
+function langkahTick(min, max, maksTick = 4) {
+    const kandidat = [0.1, 0.2, 0.25, 0.4, 0.5, 1, 2, 2.5, 4, 5, 10, 20, 25, 40, 50, 100, 200, 250, 400, 500, 1000];
+    for (const k of kandidat) {
+        const jumlah = Math.ceil(max / k - 1e-9) - Math.floor(min / k + 1e-9) + 1;
+        if (jumlah <= maksTick) return k;
+    }
+    return kandidat[kandidat.length - 1];
 }
 
 export function gsa(x){

@@ -501,3 +501,154 @@
   .area-analisis #dsp { display: block; margin-top: 3px; }             /* "Target Suhu" sedikit lebih renggang dari paragraf */
   .area-analisis > .keterangan_huruf { margin-top: 1.1rem; }          /* "Kepadatan Ayam" terpisah dari blok di atasnya */
 }
+
+/* ==========================================================================
+   MODE HP (< 1024px) — card Daya Listrik
+
+   Dua kartu info (Power | Power Factor/Energy/Freq) sejajar, grafik konsumsi
+   listrik di bawahnya, lalu "Total Listrik perhari". Di dalam media query ->
+   desktop (>= 1024px) tidak tersentuh.
+   ========================================================================== */
+@media (max-width: 1023.98px) {
+  .area-listrik { padding-inline: 0.625rem; }
+
+  .area-listrik h3 {
+    font-size: var(--fs-lg);
+    margin-bottom: 0.6rem;
+  }
+
+  /* --- dua kartu info sejajar (masing-masing 45% lebar, sisa kosong di kanan) --- */
+  .area-listrik .card2:not(.txt3) {
+    padding: 0 0 0 2.4%;
+    margin: 0;
+    gap: 2.1%;
+  }
+  .area-listrik .card2:not(.txt3) > .container_group_widget {
+    flex: none;
+    width: 46.2%;
+    margin: 0;
+    padding: 5.4px 3.6px 3.6px;
+  }
+
+  .area-listrik h4 {                         /* "Power" */
+    font-size: var(--fs-lg);
+    margin-bottom: 0.64rem;
+  }
+
+  /* baris data: jarak rapat 4px, dan ada spasi antar-<span> ("Daya : 1528.7 W") */
+  .area-listrik .keterangan_huruf { margin: var(--sp-2xs); white-space: nowrap; }
+  .area-listrik .keterangan_huruf span + span { margin-left: 0.27em; }
+
+  /* kartu kiri: ikon sedikit masuk dari tepi, jarak ke teks lebih lega */
+  .area-listrik .card2:not(.txt3) > .container_group_widget:first-child .wrapper_group_widget > .card_group_widget {
+    margin: 4.8px 5.8px 1.66px 3.9px;        /* atas sedikit lebih besar -> ikon sejajar dengan tengah 3 baris data */
+  }
+
+  /* kartu kanan: bar Power Factor sedikit lebih lebar & rata kiri; Energy/Freq lebih dekat ke bar */
+  .area-listrik .progres_bar { width: 8.15rem; }
+  .area-listrik .keterangan_bar_pf:first-child { margin-left: 0; }
+  .area-listrik .card2:not(.txt3) > .container_group_widget:last-child > .wrapper_group_widget > div:last-child {
+    margin-top: -3.5px;      /* hanya blok Energy/Freq (anak langsung), bukan baris di dalam bar */
+  }
+
+  /* --- grafik konsumsi + total --- */
+  .area-listrik #grafik_lst { margin-top: 8.7px; }
+  .area-listrik .card2.txt3 {
+    font-size: 0.75rem;
+    margin: 0;
+    padding: 0 0 15px 5.2px;
+  }
+}
+
+/* --- card Daya Listrik — layar sempit (<= 425px): kartu berbagi lebar sama, isi dirapatkan --- */
+@media (max-width: 425px) {
+  .area-listrik .card2:not(.txt3) {
+    padding-left: 0;
+    gap: 8px;
+  }
+  .area-listrik .card2:not(.txt3) > .container_group_widget {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;                            /* membatalkan min-width bawaan kartu */
+  }
+  .area-listrik .keterangan_huruf { font-size: 0.72rem; }
+  .area-listrik .gambar_widget {
+    width: 2.2rem !important;                /* !important: ukuran awal ada di atribut style inline HTML */
+    height: 3rem !important;
+  }
+  .area-listrik .card2:not(.txt3) > .container_group_widget:first-child .wrapper_group_widget > .card_group_widget {
+    margin: 4.8px 3px 1.66px 1px;
+  }
+  .area-listrik .progres_bar { width: 5.6rem; }
+}
+
+/* --- card Daya Listrik — layar sangat sempit (<= 340px): dua kartu disusun atas-bawah --- */
+@media (max-width: 340px) {
+  .area-listrik .card2:not(.txt3) { flex-wrap: wrap; }
+  .area-listrik .card2:not(.txt3) > .container_group_widget {
+    flex: 1 1 100%;
+    margin-bottom: 8px;
+  }
+  .area-listrik .keterangan_huruf { font-size: 0.8rem; }
+  .area-listrik .gambar_widget { width: 2.9rem !important; height: 3.9rem !important; }
+  .area-listrik .progres_bar { width: 8.15rem; }
+}
+
+/* ==========================================================================
+   MODE HP (< 1024px) — card Kipas
+
+   Judul, kotak 5 kipas selebar penuh, angka di bawah tiap kipas (5 kolom sama
+   lebar), "Mode/Timer Kipas", lalu tombol detail bergaya tombol bawaan browser.
+   Di dalam media query -> desktop (>= 1024px) tidak tersentuh.
+   ========================================================================== */
+@media (max-width: 1023.98px) {
+  .area-kipas { padding-inline: 0.35rem; }
+
+  .area-kipas .judul_container_kipas { margin: 0; }
+  .area-kipas .judul_container_kipas h3 { font-size: var(--fs-xl); }
+
+  .area-kipas .container_kipas {
+    width: 100%;
+    height: 5.3rem;
+    margin: 0.45rem 0 0;
+  }
+
+  /* angka di bawah kipas: 5 kolom sama lebar (grid), sedikit masuk dari kiri */
+  .area-kipas .container_keterangan_kipas {
+    top: 0;
+    width: 87.4%;
+    margin: 0 0 5% 4%;
+    padding-left: 0;
+  }
+  .area-kipas .card_keterangan_kipas {
+    width: auto;
+    font-size: var(--fs-xl);
+  }
+
+  /* Mode/Timer: rata kiri penuh (margin-left inline di HTML ditimpa) */
+  .area-kipas > div[style*="margin-left"] {
+    margin-left: 0 !important;
+    font-size: 1.12rem;
+  }
+
+  /* tombol detail: gaya tombol bawaan browser, ringkas */
+  .area-kipas #button_detail_kipas {
+    width: auto;
+    margin: 0;
+    padding: 0.1rem 1px;
+    background-color: #efefef;
+    border: 1px solid #767676;
+    border-radius: 3px;
+    color: #000;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+}
+
+/* --- card Kipas — layar sangat sempit (<= 340px): ikon kipas diperkecil agar tidak saling menyentuh --- */
+@media (max-width: 340px) {
+  .area-kipas .kipas {
+    width: 2.5rem !important;                /* !important: ukuran kipas 1 dan 5 ada di atribut style inline HTML */
+    height: 2.5rem !important;
+  }
+}
