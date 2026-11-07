@@ -11,8 +11,62 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script>
+window.loadChartLibraries = async function () {
+    const libraries = [
+        {
+            name: "Chart.js",
+            cdn: "https://cdn.jsdelivr.net/npm/chart.js@4.6.1/dist/chart.umd.min.js",
+            local: "/vendor/chart.umd.min.js"
+        },
+        {
+            name: "Chart.js DataLabels",
+            cdn: "https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js",
+            local: "/vendor/chartjs-plugin-datalabels.min.js"
+        }
+    ];
+
+    function loadScript(url) {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+
+            script.src = url;
+            script.onload = resolve;
+            script.onerror = () => {
+                script.remove();
+                reject(new Error("Gagal memuat " + url));
+            };
+
+            document.head.appendChild(script);
+        });
+    }
+
+    for (const library of libraries) {
+        let loaded = false;
+
+        for (const source of [library.cdn, library.local]) {
+            try {
+                await loadScript(source);
+                console.log(`${library.name} berhasil dimuat: ${source}`);
+                loaded = true;
+                break;
+            } catch (error) {
+                console.warn(`${library.name} gagal dimuat: ${source}`);
+            }
+        }
+
+        if (!loaded) {
+            throw new Error(`${library.name} tidak dapat dimuat.`);
+        }
+    }
+
+    if (!window.Chart || !window.ChartDataLabels) {
+        throw new Error("Library Chart.js tidak lengkap.");
+    }
+
+    console.log("Semua library grafik siap digunakan.");
+};
+</script>
 </head>
 <body>
     <button id="menuBtn" class="open-btn">☰</button>
@@ -371,6 +425,9 @@
 
     <div class="loading_1" id="loading_1"></div>
 
-    <script type="module" src="/js/main.js"></script>
+   <script type="module">
+        await window.loadChartLibraries();
+        await import("/js/main.js");
+    </script>
 </body>
 </html>
