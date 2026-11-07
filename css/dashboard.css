@@ -433,15 +433,16 @@
     /* buang bayangan DI BAWAH kotak (agar tak ada garis sambungan), tapi ekor bayangan di sisi kiri/kanan
        dibiarkan menerus ke bawah supaya menyambung mulus dengan bayangan section analisis */
     clip-path: polygon(-40px -40px, calc(100% + 40px) -40px, calc(100% + 40px) calc(100% + 40px),
-                       100% calc(100% + 40px), 100% 100%, 0 100%, 0 calc(100% + 40px), -40px calc(100% + 40px));
+                       100% calc(100% + 40px), 100% calc(100% - 1px), 0 calc(100% - 1px), 0 calc(100% + 40px), -40px calc(100% + 40px));
   }
   .area-analisis {
     margin-top: 0;
+    margin-bottom: 0;
     padding-top: 1.4rem;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    clip-path: polygon(-40px -40px, 0 -40px, 0 0, 100% 0, 100% -40px, calc(100% + 40px) -40px,
-                       calc(100% + 40px) calc(100% + 40px), -40px calc(100% + 40px));
+    border-radius: 0;
+    /* bagian tengah kartu gabungan: bayangan di atas DAN di bawah kotak dibuang, ekor bayangan sisi dibiarkan menerus */
+    clip-path: polygon(-40px -40px, 0 -40px, 0 1px, 100% 1px, 100% -40px, calc(100% + 40px) -40px,
+                       calc(100% + 40px) calc(100% + 40px), 100% calc(100% + 40px), 100% calc(100% - 1px), 0 calc(100% - 1px), 0 calc(100% + 40px), -40px calc(100% + 40px));
   }
 
   /* --- tombol + caption + canvas --- */
@@ -455,6 +456,10 @@
   }
   .area-grafik #hidden_chart1 { font-size: var(--fs-md); }
   .area-grafik #grafik { margin-top: 0; }
+  /* Chart.js (aspectRatio 4:3) tidak membiarkan tinggi kanvas melebihi tinggi kontainernya yang masih "auto"
+     (= kanvas + baris caption). Tanpa tinggi minimum ini kanvas tumbuh bertahap, +1 baris caption per siklus
+     resize, selama beberapa detik. Tinggi minimum = tinggi 4:3 dari lebar konten (100vw - margin 32 - padding 20). */
+  .area-grafik #hidden_chart1 { min-height: calc((100vw - 52px) * 0.75 + 20px); }
 
   /* --- analisis: tanpa kotak bersarang --- */
   .area-analisis h3 {
@@ -651,4 +656,54 @@
     width: 2.5rem !important;                /* !important: ukuran kipas 1 dan 5 ada di atribut style inline HTML */
     height: 2.5rem !important;
   }
+}
+
+/* ==========================================================================
+   MODE HP (< 1024px) — card Heatmap
+
+   Menjadi bagian bawah kartu gabungan Grafik + Analisis Cepat + Heatmap
+   (posisi di HTML: tepat setelah section Analisis). Di dalam media query ->
+   desktop (>= 1024px) tidak tersentuh.
+   ========================================================================== */
+@media (max-width: 1023.98px) {
+  .area-heatmap {
+    padding-inline: 0.625rem;
+    padding-top: 1.4rem;
+    padding-bottom: 2rem;
+    margin-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    clip-path: polygon(-40px -40px, 0 -40px, 0 1px, 100% 1px, 100% -40px, calc(100% + 40px) -40px,
+                       calc(100% + 40px) calc(100% + 40px), -40px calc(100% + 40px));
+  }
+  .area-heatmap h3 {
+    font-size: var(--fs-lg);
+    margin-bottom: 1.55rem;
+  }
+
+  .area-heatmap .kandang-container {
+    width: 93.7%;
+    height: 6.7rem;
+  }
+  .area-heatmap .inlet-section {
+    padding: 0;
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+
+  /* label suhu kecil di dasar kotak */
+  .area-heatmap .suhu-label {
+    top: 90%;
+    font-size: 0.7rem;
+  }
+  .area-heatmap .suhu-label.kiri  { left: 0.25rem; }
+  .area-heatmap .suhu-label.kanan { right: 0.25rem; }
+
+  /* keterangan angin di bawah kotak: "Kecepatan Angin : 1.0 m/dtk" */
+  .area-heatmap .heatmap-label-kanan::before { content: "Kecepatan Angin : "; }
+  .area-heatmap .heatmap-label-kanan { margin: 1.45rem 0 0 0.8rem; }
+
+  /* dua baris panah lebih rapat (jarak ±42px) */
+  .area-heatmap .panah:nth-child(odd)  { top: calc(5% + 1.6px); }
+  .area-heatmap .panah:nth-child(even) { top: calc(50% - 4.8px); }
 }
