@@ -11,77 +11,49 @@ import {
     getColorForTemperatureHSL, ambilValid
 } from './utils.js';
 
-export async function data_thingspeak(){
+// Sumber data ditentukan dari alamat halaman:
+//  - versi Netlify   -> ThingSpeak, interval tetap 3 detik
+//  - versi lokal/Pi  -> endpoint /api/dataweb, interval 1 detik
+const MODE_NETLIFY = location.hostname === "kandangayamrakha.netlify.app";
+export const INTERVAL_DATA_MS = MODE_NETLIFY ? 3000 : 1000;
+let sedangAmbilData = false;
 
-    const lan_url = "http://192.168.0.156:8080/api/dataweb";
-    const ts_url  = "https://api.thingspeak.com/channels/2172969/feeds.json?results=1";
-
-    let data; 
-
+async function ambilDataweb() {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3000);
     try {
-
-        // ----------- LAN REQUEST DENGAN TIMEOUT -------------
-        // Hanya jalankan jika cookie owner adalah "1"
-        if (getCookie("owner") == "1") {
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 1500); // 1.5 detik
-
-            const response = await fetch(lan_url, { signal: controller.signal });
-            clearTimeout(timeout);
-
-            if(!response.ok) throw new Error("LAN response error");
-
-            const data = await response.json();
-
-            console.log("Data dari LAN");
-
-            // ambil timestamp
-            state.penampung_data_waktu = data.created_at;
-
-            // kirim seluruh JSON ke parser
-            penguraiJson(data);
-
-            document.getElementById('messages').innerHTML = JSON.stringify(data).slice(0,120);
-        } else {
-            // Bukan mode owner, lempar error agar langsung ke ThingSpeak
-            throw new Error("Bukan owner mode");
-        }
-
+        const response = await fetch("/api/dataweb", { signal: controller.signal, cache: "no-store" });
+        if (!response.ok) throw new Error("dataweb HTTP " + response.status);
+        const data = await response.json();
+        state.penampung_data_waktu = data.created_at;
+        penguraiJson(data);
+        document.getElementById('messages').innerHTML = JSON.stringify(data).slice(0, 120);
+    } finally {
+        clearTimeout(timeout);
     }
-    catch(err){
-        
-        console.log("LAN gagal, fallback ke ThingSpeak");
+}
 
-        // ----------- FALLBACK KE THINGSPEAK ----------------
-        try {
+async function ambilThingspeak() {
+    const ts_url = "https://api.thingspeak.com/channels/2172969/feeds.json?results=1";
+    const response = await fetch(ts_url);
+    const tsdata = await response.json();
+    const f = tsdata.feeds[0];
+    state.penampung_data_waktu = f.created_at;
+    penguraiJson((f.field1 ?? "") + (f.field2 ?? "") + (f.field3 ?? "") + (f.field4 ?? "") +
+                 (f.field5 ?? "") + (f.field6 ?? "") + (f.field7 ?? "") + (f.field8 ?? ""));
+    document.getElementById('messages').innerHTML = f.field1 + f.field2 + f.field3 + f.field4;
+}
 
-            const response = await fetch(ts_url);
-            const tsdata = await response.json();
-
-            const lastUpdateTime = tsdata.feeds[0].created_at;
-            state.penampung_data_waktu = lastUpdateTime;
-
-            const f = tsdata.feeds[0];
-
-            var penampung_json_thingspeak =
-                (f.field1 ?? "") +
-                (f.field2 ?? "") +
-                (f.field3 ?? "") +
-                (f.field4 ?? "") +
-                (f.field5 ?? "") +
-                (f.field6 ?? "") +
-                (f.field7 ?? "") +
-                (f.field8 ?? "");
-
-            penguraiJson(penampung_json_thingspeak);
-
-            document.getElementById('messages').innerHTML =
-                f.field1 + f.field2 + f.field3 + f.field4;
-
-        }
-        catch(e){
-            console.error("ThingSpeak juga gagal:", e);
-        }
+export async function data_thingspeak(){
+    if (sedangAmbilData) return;   // jangan menumpuk request bila yang sebelumnya belum selesai
+    sedangAmbilData = true;
+    try {
+        if (MODE_NETLIFY) await ambilThingspeak();
+        else await ambilDataweb();
+    } catch (err) {
+        console.error("Gagal mengambil data:", err);
+    } finally {
+        sedangAmbilData = false;
     }
 
     // ---------- kode yang tetap sama ----------
@@ -1828,4 +1800,4 @@ export function isilkanDataHargaAyam() {
 
     document.getElementById("harga_kurang_2kg").innerText = dataHargaAyam["Ayam < 2 Kg"];
     document.getElementById("harga_lebih_2kg").innerText = dataHargaAyam["Ayam > 2 Kg"];
-}
+}

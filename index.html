@@ -44,7 +44,7 @@ window.loadChartLibraries = async function () {
     for (const library of libraries) {
         let loaded = false;
 
-        for (const source of [library.cdn, library.local]) {
+        for (const source of [library.local, library.cdn]) {
             try {
                 await loadScript(source);
                 console.log(`${library.name} berhasil dimuat: ${source}`);

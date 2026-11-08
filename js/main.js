@@ -5,7 +5,7 @@ import { state } from './state.js';
 import { setCookie, getCookie, capitalizeWords, formatPlatNomor } from './utils.js';
 import { initSidebar } from './sidebar.js';
 import {
-    data_thingspeak, data_thingspeak_2, eksekutor, keterangan_air, loadA1,
+    data_thingspeak, INTERVAL_DATA_MS, data_thingspeak_2, eksekutor, keterangan_air, loadA1,
     wkt_on, setDefaultValue, fetchData, postData, createPieChart, setAnimasiPanah,
     pasangPelacakInputKalkulator
 } from './app.js';
@@ -15,7 +15,8 @@ pasangPelacakInputKalkulator();
 
 //Math.floor(randomFraction * (5000 - 2000 + 1)) + 2000;
 
-setInterval(data_thingspeak,state.randomValue);
+data_thingspeak();   // data pertama langsung, tidak menunggu interval
+setInterval(data_thingspeak, INTERVAL_DATA_MS);
 setInterval(eksekutor,100);
 setInterval(keterangan_air, 8000);
 setInterval(loadA1, 10000);
@@ -177,4 +178,4 @@ window.addEventListener('DOMContentLoaded', fetchData());
         // HSL (Hue, Saturation, Lightness) sangat cocok untuk pelangi.
         // Hue 240 = Biru (Dingin), Hue 0 = Merah (Panas)
 
-setAnimasiPanah(4, [0, 0, 2, 2]);
+setAnimasiPanah(4, [0, 0, 2, 2]);
