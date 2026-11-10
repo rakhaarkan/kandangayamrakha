@@ -373,3 +373,69 @@ canvas { width: 100%; height: 100%; display: block; }
   cursor: pointer;
   width: 100%;
 }
+
+/* ==========================================================================
+   Pop up "Data kalkulator diperbarui" (muncul saat nilai mtd berubah).
+   Elemen dibuat oleh JS (periksaPerubahanMtd) dan baru ada setelah terjadi perubahan,
+   jadi tidak memengaruhi layout apa pun yang sudah ada.
+   ========================================================================== */
+.popup-kalkulator {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  left: 50%;
+  z-index: 10000;
+  width: min(92vw, 360px);
+  padding: 12px 14px;
+  background: #fff;
+  color: #000;
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  font-size: var(--fs-sm);
+  transform: translate(-50%, -140%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.popup-kalkulator.tampil {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.popup-kalkulator .popup-kepala {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: var(--fs-md);
+}
+.popup-kalkulator .popup-tutup {
+  border: 0;
+  background: transparent;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 0 4px;
+  cursor: pointer;
+  color: #555;
+}
+.popup-kalkulator .popup-daftar {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.popup-kalkulator .popup-daftar li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+.popup-kalkulator .popup-nilai { text-align: right; white-space: nowrap; }
+.popup-kalkulator .popup-catatan {
+  margin: 6px 0 0;
+  font-size: var(--fs-xs);
+  color: #555;
+}
+@media (prefers-reduced-motion: reduce) {
+  .popup-kalkulator { transition: none; }
+}

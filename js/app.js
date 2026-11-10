@@ -189,6 +189,8 @@ export function penguraiJson(dataHttp) {
 
     // Coba isi kalkulator (per kolom, hanya yang datanya sudah valid & belum diketik user)
     jalankanAman('isi-kalkulator', () => isiDefaultKalkulator(false));
+    // Nilai mtd berubah? -> muat ulang kolom kalkulator terkait + pop up
+    jalankanAman('perubahan-mtd', periksaPerubahanMtd);
 }
 
 // =====================================================================
@@ -1192,6 +1194,110 @@ export function setDefaultValue() {
     state.kalkulatorTerisi.clear();
     isiDefaultKalkulator(true);
     createPieChart();
+}
+
+// ---------------------------------------------------------------------
+//  Perubahan data "mtd" -> muat ulang kalkulator + pop up
+//
+//  "mtd" adalah data ayam & harga dari server (Pi / ThingSpeak). Hanya indeks yang menjadi sumber
+//  kolom kalkulator yang dipantau. Bila nilainya berubah di antara dua pengambilan data:
+//    1) kolom kalkulator yang bersangkutan diisi ulang dengan nilai baru, dan
+//    2) muncul pop up berisi apa saja yang berubah.
+//  Kolom yang sumbernya TIDAK berubah dibiarkan, termasuk yang sedang Anda ubah manual.
+//  Indeks lain di mtd (bobot, blok kandang, jumlah dipanen, harga pasar) tidak mengisi kalkulator,
+//  jadi perubahannya tidak memicu pop up ini.
+// ---------------------------------------------------------------------
+const SUMBER_MTD = [
+    // i = indeks di array mtd, id = kolom kalkulator, rupiah = ditampilkan sebagai Rp
+    { i: 0, id: 'input_kalkulator_9', nama: 'Harga Pakan/kg',     rupiah: true },
+    { i: 1, id: 'input_kalkulator_2', nama: 'Jumlah Ayam Awal' },
+    { i: 2, id: 'input_kalkulator_8', nama: 'Harga Obat dll',     rupiah: true },
+    { i: 3, id: 'input_kalkulator_3', nama: 'Jumlah Ayam Mati' },
+    { i: 4, id: 'input_kalkulator_7', nama: 'Harga Bibit/Ekor',   rupiah: true },
+    { i: 5, id: 'input_kalkulator_4', nama: 'Jumlah Pakan (sak)' },
+    { i: 6, id: 'input_kalkulator_6', nama: 'Harga Kontrak Ayam', rupiah: true },
+];
+
+const mtdTerakhir = {};   // nilai valid terakhir per indeks mtd
+
+export function periksaPerubahanMtd() {
+    const mtd = state.data_json && state.data_json.mtd;
+    if (!Array.isArray(mtd)) return;
+
+    const berubah = [];
+    for (const f of SUMBER_MTD) {
+        const baru = toNum(mtd[f.i]);
+        const aturan = FIELD_KALKULATOR.find(k => k.id === f.id);
+        // nilai kosong/rusak (atau 0 untuk kolom yang 0-nya berarti "belum ada data") diabaikan,
+        // supaya data setengah jadi tidak dianggap sebagai perubahan
+        if (!Number.isFinite(baru) || (aturan && aturan.positif ? baru <= 0 : baru < 0)) continue;
+        const lama = mtdTerakhir[f.i];
+        mtdTerakhir[f.i] = baru;
+        if (lama !== undefined && lama !== baru) berubah.push({ ...f, lama, baru });
+    }
+
+    // data pertama kali masuk (lama belum ada) bukan "perubahan": cukup diisi oleh isiDefaultKalkulator()
+    if (berubah.length === 0 || !isOwner()) return;
+
+    for (const b of berubah) {
+        const el = document.getElementById(b.id);
+        if (!el) continue;
+        b.ditimpa = el.dataset.diubahUser === '1';   // user sempat mengetik sendiri di kolom ini
+        el.value = b.baru;
+        el.dataset.diubahUser = '0';
+        state.kalkulatorTerisi.add(b.id);
+    }
+    tampilkanPopupKalkulator(berubah);
+}
+
+// --- pop up "Data kalkulator diperbarui" -------------------------------------------------
+let timerPopupKalkulator = null;
+const itemPopupKalkulator = new Map();   // perubahan yang sedang tampil, digabung per kolom
+
+function sembunyikanPopupKalkulator() {
+    clearTimeout(timerPopupKalkulator);
+    itemPopupKalkulator.clear();
+    const kotak = document.getElementById('popup_kalkulator');
+    if (kotak) kotak.classList.remove('tampil');
+}
+
+function tampilkanPopupKalkulator(berubah) {
+    let kotak = document.getElementById('popup_kalkulator');
+    if (!kotak) {
+        kotak = document.createElement('div');
+        kotak.id = 'popup_kalkulator';
+        kotak.className = 'popup-kalkulator';
+        kotak.setAttribute('role', 'status');
+        kotak.setAttribute('aria-live', 'polite');
+        kotak.addEventListener('click', sembunyikanPopupKalkulator);
+        document.body.appendChild(kotak);
+    }
+
+    // gabungkan dengan perubahan yang masih tampil: nilai awal = yang pertama, nilai akhir = yang terbaru
+    for (const b of berubah) {
+        const sebelumnya = itemPopupKalkulator.get(b.id);
+        const item = { ...b, lama: sebelumnya ? sebelumnya.lama : b.lama, ditimpa: b.ditimpa || (sebelumnya && sebelumnya.ditimpa) };
+        if (item.lama === item.baru) itemPopupKalkulator.delete(b.id);   // kembali ke nilai semula
+        else itemPopupKalkulator.set(b.id, item);
+    }
+    if (itemPopupKalkulator.size === 0) { sembunyikanPopupKalkulator(); return; }
+
+    const fmt = (item, v) => item.rupiah ? formatRupiah(v) : v.toLocaleString('id-ID');
+    const baris = [...itemPopupKalkulator.values()].map(item =>
+        `<li><span class="popup-nama">${item.nama}</span><span class="popup-nilai">${fmt(item, item.lama)} &rarr; <b>${fmt(item, item.baru)}</b></span></li>`
+    ).join('');
+    const catatan = [...itemPopupKalkulator.values()].some(item => item.ditimpa)
+        ? '<p class="popup-catatan">Isi kolom yang sebelumnya Anda ubah manual telah diganti dengan data terbaru.</p>' : '';
+
+    kotak.innerHTML =
+        '<div class="popup-kepala"><strong>Data kalkulator diperbarui</strong>' +
+        '<button type="button" class="popup-tutup" aria-label="Tutup">&times;</button></div>' +
+        `<ul class="popup-daftar">${baris}</ul>${catatan}`;
+    kotak.querySelector('.popup-tutup').addEventListener('click', (e) => { e.stopPropagation(); sembunyikanPopupKalkulator(); });
+
+    kotak.classList.add('tampil');
+    clearTimeout(timerPopupKalkulator);
+    timerPopupKalkulator = setTimeout(sembunyikanPopupKalkulator, 8000);
 }
 
 export function wkt_on(){
