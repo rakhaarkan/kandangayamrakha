@@ -349,6 +349,41 @@ canvas { width: 100%; height: 100%; display: block; }
 .th_ { padding: 10px; border: 1px solid #ddd; background-color: #f2f2f2; font-size: 1rem; }
 .td_ { padding: 3px; border: 1px solid #ddd; background-color: #f9f9f9; font-size: 1rem; }
 
+/* --- Keterangan timbangan: kartu ringkas (rata-rata, deviasi, ADG, dst) ---
+   Ukuran font sengaja dibuat eksplisit (rem), tidak mewarisi .txt2 dari kontainernya. */
+.info-timbang {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-xs);
+  margin: var(--sp-md) 0 var(--sp-sm);
+}
+
+.info-tile {
+  padding: 0.5rem 0.7rem;
+  background: #f6f9fc;
+  border: 1px solid #e1e8f0;
+  border-radius: var(--radius-sm);
+  min-width: 0;
+}
+
+.info-tile--utama {
+  grid-column: 1 / -1;
+  background: #eef6ff;
+  border-color: #cfe2f7;
+}
+
+.info-tile__label { font-size: var(--fs-xs); color: #5b6670; line-height: 1.2; }
+.info-tile__value { font-size: 0.95rem; font-weight: 600; color: #222; line-height: 1.3; margin-top: 2px; overflow-wrap: anywhere; }
+.info-tile--utama .info-tile__value { font-size: 1.15rem; color: #0b5cad; }
+.info-tile__sub { font-size: var(--fs-xs); color: #6b7680; margin-top: 1px; }
+
+.catatan-kecil { font-size: var(--fs-xs); color: #7a838c; }
+
+@media (min-width: 640px) {
+  .info-timbang { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .info-tile--utama { grid-column: auto; }
+}
+
 #output_t {
   white-space: pre-wrap;
   text-align: left;

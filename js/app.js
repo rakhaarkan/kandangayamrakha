@@ -1649,6 +1649,18 @@ function kosongkanChartSebaran() {
     state.chartInstance.update();
 }
 
+// Kartu-kartu ringkas untuk keterangan timbangan (rata-rata, deviasi, ADG, dst).
+// Pengganti createOutputTable() KHUSUS bagian ini; createOutputTable() sendiri tidak diubah
+// karena masih dipakai widget lain. Item: { label, value, sub?, utama? }
+function renderInfoTimbang(items) {
+    return items.map(it => `
+        <div class="info-tile${it.utama ? ' info-tile--utama' : ''}">
+            <div class="info-tile__label">${it.label}</div>
+            <div class="info-tile__value">${it.value}</div>
+            ${it.sub ? `<div class="info-tile__sub">${it.sub}</div>` : ''}
+        </div>`).join('');
+}
+
 export function tampilkanSebaranBobot() {
     const raw = bacaDataTimbangan();
     state.rawData = raw;
@@ -1662,12 +1674,12 @@ export function tampilkanSebaranBobot() {
     // ---- belum ada data timbang ----
     if (raw.length === 0) {
         tableBody.innerHTML = '';
-        kotakInfo.innerHTML = createOutputTable({
-            d1: { label: 'Bobot Rata-Rata : ', value: 'Belum ada data timbang' },
-            d3: { label: 'Average Daily Gain : ', value: `${adgAman.toFixed(2)} g/hari` },
-            d5: { label: 'Sampel Masuk Hari Ini : ', value: `${state.jumlah_sample_timbang ?? 0} ekor` },
-            d6: { label: 'Sampel Masuk Kemarin : ', value: `${state.jumlah_sample_timbang_kemarin ?? 0} ekor` }
-        }, 8);
+        kotakInfo.innerHTML = renderInfoTimbang([
+            { label: 'Bobot Rata-Rata', value: 'Belum ada data timbang', utama: true },
+            { label: 'Average Daily Gain', value: `${adgAman.toFixed(2)} g/hari` },
+            { label: 'Sampel Hari Ini', value: `${state.jumlah_sample_timbang ?? 0} ekor` },
+            { label: 'Sampel Kemarin', value: `${state.jumlah_sample_timbang_kemarin ?? 0} ekor` }
+        ]);
         kosongkanChartSebaran();
         return;
     }
@@ -1723,14 +1735,14 @@ export function tampilkanSebaranBobot() {
         values.push(Number(estimasiEkor));
     }
 
-    kotakInfo.innerHTML = createOutputTable({
-        d1: { label: 'Bobot Rata-Rata : ', value: `${(mean / 1000).toFixed(3)} Kg/ekor` },
-        d2: { label: 'Standar Deviasi  : ', value: `±${stdDev.toFixed(0)} gram (${lowerBound.toFixed(0)} g - ${upperBound.toFixed(0)} g), ${stdPercent}%` },
-        d3: { label: 'Average Daily Gain : ', value: `${adgAman.toFixed(2)} g/hari` },
-        d4: { label: 'Perkiraan Bobot Besok (24 jam): ', value: `${((mean / 1000) + (adgAman / 1000 * 1.05)).toFixed(3)} Kg/ekor` },
-        d5: { label: 'Sampel Masuk Hari Ini : ', value: `${state.jumlah_sample_timbang} ekor` },
-        d6: { label: 'Sampel Masuk Kemarin : ', value: `${state.jumlah_sample_timbang_kemarin} ekor` }
-    }, 8);
+    kotakInfo.innerHTML = renderInfoTimbang([
+        { label: 'Bobot Rata-Rata', value: `${(mean / 1000).toFixed(3)} Kg/ekor`, utama: true },
+        { label: 'Standar Deviasi', value: `±${stdDev.toFixed(0)} g`, sub: `${lowerBound.toFixed(0)} – ${upperBound.toFixed(0)} g · ${stdPercent}%` },
+        { label: 'Average Daily Gain', value: `${adgAman.toFixed(2)} g/hari` },
+        { label: 'Perkiraan Besok (24 jam)', value: `${((mean / 1000) + (adgAman / 1000 * 1.05)).toFixed(3)} Kg/ekor` },
+        { label: 'Sampel Hari Ini', value: `${state.jumlah_sample_timbang} ekor` },
+        { label: 'Sampel Kemarin', value: `${state.jumlah_sample_timbang_kemarin} ekor` }
+    ]);
 
     if (typeof Chart === 'undefined') return;   // CDN Chart.js gagal dimuat
 
