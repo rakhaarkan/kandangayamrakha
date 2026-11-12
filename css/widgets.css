@@ -28,6 +28,22 @@
 
 canvas { width: 100%; height: 100%; display: block; }
 
+/* --- Pembungkus grafik dengan ukuran PASTI (grafik timbang & pie hasil perhitungan) ---
+   Chart.js (responsive) mengikuti ukuran pembungkusnya. Kalau pembungkus tingginya "auto",
+   ukuran kanvas ikut menentukan tinggi pembungkus -> tumbuh terus ke bawah tanpa batas.
+   Maka tinggi pembungkus dikunci di sini, dan kanvas diisi penuh (position: relative wajib
+   agar Chart.js bisa mengukur dengan benar). */
+.chart-box {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  margin: var(--sp-md) auto;
+  overflow: hidden;
+}
+.chart-box > canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+.chart-box--sebaran { height: clamp(220px, 45vw, 360px); }
+.chart-box--pie { max-width: 420px; aspect-ratio: 1 / 1; }
+
 .labels_gauge {
   display: flex;
   justify-content: space-between;

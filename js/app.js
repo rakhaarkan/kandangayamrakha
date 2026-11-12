@@ -1553,6 +1553,7 @@ export function createPieChart() {
         data: data,
         options: {
             responsive: true,
+            maintainAspectRatio: false,   // ukuran diatur pembungkus .chart-box--pie (CSS)
             plugins: {
                 legend: { position: 'top' },
                 tooltip: { enabled: true },

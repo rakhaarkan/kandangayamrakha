@@ -364,7 +364,7 @@ window.loadChartLibraries = async function () {
                     <div id="data_kalkulator_chart" style="display: none;">
                         <div id="output_group_container_2"></div>
                         <div id="data_calc_total" style="font-size: large;"></div>
-                        <canvas id="myPieChart" width="400" height="400"></canvas>
+                        <div class="chart-box chart-box--pie"><canvas id="myPieChart"></canvas></div>
                     </div>
                     <input type="text" id="input_test_kosong">
                     <button class="btn-toggle" id="toggleButton2">set</button>
@@ -397,7 +397,7 @@ window.loadChartLibraries = async function () {
                 </thead>
                 <tbody id="tableBody"></tbody>
             </table>
-            <canvas id="lineChart"></canvas>
+            <div class="chart-box chart-box--sebaran"><canvas id="lineChart"></canvas></div>
             <div class="mrg3" id="data_kalkulasi_bobot"></div>
             <div>data diambil dari mesin timbang automatis dan diupdate setiap menit</div>
         </div>
