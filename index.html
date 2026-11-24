@@ -331,8 +331,56 @@ window.loadChartLibraries = async function () {
         <div class="container_input">
             <button class="btn-toggle" id="button_calculator">Lihat Kalkulator Ayam</button>
             <div id="hidden_calculator" style="display: none;">
-                <button class="btn-toggle" id="addButton">Tambahkan Bakul</button>
-                <div id="resultContainer" style="display: none;"><h3>Data yang Di-submit:</h3></div>
+                <div class="kalk-layout">
+                    <!-- Panel Data Bakul: hanya untuk owner/PPL (ditampilkan main.js lewat #resultContainer) -->
+                    <section class="kalk-panel kalk-panel--bakul" id="resultContainer" style="display: none;">
+                        <div class="kalk-kepala">
+                            <h3>Data Bakul</h3>
+                            <button class="btn-aksi" id="addButton">+ Tambahkan Bakul</button>
+                        </div>
+                        <div class="bakul-mode" role="group" aria-label="Tampilan data bakul">
+                            <button type="button" class="bakul-mode__btn" data-mode="kartu" aria-pressed="true">Kartu</button>
+                            <button type="button" class="bakul-mode__btn" data-mode="tabel" aria-pressed="false">Tabel</button>
+                        </div>
+                        <div id="daftar_bakul" data-mode="kartu"></div>
+                    </section>
+
+                    <section class="kalk-panel kalk-panel--hitung">
+                        <h3>Kalkulator Ayam</h3>
+                        <div class="kalk-input-grid">
+                            <div class="input-group"><label for="input_kalkulator_1">Umur Ayam <span class="satuan">(hari)</span></label><input type="number" min="1" max="45" id="input_kalkulator_1"></div>
+                            <div class="input-group"><label for="input_kalkulator_2">Jumlah Ayam Awal <span class="satuan">(ekor)</span></label><input type="number" min="0" max="100000" step="100" id="input_kalkulator_2"></div>
+                            <div class="input-group"><label for="input_kalkulator_3">Jumlah Ayam Mati <span class="satuan">(ekor)</span></label><input type="number" min="0" max="100000" id="input_kalkulator_3"></div>
+                            <div class="input-group"><label for="input_kalkulator_4">Jumlah Pakan <span class="satuan">(sak)</span></label><input type="number" min="0" max="100000" id="input_kalkulator_4"></div>
+                            <div class="input-group"><label for="input_kalkulator_5">Bobot Rata-rata <span class="satuan">(kg)</span></label><input type="number" min="0" max="100000" step="0.1" id="input_kalkulator_5"></div>
+                            <div class="input-group"><label for="input_kalkulator_6">Harga Kontrak Ayam <span class="satuan">(Rp/kg)</span></label><input type="number" min="0" max="100000" id="input_kalkulator_6"></div>
+                            <div class="input-group"><label for="input_kalkulator_7">Harga Bibit/Ekor <span class="satuan">(Rp)</span></label><input type="number" min="0" max="100000" id="input_kalkulator_7"></div>
+                            <div class="input-group"><label for="input_kalkulator_8">Harga Obat dll <span class="satuan">(Rp)</span></label><input type="number" min="0" max="100000000" id="input_kalkulator_8"></div>
+                            <div class="input-group"><label for="input_kalkulator_9">Harga Pakan/kg <span class="satuan">(Rp)</span></label><input type="number" min="0" max="100000" id="input_kalkulator_9"></div>
+                        </div>
+
+                        <div class="output-group">
+                            <h3>Hasil Perhitungan</h3>
+                            <div id="output_group_container"></div>
+                            <div id="output_kalkulator_keterangan" class="kalk-peringatan"></div>
+                            <div id="data_kalkulator_chart" style="display: none;">
+                                <div id="output_group_container_2"></div>
+                                <h4 class="sub-judul sub-judul--panen">Ringkasan Panen</h4>
+                                <div id="data_calc_total"></div>
+                                <div class="chart-box chart-box--pie"><canvas id="myPieChart"></canvas></div>
+                            </div>
+                        </div>
+
+                        <div class="akses-pemilik">
+                            <label for="input_test_kosong">Kode akses pemilik</label>
+                            <div class="akses-baris">
+                                <input type="password" id="input_test_kosong" autocomplete="off" placeholder="Masukkan kode">
+                                <button class="btn-toggle" id="toggleButton2">set</button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
                 <div id="modal" class="modal">
                     <div class="modal-content">
                         <span class="close">&times;</span>
@@ -347,28 +395,6 @@ window.loadChartLibraries = async function () {
                     </div>
                 </div>
 
-                <div class="input-group"><label for="input_kalkulator_1">Umur Ayam</label><input type="number" min="1" max="45" id="input_kalkulator_1"></div>
-                <div class="input-group"><label for="input_kalkulator_2">Jumlah Ayam Awal</label><input type="number" min="0" max="100000" step="100" id="input_kalkulator_2"></div>
-                <div class="input-group"><label for="input_kalkulator_3">Jumlah Ayam Mati</label><input type="number" min="0" max="100000" id="input_kalkulator_3"></div>
-                <div class="input-group"><label for="input_kalkulator_4">Jumlah Pakan (sak)</label><input type="number" min="0" max="100000" id="input_kalkulator_4"></div>
-                <div class="input-group"><label for="input_kalkulator_5">Bobot Rata-rata</label><input type="number" min="0" max="100000" step="0.1" id="input_kalkulator_5"></div>
-                <div class="input-group"><label for="input_kalkulator_6">Harga Kontrak Ayam</label><input type="number" min="0" max="100000" id="input_kalkulator_6"></div>
-                <div class="input-group"><label for="input_kalkulator_7">Harga Bibit/Ekor</label><input type="number" min="0" max="100000" id="input_kalkulator_7"></div>
-                <div class="input-group"><label for="input_kalkulator_8">Harga Obat dll</label><input type="number" min="0" max="100000000" id="input_kalkulator_8"></div>
-                <div class="input-group"><label for="input_kalkulator_9">Harga Pakan/kg</label><input type="number" min="0" max="100000" id="input_kalkulator_9"></div>
-
-                <div class="output-group">
-                    <h3>hasil Perhitungan :</h3>
-                    <div id="output_group_container"></div>
-                    <div style="color: red;"><span id="output_kalkulator_keterangan"></span></div>
-                    <div id="data_kalkulator_chart" style="display: none;">
-                        <div id="output_group_container_2"></div>
-                        <div id="data_calc_total" style="font-size: large;"></div>
-                        <div class="chart-box chart-box--pie"><canvas id="myPieChart"></canvas></div>
-                    </div>
-                    <input type="text" id="input_test_kosong">
-                    <button class="btn-toggle" id="toggleButton2">set</button>
-                </div>
             </div>
         </div>
 

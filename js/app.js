@@ -15,16 +15,36 @@ import {
 //  - versi Netlify   -> ThingSpeak, interval tetap 3 detik
 //  - versi lokal/Pi  -> endpoint /api/dataweb, interval 1 detik
 const MODE_NETLIFY = location.hostname === "kandangayamrakha.netlify.app";
-export const INTERVAL_DATA_MS = MODE_NETLIFY ? 3000 : 1000;
+// Paksa sumber lewat alamat: ?sumber=thingspeak (selalu ThingSpeak) atau ?sumber=lokal (selalu /api/dataweb, tanpa cadangan).
+const PARAM_SUMBER = new URLSearchParams(location.search).get('sumber');
+const PAKAI_THINGSPEAK_SAJA = MODE_NETLIFY || PARAM_SUMBER === 'thingspeak';
+export const INTERVAL_DATA_MS = PAKAI_THINGSPEAK_SAJA ? 3000 : 1000;
 let sedangAmbilData = false;
+
+// Versi lokal/Pi: /api/dataweb adalah sumber utama; bila tidak tersedia (Pi mati/lambat, atau host statis seperti
+// Live Server yang memang tak punya endpoint itu) otomatis memakai ThingSpeak. Format JSON keduanya sama.
+let sumberDataAktif = PAKAI_THINGSPEAK_SAJA ? 'thingspeak' : 'lokal';   // 'lokal' | 'thingspeak'
+let lokalCobaLagiPada = 0;           // setelah gagal, /api/dataweb tidak dicoba lagi sampai waktu ini (ms)
+let waktuThingspeakTerakhir = 0;
+const JEDA_LOKAL_GAGAL_MS = 10000;   // gangguan sementara
+const JEDA_LOKAL_404_MS = 300000;    // 404 = endpoint memang tidak ada di host ini
+
+function catatSumber(sumber) {
+    if (sumber !== sumberDataAktif) {
+        console.info(`Sumber data: ${sumberDataAktif} -> ${sumber}`);
+        sumberDataAktif = sumber;
+    }
+    document.documentElement.dataset.sumberData = sumber;   // terlihat di DevTools: <html data-sumber-data="...">
+}
 
 async function ambilDataweb() {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3000);
     try {
         const response = await fetch("/api/dataweb", { signal: controller.signal, cache: "no-store" });
-        if (!response.ok) throw new Error("dataweb HTTP " + response.status);
+        if (!response.ok) { const e = new Error("dataweb HTTP " + response.status); e.status = response.status; throw e; }
         const data = await response.json();
+        catatSumber('lokal');
         state.penampung_data_waktu = data.created_at;
         penguraiJson(data);
         document.getElementById('messages').innerHTML = JSON.stringify(data).slice(0, 120);
@@ -38,6 +58,7 @@ async function ambilThingspeak() {
     const response = await fetch(ts_url);
     const tsdata = await response.json();
     const f = tsdata.feeds[0];
+    catatSumber('thingspeak');
     state.penampung_data_waktu = f.created_at;
     penguraiJson((f.field1 ?? "") + (f.field2 ?? "") + (f.field3 ?? "") + (f.field4 ?? "") +
                  (f.field5 ?? "") + (f.field6 ?? "") + (f.field7 ?? "") + (f.field8 ?? ""));
@@ -48,8 +69,27 @@ export async function data_thingspeak(){
     if (sedangAmbilData) return;   // jangan menumpuk request bila yang sebelumnya belum selesai
     sedangAmbilData = true;
     try {
-        if (MODE_NETLIFY) await ambilThingspeak();
-        else await ambilDataweb();
+        if (PAKAI_THINGSPEAK_SAJA) {
+            await ambilThingspeak();
+        } else {
+            let lokalOk = false;
+            if (PARAM_SUMBER === 'lokal' || Date.now() >= lokalCobaLagiPada) {
+                try {
+                    await ambilDataweb();
+                    lokalOk = true;
+                } catch (err) {
+                    if (PARAM_SUMBER === 'lokal') throw err;          // diminta murni lokal: tampilkan errornya
+                    lokalCobaLagiPada = Date.now() + (err && err.status === 404 ? JEDA_LOKAL_404_MS : JEDA_LOKAL_GAGAL_MS);
+                    console.warn(`/api/dataweb gagal (${err && err.message}) -> cadangan ThingSpeak; coba lokal lagi dalam ` +
+                                 `${Math.round((lokalCobaLagiPada - Date.now()) / 1000)} dtk`);
+                }
+            }
+            // cadangan: ThingSpeak, dibatasi 1 permintaan per 3 detik walau fungsi ini dipanggil tiap 1 detik
+            if (!lokalOk && Date.now() - waktuThingspeakTerakhir >= 3000) {
+                waktuThingspeakTerakhir = Date.now();
+                await ambilThingspeak();
+            }
+        }
     } catch (err) {
         console.error("Gagal mengambil data:", err);
     } finally {
@@ -1054,6 +1094,45 @@ export function hasil_analisa(target_suhu_,suhu_minimal_,suhu_maksimal_,target_h
     }
 }
 
+// ---------------------------------------------------------------------
+//  Helper tampilan kalkulator & data bakul
+// ---------------------------------------------------------------------
+const NAMA_BULAN = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+// Escape teks dari database sebelum dimasukkan ke innerHTML (nama bakul/DO/plat diketik user).
+function escHtml(v) {
+    return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// "2026-11-02T00:00:00.000Z" -> "2 Nov 2026" (dihitung dari teksnya, jadi tidak tergeser zona waktu)
+function tanggalIndo(iso) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso ?? ''));
+    return m ? `${parseInt(m[3], 10)} ${NAMA_BULAN[parseInt(m[2], 10) - 1]} ${m[1]}` : escHtml(iso);
+}
+
+// Hasil kalkulator sebagai kartu ringkas (gaya sama dengan .info-tile di bagian timbang).
+// d = { kunci: { label, value } }; hasil rupiah (label "Perkiraan Hasil"/"Keuntungan...") ditandai utama.
+// Ringkasan panen: tile besar & interaktif (informasi penting). Nilai dipecah jadi angka besar + satuan kecil.
+const IKON_RINGKASAN = ['\u{1F414}', '\u2696\uFE0F', '\u{1F4CA}'];   // ayam, timbangan, grafik
+function renderRingkasanPanen(d) {
+    return '<div class="ringkasan-panen">' + Object.keys(d).map((k, i) => {
+        const nilai = String(d[k].value ?? '');
+        const m = /^(.*?)\s+([A-Za-z]+)$/.exec(nilai);
+        const angka = m ? m[1] : nilai, satuan = m ? m[2] : '';
+        return `<div class="ringkasan-tile${i === 0 ? ' ringkasan-tile--utama' : ''}" tabindex="0">` +
+               `<div class="ringkasan-label"><span class="ringkasan-ikon" aria-hidden="true">${IKON_RINGKASAN[i] || ''}</span>${d[k].label}</div>` +
+               `<div class="ringkasan-nilai">${angka}<small>${satuan}</small></div></div>`;
+    }).join('') + '</div>';
+}
+
+function renderHasilKalkulator(d, kelas = '') {
+    const kunci = Object.keys(d);
+    const utama = new Set(kunci.filter(k => /Hasil|Keuntungan/i.test(d[k].label)));
+    return `<div class="hasil-grid ${kelas}">` + kunci.map(k =>
+        `<div class="info-tile${utama.has(k) ? ' info-tile--utama' : ''}"><div class="info-tile__label">${d[k].label}</div><div class="info-tile__value">${d[k].value}</div></div>`
+    ).join('') + '</div>';
+}
+
 export function kalkulator(){
     var calc_usia_ayam = document.getElementById('input_kalkulator_1').value;
     state.calc_ayam_awal = document.getElementById('input_kalkulator_2').value;
@@ -1118,9 +1197,9 @@ export function kalkulator(){
     };
     
     // Mengisi elemen dengan id "output_group_container" dengan HTML yang dihasilkan
-    document.getElementById('output_group_container').innerHTML = createOutputTable(kalkulatorData,2);
+    document.getElementById('output_group_container').innerHTML = renderHasilKalkulator(kalkulatorData);
     if((state.total_ayam_dipanen>0)){
-        document.getElementById('output_group_container_2').innerHTML = "<div style='padding-bottom: 2vw;'><h3>Hasil Penyesuaian Ayam Terpanen :</h3></div>" + createOutputTable(kalkulatorData2,2);
+        document.getElementById('output_group_container_2').innerHTML = "<h4 class='sub-judul sub-judul--penyesuaian'>Hasil Penyesuaian Ayam Terpanen</h4>" + renderHasilKalkulator(kalkulatorData2, 'hasil-grid--penyesuaian');
     }else{
         document.getElementById('output_group_container_2').innerHTML = "";
     }
@@ -1218,7 +1297,7 @@ const SUMBER_MTD = [
     { i: 6, id: 'input_kalkulator_6', nama: 'Harga Kontrak Ayam', rupiah: true },
 ];
 
-const mtdTerakhir = {};   // nilai valid terakhir per indeks mtd
+const mtdTerakhir = { lokal: {}, thingspeak: {} };   // nilai valid terakhir per indeks mtd, TERPISAH per sumber data
 
 export function periksaPerubahanMtd() {
     const mtd = state.data_json && state.data_json.mtd;
@@ -1231,8 +1310,9 @@ export function periksaPerubahanMtd() {
         // nilai kosong/rusak (atau 0 untuk kolom yang 0-nya berarti "belum ada data") diabaikan,
         // supaya data setengah jadi tidak dianggap sebagai perubahan
         if (!Number.isFinite(baru) || (aturan && aturan.positif ? baru <= 0 : baru < 0)) continue;
-        const lama = mtdTerakhir[f.i];
-        mtdTerakhir[f.i] = baru;
+        const peta = mtdTerakhir[sumberDataAktif];
+        const lama = peta[f.i];
+        peta[f.i] = baru;
         if (lama !== undefined && lama !== baru) berubah.push({ ...f, lama, baru });
     }
 
@@ -1323,10 +1403,75 @@ export function validateInput() {
     return true;
 }
 
+// Tombol Edit/Hapus satu data bakul. Dipakai tampilan kartu dan tabel; perilakunya sama dengan sebelumnya.
+// elemenUntukDihapus = elemen kartu & baris tabel yang ikut hilang saat data dihapus.
+function buatTombolAksiBakul(item, wadah, elemenUntukDihapus) {
+    const editButton = document.createElement("button");
+    editButton.classList.add("edit-button");
+    editButton.textContent = "Edit";
+    wadah.appendChild(editButton);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.classList.add("delete-button");
+    deleteButton.textContent = "Hapus";
+    wadah.appendChild(deleteButton);
+
+    deleteButton.onclick = function() {
+        const confirmDelete = confirm("Apakah Anda yakin ingin menghapusnya?");
+        if (confirmDelete) {
+            elemenUntukDihapus.forEach(el => el.remove());
+            const dataDelete = {
+                action: 'delete',
+                id: item.id
+            };
+            postData(dataDelete);
+            alert("Data berhasil dihapus");
+        }
+        createPieChart();
+    };
+
+    editButton.onclick = function() {
+        state.modal.style.display = "block";
+        document.getElementById("tanggal").value = item.tanggal.split('T')[0];
+        document.getElementById("nama_do").value = item.nama_do;
+        document.getElementById("nama_bakul").value = item.nama_bakul;
+        document.getElementById("plat_nomor").value = item.plat_nomor;
+        document.getElementById("jumlah_ekor_ambil").value = item.jumlah_ekor_ambil;
+        document.getElementById("jumlah_kg_ambil").value = item.jumlah_kg_ambil;
+
+        state.submitButton.onclick = function() {
+            var tanggal = document.getElementById("tanggal").value;
+            var nama_do = document.getElementById("nama_do").value;
+            var nama_bakul = document.getElementById("nama_bakul").value;
+            var plat_nomor = document.getElementById("plat_nomor").value;
+            var jumlah_ekor_ambil = document.getElementById("jumlah_ekor_ambil").value;
+            var jumlah_kg_ambil = document.getElementById("jumlah_kg_ambil").value;
+            if (!tanggal || !nama_do || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
+                alert("Semua kolom harus diisi!");
+            } else {
+                const testData = {
+                    action: 'edit',
+                    tanggal: tanggal,
+                    nama_bakul: capitalizeWords(nama_bakul),
+                    plat_nomor: formatPlatNomor(plat_nomor),
+                    jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),  // Pastikan data yang dikirim adalah angka
+                    jumlah_kg_ambil: parseFloat(jumlah_kg_ambil),    // Pastikan data yang dikirim adalah angka
+                    id: item.id,
+                    nama_do: capitalizeWords(nama_do)
+                };
+                postData(testData);
+                state.modal.style.display = "none";
+            }
+            state.modal.style.display = "none";
+        };
+        createPieChart();
+    };
+}
+
 export async function fetchData() {
     
     if((getCookie("owner") == 1)||(getCookie("owner") == 2)){
-        const container = document.getElementById('resultContainer');
+        const container = document.getElementById('daftar_bakul');
         state.total_ayam_dipanen = 0;
         state.total_kg_diambil = 0;
         try {
@@ -1344,110 +1489,71 @@ export async function fetchData() {
 
           data.sort((a, b) => a.id - b.id);
       
+          // Dua tampilan dari data yang sama: kartu & tabel. Mana yang terlihat diatur CSS lewat
+          // #daftar_bakul[data-mode] (disimpan di cookie oleh main.js), jadi pindah mode tidak perlu mengambil data lagi.
+          const daftarKartu = document.createElement('div');
+          daftarKartu.className = 'bakul-kartu';
+          const bungkusTabel = document.createElement('div');
+          bungkusTabel.className = 'bakul-tabel';
+          const tabel = document.createElement('table');
+          tabel.innerHTML = '<thead><tr><th>Tanggal</th><th>Bakul / DO</th><th class="num">Ekor</th><th class="num">Kg</th><th class="num">Rata</th><th>Aksi</th></tr></thead><tbody></tbody><tfoot></tfoot>';
+          const tbody = tabel.querySelector('tbody');
+
           data.forEach((item, index) => {
             const resultItem = document.createElement('div');
             resultItem.classList.add("result-item");
+            const ekorAmbil = parseInt(item.jumlah_ekor_ambil);
+            const kgAmbil = parseFloat(item.jumlah_kg_ambil);
+            const rataKg = (ekorAmbil > 0 && Number.isFinite(kgAmbil)) ? (Number(kgAmbil.toFixed(1)) / ekorAmbil).toFixed(2) : '-';
+            const teksEkor = Number.isFinite(ekorAmbil) ? ekorAmbil : '-';
+            const teksKg = Number.isFinite(kgAmbil) ? kgAmbil.toFixed(1) : '-';
             resultItem.innerHTML = `
-            <table style="width: 100%; border-collapse: collapse;">
-                <tr>
-                    <td style="padding: 6px; border-bottom: 1px solid #ddd;"><strong>Nama DO/Bakul</strong></td>
-                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${item.nama_do+"/"+item.nama_bakul}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 6px; border-bottom: 1px solid #ddd;"><strong>Tanggal</strong></td>
-                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${item.tanggal.split('T')[0]}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 6px; border-bottom: 1px solid #ddd;"><strong>Plat Nomor</strong></td>
-                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${item.plat_nomor}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 6px; border-bottom: 1px solid #ddd;"><strong>Jumlah Ekor Ambil</strong></td>
-                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${item.jumlah_ekor_ambil}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 6px; border-bottom: 1px solid #ddd;"><strong>Total KG</strong></td>
-                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${parseFloat(item.jumlah_kg_ambil).toFixed(1)}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 6px; border-bottom: 1px solid #ddd;"><strong>Rata Rata</strong></td>
-                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${((parseFloat(item.jumlah_kg_ambil).toFixed(1))/(parseInt(item.jumlah_ekor_ambil))).toFixed(2)}</td>
-                </tr>
-            </table>
+            <div class="bakul-atas">
+                <div class="bakul-identitas">
+                    <div class="bakul-nama">${escHtml(item.nama_bakul)}</div>
+                    <div class="bakul-do">${escHtml(item.nama_do)}</div>
+                </div>
+                <div class="bakul-tanggal">${tanggalIndo(item.tanggal)}</div>
+            </div>
+            <div class="bakul-stat">
+                <div class="info-tile"><div class="info-tile__label">Ekor</div><div class="info-tile__value">${teksEkor}</div></div>
+                <div class="info-tile"><div class="info-tile__label">Total</div><div class="info-tile__value">${teksKg} kg</div></div>
+                <div class="info-tile"><div class="info-tile__label">Rata-rata</div><div class="info-tile__value">${rataKg} kg</div></div>
+            </div>
+            <div class="bakul-bawah">
+                <span class="bakul-plat">${escHtml(item.plat_nomor)}</span>
+                <span class="bakul-aksi"></span>
+            </div>
+            `;
+            const baris = document.createElement('tr');
+            baris.innerHTML = `
+            <td class="tgl">${tanggalIndo(item.tanggal)}</td>
+            <td><div class="bakul-nama">${escHtml(item.nama_bakul)}</div><div class="bakul-do">${escHtml(item.nama_do)}</div><span class="bakul-plat">${escHtml(item.plat_nomor)}</span></td>
+            <td class="num">${teksEkor}</td>
+            <td class="num">${teksKg}</td>
+            <td class="num">${rataKg}</td>
+            <td><span class="bakul-aksi"></span></td>
             `;
             state.total_ayam_dipanen += parseInt(item.jumlah_ekor_ambil);
             state.total_kg_diambil += parseFloat(item.jumlah_kg_ambil);
             state.jumlah_ayam_dipanen = state.total_ayam_dipanen;
             state.first_dipanen = true;
-            
-            const id_bakul = item.id;
-            const editButton = document.createElement("button");
-            editButton.classList.add("edit-button");
-            editButton.textContent = "Edit";
-            resultItem.appendChild(editButton);
 
-            const deleteButton = document.createElement("button");
-            deleteButton.classList.add("delete-button");
-            deleteButton.textContent = "Hapus";
-            resultItem.appendChild(deleteButton);
+            // tombol Edit/Hapus yang sama untuk tampilan kartu dan tabel
+            buatTombolAksiBakul(item, resultItem.querySelector('.bakul-aksi'), [resultItem, baris]);
+            buatTombolAksiBakul(item, baris.querySelector('.bakul-aksi'), [resultItem, baris]);
+            daftarKartu.appendChild(resultItem);
+            tbody.appendChild(baris);
+          });
 
-            deleteButton.onclick = function() {
-                const confirmDelete = confirm("Apakah Anda yakin ingin menghapusnya?");
-                if (confirmDelete) {
-                    resultContainer.removeChild(resultItem);
-                    const dataDelete = {
-                        action: 'delete',
-                        id: item.id 
-                    };
-                    postData(dataDelete);
-                    alert("Data berhasil dihapus");    
-                }
-                createPieChart(); 
-            };
-
-            editButton.onclick = function() {
-                state.modal.style.display = "block";
-                document.getElementById("tanggal").value = item.tanggal.split('T')[0];
-                document.getElementById("nama_do").value = item.nama_do;
-                document.getElementById("nama_bakul").value = item.nama_bakul;
-                document.getElementById("plat_nomor").value = item.plat_nomor;
-                document.getElementById("jumlah_ekor_ambil").value = item.jumlah_ekor_ambil;
-                document.getElementById("jumlah_kg_ambil").value = item.jumlah_kg_ambil;
-                    
-                state.submitButton.onclick = function() {
-                     
-                    var tanggal = document.getElementById("tanggal").value;
-                    var nama_do = document.getElementById("nama_do").value;
-                    var nama_bakul = document.getElementById("nama_bakul").value;
-                    var plat_nomor = document.getElementById("plat_nomor").value;
-                    var jumlah_ekor_ambil = document.getElementById("jumlah_ekor_ambil").value;
-                    var jumlah_kg_ambil = document.getElementById("jumlah_kg_ambil").value;
-                    if (!tanggal || !nama_do || !nama_bakul || !plat_nomor || !jumlah_ekor_ambil || !jumlah_kg_ambil) {
-                        alert("Semua kolom harus diisi!");
-                        //return false;
-                    }else{
-                        const testData = {
-                            action: 'edit',
-                            tanggal: tanggal,
-                            nama_bakul: capitalizeWords(nama_bakul),
-                            plat_nomor: formatPlatNomor(plat_nomor),
-                            jumlah_ekor_ambil: parseInt(jumlah_ekor_ambil),  // Pastikan data yang dikirim adalah angka
-                            jumlah_kg_ambil: parseFloat(jumlah_kg_ambil),      // Pastikan data yang dikirim adalah angka
-                            id: item.id,
-                            nama_do: capitalizeWords(nama_do)
-                        };
-                        postData(testData)
-                        state.modal.style.display = "none";            
-                    }
-                    resultItem.appendChild(editButton);
-                    resultItem.appendChild(deleteButton);
-                    state.modal.style.display = "none";
-                }
-                createPieChart(); 
-                
-            };
-            container.appendChild(resultItem);
-        });
+          if (data.length) {
+            const jEkor = state.total_ayam_dipanen, jKg = state.total_kg_diambil;
+            const rata = (jEkor > 0 && Number.isFinite(jKg)) ? (jKg / jEkor).toFixed(2) : '-';
+            tabel.querySelector('tfoot').innerHTML = `<tr><td colspan="2">Total (${data.length} bakul)</td><td class="num">${Number.isFinite(jEkor) ? jEkor : '-'}</td><td class="num">${Number.isFinite(jKg) ? jKg.toFixed(1) : '-'}</td><td class="num">${rata}</td><td></td></tr>`;
+          }
+          bungkusTabel.appendChild(tabel);
+          container.appendChild(daftarKartu);
+          container.appendChild(bungkusTabel);
         } catch (error) {
           container.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
         }
@@ -1520,7 +1626,7 @@ export function createPieChart() {
         }
         state.first_total_bobot = 1;
     }
-    document.getElementById('data_calc_total').innerHTML = createOutputTable(Data_kalkulasi_panen, 8);
+    document.getElementById('data_calc_total').innerHTML = renderRingkasanPanen(Data_kalkulasi_panen);
 
     state.dataValues = [sisa, dipanen, mati];
     const data = {
@@ -1563,7 +1669,7 @@ export function createPieChart() {
                         return awal > 0 ? `${value} (${((value / awal) * 100).toFixed(1)}%)` : `${value}`;
                     },
                     color: 'black',
-                    font: { size: 14 },
+                    font: { size: 12 },
                     anchor: 'center',
                     align: 'center',
                 }

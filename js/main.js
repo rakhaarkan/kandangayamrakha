@@ -179,3 +179,14 @@ window.addEventListener('DOMContentLoaded', fetchData());
         // Hue 240 = Biru (Dingin), Hue 0 = Merah (Panas)
 
 setAnimasiPanah(4, [0, 0, 2, 2]);
+
+// --- Tampilan data bakul: kartu / tabel (pilihan diingat di cookie "tampilan_bakul") ---
+function setTampilanBakul(mode, simpan = true) {
+    if (mode !== 'tabel') mode = 'kartu';
+    const daftar = document.getElementById('daftar_bakul');
+    if (daftar) daftar.dataset.mode = mode;
+    document.querySelectorAll('.bakul-mode__btn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
+    if (simpan) setCookie('tampilan_bakul', mode, 365);
+}
+setTampilanBakul(getCookie('tampilan_bakul'), false);
+document.querySelectorAll('.bakul-mode__btn').forEach(b => b.addEventListener('click', () => setTampilanBakul(b.dataset.mode)));

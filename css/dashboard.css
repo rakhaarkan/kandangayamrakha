@@ -334,6 +334,23 @@
   #manajemen-grid .container_bbt {
     height: 100%;
   }
+
+  /* Kartu kalkulator + data bakul: selebar area, isinya dua kolom (bakul | kalkulator) */
+  #manajemen-grid .container_input {
+    grid-column: 1 / -1;
+    height: auto;
+  }
+  .kalk-layout { flex-direction: row; align-items: flex-start; }
+  .kalk-panel--bakul { flex: 0 1 36%; }
+  .kalk-panel--hitung { flex: 1 1 0; }
+  .kalk-input-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ringkasan-panen { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ringkasan-tile--utama { grid-column: auto; }
+  .hasil-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .hasil-grid .info-tile--utama { grid-column: span 2; }
+  .hasil-grid > .info-tile:last-child:nth-child(odd) { grid-column: auto; }
+  .hasil-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #daftar_bakul { max-height: 44rem; overflow-y: auto; }
 }
 
 @media (min-width: 1440px) {

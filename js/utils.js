@@ -89,7 +89,10 @@ export function ambilValid(arr, index, maxCheck = 24,mode=1) {
 }
 
 export function formatRupiah(angka) {
-    return 'Rp.' + angka.toLocaleString('id-ID');
+    // Terima angka maupun string hasil toFixed(); string dulu tidak diberi pemisah ribuan ("Rp.32822").
+    const n = Number(angka);
+    if (!Number.isFinite(n)) return 'Rp.-';
+    return 'Rp.' + n.toLocaleString('id-ID');
 }
 
 export function capitalizeWords(text) {
