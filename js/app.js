@@ -362,6 +362,8 @@ const LANGKAH_RENDER = [
     ['heatmap',       updateHeatmap],
     ['analisa',       analisa_realtime],
     ['kalkulator',    kalkulator],
+    ['simulasi-panen', simulasiPanen],
+    ['selebrasi-panen', selebrasiPanen],
     ['sebaran-bobot', tampilkanSebaranBobot],
     ['harga-ayam',    isilkanDataHargaAyam],
     ['grafik',        animasi_chart],
@@ -1182,7 +1184,14 @@ export function kalkulator(){
     //total_kg_diambil/total_ayam_dipanen
     var total_bobot_2 = (calc_bobot_rata * state.sisa_ayam_hidup)+state.total_kg_diambil;
     var fcr_2 = (jumlah_pakan/total_bobot_2).toFixed(2); 
-    var ip_2 = ((persen_ayam_hidup*calc_bobot_rata)/(fcr_2*calc_usia_ayam)*100).toFixed(0);
+    // ayam_tersisa = awal - mati = SELURUH ayam hidup batch (termasuk yang sudah dipanen), bukan state.sisa_ayam_hidup (hanya yang masih di kandang).
+    // Bobot rata-rata penyesuaian = total bobot penyesuaian / seluruh ayam hidup -> basis bobot IP sama dengan basis FCR penyesuaian.
+    var bobot_rata_2 = ayam_tersisa > 0 ? total_bobot_2 / ayam_tersisa : 0;
+    var ip_2_num = (persen_ayam_hidup*bobot_rata_2)/(fcr_2*calc_usia_ayam)*100;
+    var ip_2 = Number.isFinite(ip_2_num) ? ip_2_num.toFixed(0) : '-';   // '-' bila pembagian nol / data belum valid
+    // Konversi daging penyesuaian = 50 / FCR penyesuaian (FCR tidak dibulatkan dulu, sama seperti konversi daging normal).
+    var konversi_daging_2_num = 50/(jumlah_pakan/total_bobot_2);
+    var konversi_daging_2 = Number.isFinite(konversi_daging_2_num) ? konversi_daging_2_num.toFixed(2) : '-';
     var perkiraan_pendapatan_2 = (total_bobot_2 * calc_harga_kontrak_ayam)-(calc_harga_bibit * state.calc_ayam_awal) - (calc_harga_obat_dll) - (calc_harga_pakan_per_kilo * jumlah_pakan);
     var perkiraan_keuntungan_per_ekor_2 = (perkiraan_pendapatan_2/state.calc_ayam_awal).toFixed(0);
     
@@ -1191,7 +1200,7 @@ export function kalkulator(){
         fcr: { label: 'FCR', value: `${fcr_2}` },
         ip: { label: 'IP', value: `${ip_2}` },
         deplesi: { label: 'Deplesi', value: `${deplesi+'%'}` },
-        konversidaging: { label: 'Konversi Daging', value: `${konversi_daging+' Kg/Sak'}` },
+        konversidaging: { label: 'Konversi Daging', value: konversi_daging_2 === '-' ? '-' : `${konversi_daging_2+' Kg/Sak'}` },
         perkiraanPendapatan: { label: 'Perkiraan Hasil', value: `${formatRupiah(perkiraan_pendapatan_2)}` },
         keuntunganPerEkor: { label: 'Keuntungan per Ekor', value: `${formatRupiah(perkiraan_keuntungan_per_ekor_2)}` }
     };
@@ -1468,12 +1477,17 @@ function buatTombolAksiBakul(item, wadah, elemenUntukDihapus) {
     };
 }
 
+// Status muat data bakul, hanya dibaca oleh selebrasiPanen() (dekoratif).
+let bakulSedangMuat = 0;   // jumlah fetchData yang sedang berjalan
+let bakulSiap = false;     // true bila fetchData TERAKHIR selesai sukses (total panen sudah lengkap)
 export async function fetchData() {
     
     if((getCookie("owner") == 1)||(getCookie("owner") == 2)){
         const container = document.getElementById('daftar_bakul');
         state.total_ayam_dipanen = 0;
         state.total_kg_diambil = 0;
+        bakulSiap = false;
+        bakulSedangMuat++;
         try {
           const response = await fetch('https://kandangayamrakha.netlify.app/api/fetchData'); 
           if (!response.ok) {
@@ -1554,8 +1568,11 @@ export async function fetchData() {
           bungkusTabel.appendChild(tabel);
           container.appendChild(daftarKartu);
           container.appendChild(bungkusTabel);
+          bakulSiap = true;
         } catch (error) {
           container.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+        } finally {
+          bakulSedangMuat--;
         }
       }         
       createPieChart(); 
@@ -1598,6 +1615,191 @@ export async function postData(data) {
 //    dipakai; datanya sudah ada di state dari fetchData()).
 //  - Sinkron: membaca state saat ini, jadi tidak ada lagi jeda/ketergantungan
 //    urutan dengan kalkulator().
+// ---------------------------------------------------------------------
+//  Micro-celebration panen raya (murni dekoratif). Tidak menulis ke state, input, data, maupun DOM dashboard;
+//  hanya membuat satu lapisan fixed non-interaktif yang dihapus sendiri. Dipanggil dari eksekutor (100 ms yang sudah ada),
+//  tetapi hanya BERJALAN SEKALI per sesi halaman: setelah data bakul selesai dimuat dan jumlah ayam awal valid.
+//  Tidak memakai localStorage/cookie, jadi muncul lagi setiap reload bila syaratnya terpenuhi.
+//  Basis persentase = state.jumlah_ayam_awal (sama dengan latch 30% di createPieChart()).
+// ---------------------------------------------------------------------
+let selebrasiDievaluasi = false;
+
+export function selebrasiPanen() {
+    if (selebrasiDievaluasi) return;
+    if (!isOwner()) return;                                  // data panen/bakul hanya dimuat untuk owner/PPL
+    if (!bakulSiap || bakulSedangMuat > 0) return;           // data bakul belum selesai / sedang dimuat ulang
+    const awal = Number(state.jumlah_ayam_awal);
+    if (!Number.isFinite(awal) || awal <= 0) return;         // data kalkulator (mtd) belum masuk / tidak valid: tunggu
+    selebrasiDievaluasi = true;                              // evaluasi awal hanya sekali (polling/render ulang tidak memicu lagi)
+
+    const dipanen = Number(state.total_ayam_dipanen) || 0;
+    if (dipanen * 10 < awal * 3) return;                     // < 30%: tidak ada animasi (integer, tepat 30% termasuk)
+    // "Selesai" = seluruh ayam HIDUP sudah terpanen (populasi awal dikurangi yang mati, seperti perhitungan ayam saat ini di dashboard),
+    // karena bila ada ayam mati, 100% dari populasi awal tidak akan pernah tercapai.
+    const mati = Number(state.jumlah_ayam_mati);
+    const hidup = awal - (Number.isFinite(mati) && mati > 0 ? mati : 0);
+    const selesai = hidup > 0 && dipanen >= hidup;
+    tampilkanSelebrasi(selesai ? 'PANEN RAYA SELESAI!' : 'PANEN RAYA DIMULAI!', selesai);
+}
+
+function tampilkanSelebrasi(teks, selesai) {
+    if (document.querySelector('.sel-panen')) return;
+    const lapisan = document.createElement('div');
+    lapisan.className = 'sel-panen';
+    lapisan.setAttribute('role', 'status');
+    const tulisan = document.createElement('div');
+    tulisan.className = 'sel-panen__teks ' + (selesai ? 'sel-panen__teks--selesai' : 'sel-panen__teks--mulai');
+    tulisan.textContent = teks;
+    lapisan.appendChild(tulisan);
+
+    const kurangiGerak = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!kurangiGerak) {
+        const jumlah = window.innerWidth < 600 ? 26 : 40;
+        const warna = ['#f59e0b', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#facc15'];
+        for (let i = 0; i < jumlah; i++) {
+            const k = document.createElement('i');
+            k.className = 'sel-panen__konfeti';
+            const lebar = 5 + Math.random() * 6;                       // 5-11 px
+            k.style.left = (Math.random() * 100).toFixed(1) + '%';
+            k.style.setProperty('--w', lebar.toFixed(1) + 'px');
+            k.style.setProperty('--h', (lebar * (0.9 + Math.random() * 1.1)).toFixed(1) + 'px');
+            k.style.setProperty('--c', warna[i % warna.length]);
+            k.style.setProperty('--dx', ((Math.random() - 0.5) * 30).toFixed(1) + 'vw');     // arah miring kiri/kanan
+            k.style.setProperty('--rot', Math.round((Math.random() < 0.5 ? -1 : 1) * (240 + Math.random() * 480)) + 'deg');
+            k.style.setProperty('--d', (1.5 + Math.random() * 0.5).toFixed(2) + 's');         // durasi 1,5-2,0 s
+            k.style.setProperty('--t', (Math.random() * 0.3).toFixed(2) + 's');                // jeda 0-0,3 s -> selesai paling lambat 2,3 s
+            if (i % 3 === 0) k.style.borderRadius = '50%';
+            lapisan.appendChild(k);
+        }
+    }
+    document.body.appendChild(lapisan);
+    setTimeout(() => lapisan.remove(), 2600);                          // dibersihkan penuh sebelum 3 detik
+}
+
+// ---------------------------------------------------------------------
+//  Simulasi Panen (owner/PPL), tepat di bawah chart donat ringkasan panen.
+//  Hanya MEMBACA data aktual & input kalkulator; tidak menulis ke state, input
+//  kalkulator, data bakul, maupun API. Input sendiri: #input_simulasi_bobot.
+//  Sinkronisasi: nilai input_kalkulator_5 dibaca di SETIAP pemanggilan (tiap 100 ms lewat
+//  eksekutor, juga saat user mengetik). Perubahan lewat `.value = ...` (latch 30%, isi otomatis,
+//  perubahan data mtd) tidak memicu event DOM, jadi harus dideteksi dengan membandingkan nilai.
+//  Basis hitung sama dengan kalkulator():
+//    ayam hidup batch = awal - mati (termasuk yang sudah dipanen)
+//    ayam belum terpanen = ayam hidup batch - total ayam dipanen
+//    IP memakai FCR yang dibulatkan 2 desimal (sama seperti variabel `ip`)
+// ---------------------------------------------------------------------
+function angkaInput(id) {
+    const el = document.getElementById(id);
+    return el ? parseFloat(el.value) : NaN;
+}
+
+export function simulasiPanen() {
+    const wadah = document.getElementById('simulasi_panen');
+    if (!wadah) return;
+    const dipanen = Number(state.total_ayam_dipanen) || 0;
+    // Panel hanya tampil saat panen >= 30% populasi awal (inklusif). Basis sama dengan latch 30% di createPieChart():
+    // state.jumlah_ayam_awal (bukan input kalkulator). Perbandingan integer (x10 vs x3) agar tepat 30% tidak meleset oleh pecahan biner.
+    const awalDashboard = Number(state.jumlah_ayam_awal);
+    const panenRaya = Number.isFinite(awalDashboard) && awalDashboard > 0 && dipanen * 10 >= awalDashboard * 3;
+
+    if (!isOwner() || !panenRaya) {
+        if (wadah.style.display !== 'none') {
+            wadah.style.display = 'none';
+            wadah._utamaTerakhir = undefined;     // saat tampil lagi, langsung mengikuti nilai terbaru kalkulator
+            const lama = document.getElementById('input_simulasi_bobot');
+            if (lama) lama.value = '';
+        }
+        return;
+    }
+
+    if (!wadah.dataset.siap) {
+        wadah.innerHTML =
+            '<h4 class="sub-judul sub-judul--simulasi">Simulasi Panen</h4>' +
+            '<p class="sim-kalimat">Jika rata-rata bobot ayam yang belum terpanen seberat ' +
+            '<input type="number" inputmode="decimal" min="0" step="0.01" id="input_simulasi_bobot" class="sim-input" aria-label="Bobot rata-rata ayam yang belum terpanen (kg)"> ' +
+            'kg, maka hasil panen akhir diperkirakan sebagai berikut:</p>' +
+            '<div id="simulasi_panen_hasil"></div><div id="simulasi_panen_catatan" class="sim-catatan"></div>';
+        const kolom = document.getElementById('input_simulasi_bobot');
+        kolom.addEventListener('input', () => simulasiPanen());
+        kolom.addEventListener('change', () => {           // rapikan ke 2 desimal setelah selesai mengetik
+            const v = parseFloat(kolom.value);
+            if (Number.isFinite(v) && v >= 0) kolom.value = v.toFixed(2);
+        });
+        // ketikan di kalkulator utama langsung diteruskan; perubahan otomatis (latch dll) ditangkap oleh pemanggilan berkala
+        const utama = document.getElementById('input_kalkulator_5');
+        if (utama) utama.addEventListener('input', () => simulasiPanen());
+        wadah.dataset.siap = '1';
+    }
+    wadah.style.display = 'block';
+
+    const kolom = document.getElementById('input_simulasi_bobot');
+    // Ikuti input bobot kalkulator utama (input_kalkulator_5; hanya dibaca). Setiap kali nilainya berubah
+    // (diketik ATAU diubah otomatis), input simulasi ditimpa nilai terbaru, termasuk bila sempat diubah manual.
+    const dasar = angkaInput('input_kalkulator_5');
+    const sama = Object.is(dasar, wadah._utamaTerakhir);
+    if (!sama) {
+        wadah._utamaTerakhir = dasar;
+        if (Number.isFinite(dasar) && dasar > 0) kolom.value = dasar.toFixed(2);
+    }
+
+    // Harga/biaya dibaca persis seperti kalkulator(): Number(value), kolom kosong dianggap 0
+    const angkaKalk = id => { const el = document.getElementById(id); return el ? Number(el.value) : NaN; };
+    const hargaKontrak = angkaKalk('input_kalkulator_6');
+    const hargaBibit = angkaKalk('input_kalkulator_7');
+    const hargaObat = angkaKalk('input_kalkulator_8');
+    const hargaPakanKg = angkaKalk('input_kalkulator_9');
+    const awal = angkaInput('input_kalkulator_2');
+    const mati = angkaInput('input_kalkulator_3');
+    const sak = angkaInput('input_kalkulator_4');
+    const umur = angkaInput('input_kalkulator_1');
+    const bobotSim = parseFloat(kolom.value);
+    const kgPanen = Number(state.total_kg_diambil) || 0;
+
+    const hidup = awal - mati;          // total ayam hidup batch (sama dengan `ayam_tersisa` di kalkulator)
+    const sisa = hidup - dipanen;       // ayam yang belum terpanen
+    const dataOk = awal > 0 && mati >= 0 && hidup > 0 && umur > 0;
+    let catatan = '';
+    if (dataOk && sisa < 0) catatan = 'Data tidak konsisten: ayam terpanen melebihi ayam hidup.';
+
+    const pakan = (Number.isFinite(sak) ? sak : 0) * 50;
+    let totalBobot = NaN, rata = NaN, fcr = NaN, ip = NaN, kd = NaN, hasilRp = NaN, untungEkor = NaN;
+    // Deplesi: basis sama dengan kalkulator (100 - persen ayam hidup); tidak bergantung bobot simulasi
+    const deplesi = dataOk ? 100 - (hidup / awal) * 100 : NaN;
+    if (dataOk && sisa >= 0 && Number.isFinite(bobotSim) && bobotSim > 0) {
+        totalBobot = kgPanen + sisa * bobotSim;
+        rata = totalBobot / hidup;
+        // Formula sama dengan perkiraan_pendapatan_2 / perkiraan_keuntungan_per_ekor_2 di kalkulator(), berbasis total bobot simulasi
+        hasilRp = (totalBobot * hargaKontrak) - (hargaBibit * awal) - hargaObat - (hargaPakanKg * pakan);
+        untungEkor = hasilRp / awal;
+        if (totalBobot > 0 && pakan > 0) {
+            const fcrAsli = pakan / totalBobot;
+            fcr = fcrAsli;
+            ip = ((hidup / awal * 100) * rata) / (Number(fcrAsli.toFixed(2)) * umur) * 100;
+            kd = 50 / fcrAsli;
+        }
+    }
+    const tampil = (v, fmt) => Number.isFinite(v) ? fmt(v) : '-';
+    const ubin = [
+        ['Estimasi Total Bobot Akhir', tampil(totalBobot, v => v.toFixed(1) + ' Kg'), true],
+        ['Estimasi Bobot Rata-rata', tampil(rata, v => v.toFixed(2) + ' Kg')],
+        ['FCR', tampil(fcr, v => v.toFixed(2))],
+        ['IP', tampil(ip, v => v.toFixed(0))],
+        ['Deplesi', tampil(deplesi, v => v.toFixed(1) + '%')],
+        ['Konversi Daging', tampil(kd, v => v.toFixed(2) + ' Kg/Sak')],
+        ['Estimasi Hasil', tampil(hasilRp, v => formatRupiah(v)), true],
+        ['Estimasi Keuntungan per Ekor', tampil(untungEkor, v => formatRupiah(v.toFixed(0))), true],
+    ];
+    const html = '<div class="hasil-grid hasil-grid--simulasi">' + ubin.map(u =>
+        `<div class="info-tile${u[2] ? ' info-tile--utama' : ''}"><div class="info-tile__label">${u[0]}</div><div class="info-tile__value">${u[1]}</div></div>`
+    ).join('') + '</div>';
+
+    // tulis ke DOM hanya bila berubah (fungsi ini dipanggil tiap 100 ms oleh eksekutor)
+    const hasil = document.getElementById('simulasi_panen_hasil');
+    if (wadah._htmlTerakhir !== html) { wadah._htmlTerakhir = html; hasil.innerHTML = html; }
+    const ket = document.getElementById('simulasi_panen_catatan');
+    if (ket.textContent !== catatan) ket.textContent = catatan;
+}
+
 // ---------------------------------------------------------------------
 export function createPieChart() {
     if (!isOwner()) return;
