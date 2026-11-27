@@ -361,6 +361,7 @@ const LANGKAH_RENDER = [
     ['bar-pf',        animasi_bar],
     ['heatmap',       updateHeatmap],
     ['analisa',       analisa_realtime],
+    ['snapshot-kalkulator', sinkronSnapshotKalkulator],
     ['kalkulator',    kalkulator],
     ['simulasi-panen', simulasiPanen],
     ['selebrasi-panen', selebrasiPanen],
@@ -1326,7 +1327,9 @@ export function periksaPerubahanMtd() {
     }
 
     // data pertama kali masuk (lama belum ada) bukan "perubahan": cukup diisi oleh isiDefaultKalkulator()
-    if (berubah.length === 0 || !isOwner()) return;
+    // OFFLINE & data masih stale: pencatatan nilai tetap jalan, tetapi input tidak ditimpa (lihat snapshot lokal di bawah).
+    // Begitu data kembali segar (< 60 dtk) penimpaan normal berjalan lagi, meski langkah snapshot belum sempat melepas mode offline.
+    if (berubah.length === 0 || !isOwner() || (kalkulatorFallbackOffline && !dataSensorOnline())) return;
 
     for (const b of berubah) {
         const el = document.getElementById(b.id);
@@ -1337,6 +1340,143 @@ export function periksaPerubahanMtd() {
         state.kalkulatorTerisi.add(b.id);
     }
     tampilkanPopupKalkulator(berubah);
+}
+
+// ---------------------------------------------------------------------
+//  Snapshot lokal input kalkulator (localStorage) = cadangan saat data sensor OFFLINE / stale
+//
+//  Status online memakai dasar yang SAMA dengan indikator wkt_on(): umur state.penampung_data_waktu < 60 detik.
+//  - ONLINE : mekanisme normal (JSON mtd) tidak diubah. Nilai 9 input kalkulator disalin ke snapshot HANYA bila berubah.
+//  - OFFLINE: bila snapshot ada, nilainya dipulihkan SEKALI saat offline terdeteksi (di muat awal); bila belum ada,
+//             isi dari MTD stale dipakai apa adanya lalu dijadikan snapshot awal. Selama offline, periksaPerubahanMtd()
+//             tidak menimpa input dan isiDefaultKalkulator() tidak menimpa kolom yang sudah dipulihkan/terisi.
+//  - ONLINE KEMBALI: proteksi dilepas, kolom yang dipulihkan & belum disentuh user diisi ulang dari JSON segar.
+//  Hanya NILAI INPUT yang disimpan (bukan hasil hitung/state/sensor). Struktur: { v: 1, t: <ms>, nilai: { input_kalkulator_N: "teks" } }
+// ---------------------------------------------------------------------
+const KUNCI_SNAPSHOT = 'kalkulator_snapshot';
+const VERSI_SNAPSHOT = 1;
+const BATAS_ONLINE_DETIK = 60;
+const JEDA_SIMPAN_MS = 300;          // nilai harus stabil 0,3 dtk sebelum ditulis (tidak menulis tiap ketikan/tiap tick)
+
+let kalkulatorFallbackOffline = false;
+let modeKalkulator = null;           // null (belum dievaluasi) | 'online' | 'offline'
+let snapshotCache;                   // undefined = belum dibaca; null = tidak ada/rusak; objek = nilai valid
+let snapshotTertulis = '';           // tanda tangan nilai yang terakhir disimpan (cegah write tanpa perubahan)
+let calonSnapshot = null;            // { sig, sejak } perubahan yang menunggu stabil
+let dipulihkan = {};                 // id -> { nilai, diubah } kolom yang diisi dari snapshot saat offline
+let pelindungPagehidePasang = false;
+
+// Sama persis dengan penentuan hijau/merah di wkt_on() (NaN -> bukan online).
+function dataSensorOnline() {
+    const umur = Math.floor((new Date() - new Date(state.penampung_data_waktu)) / 1000);
+    return umur < BATAS_ONLINE_DETIK;
+}
+
+function idKalkulator() { return FIELD_KALKULATOR.map(f => f.id); }
+
+function nilaiValid(teks) {
+    const s = String(teks === undefined || teks === null ? '' : teks).trim();
+    return s !== '' && Number.isFinite(Number(s)) ? s : null;
+}
+
+function bacaSnapshot() {
+    if (snapshotCache !== undefined) return snapshotCache;
+    snapshotCache = null;
+    try {
+        const mentah = localStorage.getItem(KUNCI_SNAPSHOT);
+        if (mentah) {
+            const obj = JSON.parse(mentah);
+            if (obj && obj.v === VERSI_SNAPSHOT && obj.nilai && typeof obj.nilai === 'object') {
+                const bersih = {};
+                for (const id of idKalkulator()) { const s = nilaiValid(obj.nilai[id]); if (s !== null) bersih[id] = s; }
+                if (Object.keys(bersih).length > 0) { snapshotCache = bersih; snapshotTertulis = JSON.stringify(bersih); }
+            }
+        }
+    } catch (e) { snapshotCache = null; }       // localStorage tidak tersedia / JSON rusak: anggap tidak ada snapshot
+    return snapshotCache;
+}
+
+// Nilai sekarang digabung dengan snapshot sebelumnya: kolom yang sedang kosong (mis. saat user mengganti angka
+// atau data belum valid) tidak menghapus nilai tersimpan.
+function gabunganSnapshot() {
+    const sebelumnya = bacaSnapshot() || {};
+    const hasil = {};
+    for (const id of idKalkulator()) {
+        const el = document.getElementById(id);
+        const s = el ? nilaiValid(el.value) : null;
+        if (s !== null) hasil[id] = s;
+        else if (sebelumnya[id] !== undefined) hasil[id] = sebelumnya[id];
+    }
+    return hasil;
+}
+
+function tulisSnapshot(gabungan, sig) {
+    if (Object.keys(gabungan).length === 0 || sig === snapshotTertulis) return;     // tidak ada perubahan -> tidak menulis
+    snapshotCache = gabungan;
+    snapshotTertulis = sig;
+    try {
+        localStorage.setItem(KUNCI_SNAPSHOT, JSON.stringify({ v: VERSI_SNAPSHOT, t: Date.now(), nilai: gabungan }));
+    } catch (e) { /* penyimpanan penuh/dinonaktifkan: dashboard tetap jalan, snapshot hanya di memori sesi ini */ }
+}
+
+function simpanSegera() {
+    if (modeKalkulator === null || !isOwner()) return;
+    const g = gabunganSnapshot();
+    tulisSnapshot(g, JSON.stringify(g));
+    calonSnapshot = null;
+}
+
+function masukOffline(muatAwal) {
+    kalkulatorFallbackOffline = true;
+    dipulihkan = {};
+    if (!muatAwal) { simpanSegera(); return; }       // offline di tengah sesi: input sudah berisi nilai terbaru, amankan perubahan yang belum tersimpan
+    const snap = bacaSnapshot();
+    if (!snap) return;                               // belum ada snapshot: pakai isi dari MTD stale; snapshot awal dibuat oleh sinkronSnapshotKalkulator()
+    for (const f of FIELD_KALKULATOR) {
+        const nilai = snap[f.id];
+        const el = document.getElementById(f.id);
+        if (nilai === undefined || !el) continue;
+        dipulihkan[f.id] = { nilai, diubah: el.dataset.diubahUser };
+        el.value = nilai;
+        state.kalkulatorTerisi.add(f.id);            // isiDefaultKalkulator() tidak menimpa kolom ini
+    }
+}
+
+function keluarOffline() {
+    kalkulatorFallbackOffline = false;
+    // Kolom yang dipulihkan dan belum disentuh user dikembalikan ke JSON (sumber utama); kolom yang sudah diubah user tetap.
+    for (const id of Object.keys(dipulihkan)) {
+        const el = document.getElementById(id);
+        if (el && el.value === dipulihkan[id].nilai && dipulihkan[id].diubah !== '1') state.kalkulatorTerisi.delete(id);
+    }
+    dipulihkan = {};
+    isiDefaultKalkulator(false);                     // JSON segar mengisi ulang kolom yang dilepas
+}
+
+export function sinkronSnapshotKalkulator() {
+    if (!isOwner() || !state.data_json) return;
+    if (!pelindungPagehidePasang) {
+        pelindungPagehidePasang = true;
+        window.addEventListener('pagehide', simpanSegera);     // ketikan terakhir ikut tersimpan saat tab ditutup/reload
+    }
+    bacaSnapshot();
+
+    const mode = dataSensorOnline() ? 'online' : 'offline';
+    if (mode !== modeKalkulator) {
+        const awal = modeKalkulator === null;
+        const sebelumnya = modeKalkulator;
+        modeKalkulator = mode;
+        if (mode === 'offline') masukOffline(awal);
+        else if (sebelumnya === 'offline') keluarOffline();
+    }
+
+    // Simpan hanya bila nilai input berubah dan sudah stabil (perubahan manual, JSON, latch, dan update programatik tercakup).
+    const g = gabunganSnapshot();
+    const sig = JSON.stringify(g);
+    if (sig === snapshotTertulis) { calonSnapshot = null; return; }
+    const sekarang = Date.now();
+    if (!calonSnapshot || calonSnapshot.sig !== sig) { calonSnapshot = { sig, sejak: sekarang }; return; }
+    if (sekarang - calonSnapshot.sejak >= JEDA_SIMPAN_MS) { tulisSnapshot(g, sig); calonSnapshot = null; }
 }
 
 // --- pop up "Data kalkulator diperbarui" -------------------------------------------------
@@ -1654,26 +1794,38 @@ function tampilkanSelebrasi(teks, selesai) {
 
     const kurangiGerak = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!kurangiGerak) {
-        const jumlah = window.innerWidth < 600 ? 26 : 40;
-        const warna = ['#f59e0b', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#facc15'];
-        for (let i = 0; i < jumlah; i++) {
-            const k = document.createElement('i');
-            k.className = 'sel-panen__konfeti';
-            const lebar = 5 + Math.random() * 6;                       // 5-11 px
-            k.style.left = (Math.random() * 100).toFixed(1) + '%';
-            k.style.setProperty('--w', lebar.toFixed(1) + 'px');
-            k.style.setProperty('--h', (lebar * (0.9 + Math.random() * 1.1)).toFixed(1) + 'px');
-            k.style.setProperty('--c', warna[i % warna.length]);
-            k.style.setProperty('--dx', ((Math.random() - 0.5) * 30).toFixed(1) + 'vw');     // arah miring kiri/kanan
-            k.style.setProperty('--rot', Math.round((Math.random() < 0.5 ? -1 : 1) * (240 + Math.random() * 480)) + 'deg');
-            k.style.setProperty('--d', (1.5 + Math.random() * 0.5).toFixed(2) + 's');         // durasi 1,5-2,0 s
-            k.style.setProperty('--t', (Math.random() * 0.3).toFixed(2) + 's');                // jeda 0-0,3 s -> selesai paling lambat 2,3 s
-            if (i % 3 === 0) k.style.borderRadius = '50%';
-            lapisan.appendChild(k);
+        const hp = window.innerWidth < 600;
+        // Tiga gelombang konfeti berlapis: [jumlah, mulai (dtk), jeda acak maks (dtk), durasi min, durasi maks].
+        // Konfeti terakhir selesai paling lambat 4,9 dtk; teks 4,6 dtk; lapisan dihapus di 5,2 dtk (batas 5,5 dtk).
+        const gelombang = hp
+            ? [[26, 0, 0.5, 2.4, 3.2], [13, 1.3, 0.5, 2.2, 2.8], [8, 2.3, 0.4, 1.6, 2.0]]
+            : [[40, 0, 0.5, 2.4, 3.2], [20, 1.3, 0.5, 2.2, 2.8], [10, 2.3, 0.4, 1.6, 2.0]];
+        const warna = ['#f59e0b', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#facc15', '#14b8a6'];
+        const acak = (a, b) => a + Math.random() * (b - a);
+        let urut = 0;
+        for (const [jumlah, mulai, jeda, dMin, dMax] of gelombang) {
+            for (let i = 0; i < jumlah; i++, urut++) {
+                const k = document.createElement('i');
+                k.className = 'sel-panen__konfeti';
+                const lebar = acak(5, 11);
+                const bentuk = urut % 4;                                    // 0 persegi panjang, 1 bulat, 2 pita, 3 persegi
+                k.style.left = acak(0, 100).toFixed(1) + '%';
+                k.style.setProperty('--w', (bentuk === 2 ? lebar * 0.5 : lebar).toFixed(1) + 'px');
+                k.style.setProperty('--h', (bentuk === 2 ? lebar * 2.2 : bentuk === 3 ? lebar : lebar * acak(0.9, 1.9)).toFixed(1) + 'px');
+                k.style.setProperty('--c', warna[urut % warna.length]);
+                k.style.setProperty('--dx', acak(-15, 15).toFixed(1) + 'vw');       // arah miring kiri/kanan
+                k.style.setProperty('--sway', acak(-4, 4).toFixed(1) + 'vw');       // ayunan halus selama jatuh
+                k.style.setProperty('--rot', Math.round((Math.random() < 0.5 ? -1 : 1) * acak(240, 720)) + 'deg');
+                k.style.setProperty('--flip', Math.round(acak(180, 720)) + 'deg'); // efek membalik (kepak)
+                k.style.setProperty('--d', acak(dMin, dMax).toFixed(2) + 's');
+                k.style.setProperty('--t', (mulai + Math.random() * jeda).toFixed(2) + 's');
+                if (bentuk === 1) k.style.borderRadius = '50%';
+                lapisan.appendChild(k);
+            }
         }
     }
     document.body.appendChild(lapisan);
-    setTimeout(() => lapisan.remove(), 2600);                          // dibersihkan penuh sebelum 3 detik
+    setTimeout(() => lapisan.remove(), 5200);                          // dibersihkan penuh sebelum 5,5 detik
 }
 
 // ---------------------------------------------------------------------
