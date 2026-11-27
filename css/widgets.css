@@ -656,8 +656,15 @@ canvas { width: 100%; height: 100%; display: block; }
 }
 
 /* --- Tabel sebaran bobot --- */
-.th_ { padding: 10px; border: 1px solid #ddd; background-color: #f2f2f2; font-size: 1rem; }
-.td_ { padding: 3px; border: 1px solid #ddd; background-color: #f9f9f9; font-size: 1rem; }
+/* Kolom dikunci (table-layout: fixed) agar tabel tidak melebihi lebar kontainer; teks panjang dipatah, bukan meluber. */
+#sebaranTable { table-layout: fixed; max-width: 100%; }
+#sebaranTable th:first-child, #sebaranTable td:first-child { width: 30%; }
+.th_ { padding: 10px 6px; border: 1px solid #ddd; background-color: #f2f2f2; font-size: 1rem; line-height: 1.25; overflow-wrap: anywhere; }
+.td_ { padding: 6px 4px; border: 1px solid #ddd; background-color: #f9f9f9; font-size: 1rem; overflow-wrap: anywhere; }
+@media (max-width: 480px) {
+  .th_ { padding: 8px 3px; font-size: 0.78rem; }
+  .td_ { padding: 5px 2px; font-size: 0.85rem; }
+}
 
 /* --- Keterangan timbangan: kartu ringkas (rata-rata, deviasi, ADG, dst) ---
    Ukuran font sengaja dibuat eksplisit (rem), tidak mewarisi .txt2 dari kontainernya. */
