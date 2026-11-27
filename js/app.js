@@ -1832,9 +1832,11 @@ function tampilkanSelebrasi(teks, selesai) {
 //  Simulasi Panen (owner/PPL), tepat di bawah chart donat ringkasan panen.
 //  Hanya MEMBACA data aktual & input kalkulator; tidak menulis ke state, input
 //  kalkulator, data bakul, maupun API. Input sendiri: #input_simulasi_bobot.
-//  Sinkronisasi: nilai input_kalkulator_5 dibaca di SETIAP pemanggilan (tiap 100 ms lewat
-//  eksekutor, juga saat user mengetik). Perubahan lewat `.value = ...` (latch 30%, isi otomatis,
-//  perubahan data mtd) tidak memicu event DOM, jadi harus dideteksi dengan membandingkan nilai.
+//  Default bobot simulasi = rata-rata bobot TERPANEN (total kg dipanen / total ekor dipanen), sama dengan
+//  tile "Kerataan bobot panen" di ringkasan panen (createPieChart). Sama sekali TIDAK memakai input_kalkulator_5.
+//  Nilai ini dibandingkan di SETIAP pemanggilan (tiap 100 ms lewat eksekutor); bila rata-rata panen berubah
+//  (data bakul berubah), input simulasi mengikuti nilai terbaru. Input kalkulator lain (umur, ayam, pakan, harga)
+//  tetap dibaca langsung tiap pemanggilan di bawah.
 //  Basis hitung sama dengan kalkulator():
 //    ayam hidup batch = awal - mati (termasuk yang sudah dipanen)
 //    ayam belum terpanen = ayam hidup batch - total ayam dipanen
@@ -1857,7 +1859,7 @@ export function simulasiPanen() {
     if (!isOwner() || !panenRaya) {
         if (wadah.style.display !== 'none') {
             wadah.style.display = 'none';
-            wadah._utamaTerakhir = undefined;     // saat tampil lagi, langsung mengikuti nilai terbaru kalkulator
+            wadah._rataPanenTerakhir = undefined;  // saat tampil lagi, langsung mengikuti rata-rata panen terbaru
             const lama = document.getElementById('input_simulasi_bobot');
             if (lama) lama.value = '';
         }
@@ -1877,21 +1879,17 @@ export function simulasiPanen() {
             const v = parseFloat(kolom.value);
             if (Number.isFinite(v) && v >= 0) kolom.value = v.toFixed(2);
         });
-        // ketikan di kalkulator utama langsung diteruskan; perubahan otomatis (latch dll) ditangkap oleh pemanggilan berkala
-        const utama = document.getElementById('input_kalkulator_5');
-        if (utama) utama.addEventListener('input', () => simulasiPanen());
         wadah.dataset.siap = '1';
     }
     wadah.style.display = 'block';
 
     const kolom = document.getElementById('input_simulasi_bobot');
-    // Ikuti input bobot kalkulator utama (input_kalkulator_5; hanya dibaca). Setiap kali nilainya berubah
-    // (diketik ATAU diubah otomatis), input simulasi ditimpa nilai terbaru, termasuk bila sempat diubah manual.
-    const dasar = angkaInput('input_kalkulator_5');
-    const sama = Object.is(dasar, wadah._utamaTerakhir);
-    if (!sama) {
-        wadah._utamaTerakhir = dasar;
-        if (Number.isFinite(dasar) && dasar > 0) kolom.value = dasar.toFixed(2);
+    // Rata-rata bobot terpanen = total kg dipanen / total ekor dipanen (rumus tile "Kerataan bobot panen"), 2 desimal.
+    // Setiap kali nilainya berubah, input simulasi ditimpa nilai terbaru; edit manual bertahan selama rata-rata panen tetap.
+    const rataPanen = dipanen > 0 ? Number(((Number(state.total_kg_diambil) || 0) / dipanen).toFixed(2)) : NaN;
+    if (!Object.is(rataPanen, wadah._rataPanenTerakhir)) {
+        wadah._rataPanenTerakhir = rataPanen;
+        if (Number.isFinite(rataPanen) && rataPanen > 0) kolom.value = rataPanen.toFixed(2);
     }
 
     // Harga/biaya dibaca persis seperti kalkulator(): Number(value), kolom kosong dianggap 0
